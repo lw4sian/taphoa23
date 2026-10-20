@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Về Chúng Tôi - Ban Quản Trị Tạp Hóa 23</title>
+  <meta name="description"
+    content="Thông tin ban quản trị và giới thiệu hệ thống Tạp Hóa 23 - Shop tài khoản game, key bản quyền uy tín số 1 Việt Nam." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Exo+2:wght@700;800;900&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="nav-logo-icon">🛒</span>
+        <span class="nav-logo-text">Tạp Hóa 23</span>
+      </a>
+      <div id="hamburger" class="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+      <div id="nav-menu" style="display:contents">
+        <ul class="nav-links">
+          <li><a href="index.html">Trang Chủ</a></li>
+          <li><a href="products.html">Sản Phẩm</a></li>
+          <li><a href="index.html#categories">Danh Mục</a></li>
+          <li><a href="about.html" class="active">Về Chúng Tôi</a></li>
+        </ul>
+        <div class="nav-search">
+          <span class="nav-search-icon">🔍</span>
+          <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm..." />
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer"
+          class="nav-social-btn nav-btn-fb" title="Trang Facebook Tạp Hóa 23">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+          </svg>
+          <span class="social-label">Facebook</span>
+        </a>
+        <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer"
+          class="nav-social-btn nav-btn-discord" title="Máy chủ Discord Tạp Hóa 23">
+          <svg width="17" height="14" viewBox="0 0 24 19" fill="currentColor">
+            <path
+              d="M20.317 1.492a19.742 19.742 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.182-.32 10.755.099 15.277a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 12.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+          </svg>
+          <span class="social-label">Discord</span>
+        </a>
+        <a href="cart.html" class="nav-cart-btn" title="Xem giỏ hàng">
+          🛒
+          <span class="cart-badge">0</span>
+        </a>
+        <a href="login.html" class="nav-login-btn">Đăng Nhập</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== PAGE HERO ===== -->
+  <div class="about-hero">
+    <canvas id="particles" style="position:absolute;inset:0;pointer-events:none;z-index:0"></canvas>
+    <div class="hero-bg-glow hero-bg-glow-1"></div>
+    <div class="hero-bg-glow hero-bg-glow-2"></div>
+    <div class="container" style="position:relative;z-index:1">
+      <span class="section-tag">✨ Giới Thiệu & Ban Quản Trị</span>
+      <h1 class="section-title" style="margin-top:12px;font-size:38px">
+        Về Chúng Tôi <span class="gradient-text">Tạp Hóa 23</span>
+      </h1>
+      <p class="section-sub" style="max-width:680px;margin:12px auto 20px">
+        Hệ thống phân phối thẻ game, tài khoản và key bản quyền tự động, uy tín hàng đầu. Cam kết mang đến trải nghiệm
+        mua sắm an toàn, tốc độ và minh bạch nhất.
+      </p>
+      <div class="breadcrumb"
+        style="display:flex;justify-content:center;gap:8px;font-size:14px;color:var(--text-muted)">
+        <a href="index.html" style="color:var(--purple-light)">Trang Chủ</a>
+        <span>›</span>
+        <span>Về Chúng Tôi</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN TEAM SECTION ===== -->
+  <section class="admin-section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag">🛡️ BAN ĐIỀU HÀNH HỆ THỐNG</span>
+        <h2 class="section-title">
+          Thông Tin <span class="gradient-text">Quản Trị Viên (Admin)</span>
+        </h2>
+        <p class="section-sub">
+          Đội ngũ quản trị viên trực tiếp hỗ trợ, giải đáp mọi khiếu nại và vận hành hệ thống 24/7.
+        </p>
+      </div>
+
+      <div class="admin-grid stagger-children">
+
+        <!-- ============================================================== -->
+        <!-- ADMIN 1: Bạn có thể chỉnh sửa thông tin (Tên, Email, SĐT) ở đây -->
+        <!-- ============================================================== -->
+        <div class="admin-card animate-on-scroll">
+          <div class="admin-avatar-box">👑</div>
+          <span class="admin-role-badge">Lead Admin / Sáng Lập</span>
+          <h3 class="admin-name">Admin Nguyễn Văn A</h3>
+          <p class="admin-bio">Phụ trách điều hành toàn diện hệ thống, kiểm duyệt chất lượng nguồn hàng và hợp tác đối
+            tác chiến lược.</p>
+
+          <div class="admin-info-list">
+            <div class="admin-info-row">
+              <span class="row-icon">👤</span>
+              <span class="row-label">Họ tên:</span>
+              <span class="row-val">Nguyễn Văn A</span>
+            </div>
+            <div class="admin-info-row">
+              <span class="row-icon">✉️</span>
+              <span class="row-label">Email:</span>
+              <span class="row-val"><a href="mailto:admin1@taphoa23.com">admin1@taphoa23.com</a></span>
+            </div>
+            <div class="admin-info-row">
+              <span class="row-icon">📞</span>
+              <span class="row-label">Hotline:</span>
+              <span class="row-val"><a href="tel:0987654321">0987 654 321</a></span>
+            </div>
+            <div class="admin-info-row">
+              <span class="row-icon">💬</span>
+              <span class="row-label">Zalo:</span>
+              <span class="row-val"><a href="https://zalo.me/0987654321" target="_blank">0987 654 321</a></span>
+            </div>
+          </div>
+
+          <div class="admin-actions">
+            <a href="mailto:admin1@taphoa23.com" class="admin-btn admin-btn-email">✉️ Gửi Email</a>
+            <a href="tel:0987654321" class="admin-btn admin-btn-call">📞 Gọi Ngay</a>
+          </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- ADMIN 2: Bạn có thể chỉnh sửa thông tin (Tên, Email, SĐT) ở đây -->
+        <!-- ============================================================== -->
+        <div class="admin-card animate-on-scroll">
+          <div class="admin-avatar-box">⚡</div>
+          <span class="admin-role-badge">Technical / Kỹ Thuật</span>
+          <h3 class="admin-name">Admin Trần Văn B</h3>
+          <p class="admin-bio">Phụ trách hạ tầng máy chủ, hệ thống thanh toán tự động MoMo & Banking, bảo mật dữ liệu
+            người dùng.</p>
+
+          <div class="admin-info-list">
+            <div class="admin-info-row">
+              <span class="row-icon">👤</span>
+              <span class="row-label">Họ tên:</span>
+              <span class="row-val">Trần Văn B</span>
+            </div>
+            <div class="admin-info-row">
+              <span class="row-icon">✉️</span>
+              <span class="row-label">Email:</span>
+              <span class="row-val"><a href="mailto:admin2@taphoa23.com">admin2@taphoa23.com</a></span>
+            </div>
+            <div class="admin-info-row">
+              <span class="row-icon">📞</span>
+              <span class="row-label">Hotline:</span>
+              <span class="row-val"><a href="tel:0987654322">0987 654 322</a></span>
+            </div>
+            <div class="admin-info-row">
+              <span class="row-icon">💬</span>
+              <span class="row-label">Zalo:</span>
+              <span class="row-val"><a href="https://zalo.me/0987654322" target="_blank">0987 654 322</a></span>
+            </div>
+          </div>
+
+          <div class="admin-actions">
+            <a href="mailto:admin2@taphoa23.com" class="admin-btn admin-btn-email">✉️ Gửi Email</a>
+            <a href="tel:0987654322" class="admin-btn admin-btn-call">📞 Gọi Ngay</a>
+          </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- ADMIN 3: Bạn có thể chỉnh sửa thông tin (Tên, Email, SĐT) ở đây -->
+        <!-- ============================================================== -->
+        <div class="admin-card animate-on-scroll">
+          <div class="admin-avatar-box">💼</div>
+          <span class="admin-role-badge">Vận Hành & CSKH</span>
+          <h3 class="admin-name">Admin Lê Thị C</h3>
+          <p class="admin-bio">Phụ trách tiếp nhận đơn hàng, hỗ trợ kích hoạt sản phẩm, xử lý bảo hành đổi trả và giải
+            đáp thắc mắc 24/7.</p>
+
+          <div class="admin-info-list">
+            <div class="admin-info-row">
+              <span class="row-icon">👤</span>
+              <span class="row-label">Họ tên:</span>
+              <span class="row-val">Lê Thị C</span>
+            </div>
+            <div class="admin-info-row">
+              <span class="row-icon">✉️</span>
+              <span class="row-label">Email:</span>
+              <span class="row-val"><a href="mailto:admin3@taphoa23.com">admin3@taphoa23.com</a></span>
+            </div>
+            <div class="admin-info-row">
+              <span class="row-icon">📞</span>
+              <span class="row-label">Hotline:</span>
+              <span class="row-val"><a href="tel:0987654323">0987 654 323</a></span>
+            </div>
+            <div class="admin-info-row">
+              <span class="row-icon">💬</span>
+              <span class="row-label">Zalo:</span>
+              <span class="row-val"><a href="https://zalo.me/0987654323" target="_blank">0987 654 323</a></span>
+            </div>
+          </div>
+
+          <div class="admin-actions">
+            <a href="mailto:admin3@taphoa23.com" class="admin-btn admin-btn-email">✉️ Gửi Email</a>
+            <a href="tel:0987654323" class="admin-btn admin-btn-call">📞 Gọi Ngay</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BRAND VALUES & COMMITMENT ===== -->
+  <section
+    style="background:rgba(255,255,255,0.02);border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color);padding:70px 0">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-tag">💎 GIÁ TRỊ CỐT LÕI</span>
+        <h2 class="section-title">Cam Kết Từ <span class="gradient-text">Tạp Hóa 23</span></h2>
+        <p class="section-sub">Chúng tôi đặt sự an tâm và lợi ích của khách hàng lên hàng đầu.</p>
+      </div>
+
+      <div class="features-grid animate-on-scroll stagger-children">
+        <div class="feature-card">
+          <div class="feature-icon-wrapper" style="background:rgba(124,58,237,0.1);border-color:rgba(124,58,237,0.3)">
+            <span class="feature-icon">⚡</span>
+          </div>
+          <h4>Giao Hàng Tự Động</h4>
+          <p>Nhận mã thẻ, thông tin tài khoản ngay trên màn hình và qua email chỉ sau 3 giây thanh toán.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper" style="background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.3)">
+            <span class="feature-icon">💳</span>
+          </div>
+          <h4>Thanh Toán An Toàn</h4>
+          <p>Hỗ trợ thanh toán nhanh chóng, tự động duyệt đơn qua MoMo và Internet Banking.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper" style="background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3)">
+            <span class="feature-icon">🛡️</span>
+          </div>
+          <h4>Bảo Hành 1 Đổi 1</h4>
+          <p>Cam kết hoàn tiền hoặc đổi mới ngay lập tức nếu sản phẩm gặp bất kỳ lỗi kỹ thuật nào.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-wrapper" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3)">
+            <span class="feature-icon">💬</span>
+          </div>
+          <h4>Hỗ Trợ 24/7</h4>
+          <p>Đội ngũ admin trực chiến 24/7 giải quyết mọi thắc mắc của bạn qua Hotline, Zalo và Email.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">
+            <span class="footer-logo-icon">🛒</span>
+            <span class="footer-logo-text">Tạp Hóa 23</span>
+          </div>
+          <p class="footer-desc">
+            Nền tảng mua bán tài khoản game, key phần mềm và giftcode uy tín hàng đầu Việt Nam. Cam kết giao hàng siêu
+            tốc, bảo hành chu đáo, giá tốt nhất thị trường.
+          </p>
+          <div class="footer-socials">
+            <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer" class="footer-social"
+              title="Facebook">📘</a>
+            <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer" class="footer-social"
+              title="Discord">🎮</a>
+            <a href="#" class="footer-social" title="Telegram">✈️</a>
+            <a href="#" class="footer-social" title="YouTube">▶️</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Sản Phẩm</h4>
+          <ul>
+            <li><a href="products.html?cat=the-garena">Thẻ Garena</a></li>
+            <li><a href="products.html?cat=steam-wallet">Key Steam Wallet</a></li>
+            <li><a href="products.html?cat=game-account">Tài Khoản Game</a></li>
+            <li><a href="products.html?cat=key-game">Key Game</a></li>
+            <li><a href="products.html?cat=giftcode">Gift Code</a></li>
+            <li><a href="products.html?cat=software">Phần Mềm</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Hỗ Trợ</h4>
+          <ul>
+            <li><a href="#">Hướng Dẫn Mua Hàng</a></li>
+            <li><a href="#">Chính Sách Bảo Hành</a></li>
+            <li><a href="#">Câu Hỏi Thường Gặp</a></li>
+            <li><a href="mailto:taphoa23@gmail.com">Liên Hệ Hỗ Trợ</a></li>
+            <li><a href="#">Báo Lỗi Hệ Thống</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Thông Tin</h4>
+          <ul>
+            <li><a href="about.html">Về Chúng Tôi</a></li>
+            <li><a href="#">Điều Khoản Sử Dụng</a></li>
+            <li><a href="#">Chính Sách Bảo Mật</a></li>
+            <li><a href="#">Chương Trình Affiliate</a></li>
+            <li><a href="#">Tuyển Dụng</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- DÒNG LIÊN HỆ PHÍA CUỐI TRANG -->
+      <div class="footer-contact-bar">
+        <div class="footer-contact-item">
+          <span class="contact-icon">📞</span>
+          <span>Hotline / Zalo: <a href="tel:0987654321">0987 654 321</a></span>
+        </div>
+        <div class="footer-contact-divider">•</div>
+        <div class="footer-contact-item">
+          <span class="contact-icon">✉️</span>
+          <span>Email: <a href="mailto:taphoa23@gmail.com">taphoa23@gmail.com</a></span>
+        </div>
+        <div class="footer-contact-divider">•</div>
+        <div class="footer-contact-item">
+          <span class="contact-icon">⏰</span>
+          <span>Thời gian làm việc: <strong style="color:var(--green)">24/7 (Cả ngày lễ)</strong></span>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2024 Tạp Hóa 23. All rights reserved. Liên hệ: <a href="tel:0987654321" style="color:var(--gold)">0987 654
+            321</a> | <a href="mailto:taphoa23@gmail.com" style="color:var(--purple-light)">taphoa23@gmail.com</a></p>
+        <div class="footer-bottom-links">
+          <a href="#">Bảo Mật</a>
+          <a href="#">Điều Khoản</a>
+          <a href="#">Cookie</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING SOCIAL WIDGET (Facebook & Discord) -->
+  <div class="floating-social-widget">
+    <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer"
+      class="floating-social-btn floating-fb" title="Trang Facebook Tạp Hóa 23">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+      </svg>
+      <span class="floating-tooltip">Facebook Fanpage</span>
+    </a>
+    <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer"
+      class="floating-social-btn floating-discord" title="Máy chủ Discord Tạp Hóa 23">
+      <svg width="22" height="18" viewBox="0 0 24 19" fill="currentColor">
+        <path
+          d="M20.317 1.492a19.742 19.742 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.182-.32 10.755.099 15.277a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 12.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+      </svg>
+      <span class="floating-tooltip">Kênh Discord</span>
+    </a>
+  </div>
+
+  <!-- BACK TO TOP -->
+  <button id="back-to-top">↑</button>
+
+  <script src="js/products-data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>
