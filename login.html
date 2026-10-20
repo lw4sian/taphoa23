@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Đăng Nhập / Đăng Ký - Tạp Hóa 23</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Exo+2:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .register-form { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- BACK LINK -->
+<div style="position:fixed;top:24px;left:24px;z-index:100">
+  <a href="index.html" style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:99px;font-size:14px;color:var(--text-secondary);transition:var(--transition)">
+    ← Trang Chủ
+  </a>
+</div>
+
+<!-- BACKGROUND PARTICLES -->
+<canvas id="particles" style="position:fixed;inset:0;z-index:0"></canvas>
+<div style="position:fixed;width:500px;height:500px;background:rgba(124,58,237,0.12);border-radius:50%;filter:blur(80px);top:-150px;left:-150px;z-index:0"></div>
+<div style="position:fixed;width:400px;height:400px;background:rgba(37,99,235,0.1);border-radius:50%;filter:blur(80px);bottom:-100px;right:-100px;z-index:0"></div>
+
+<div class="auth-page" style="position:relative;z-index:1">
+  <div class="auth-card" style="animation:scaleIn 0.4s ease">
+    <!-- Logo -->
+    <div class="auth-logo">
+      <span class="auth-logo-icon">🛒</span>
+      <span class="auth-logo-text">Tạp Hóa 23</span>
+      <p style="font-size:13px;color:var(--text-muted);margin-top:6px">Thiên đường key & tài khoản game</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">Đăng Nhập</div>
+      <div class="auth-tab" id="tab-register" onclick="switchTab('register')">Đăng Ký</div>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form id="login-form" class="login-form" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label">Email hoặc Tên đăng nhập</label>
+        <input type="text" class="form-input" placeholder="Nhập email / tên đăng nhập..." required />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mật Khẩu</label>
+        <input type="password" class="form-input" placeholder="Nhập mật khẩu..." required />
+      </div>
+      <div class="form-forgot">
+        <a href="#">Quên mật khẩu?</a>
+      </div>
+      <button type="submit" class="btn-auth">🔐 Đăng Nhập</button>
+
+      <div class="auth-divider">hoặc đăng nhập với</div>
+
+      <button type="button" class="btn-social" onclick="showToast('🔵 Đăng nhập Google thành công!')">
+        <span>🌐</span> Tiếp tục với Google
+      </button>
+      <button type="button" class="btn-social" onclick="showToast('📘 Đăng nhập Facebook thành công!')">
+        <span>📘</span> Tiếp tục với Facebook
+      </button>
+    </form>
+
+    <!-- REGISTER FORM -->
+    <form id="register-form" class="register-form" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label class="form-label">Tên đăng nhập</label>
+        <input type="text" class="form-input" placeholder="Chọn tên đăng nhập..." required />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" placeholder="email@example.com" required />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mật Khẩu</label>
+        <input type="password" class="form-input" placeholder="Tối thiểu 8 ký tự..." required />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Xác Nhận Mật Khẩu</label>
+        <input type="password" class="form-input" placeholder="Nhập lại mật khẩu..." required />
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;line-height:1.6">
+        Bằng cách đăng ký, bạn đồng ý với 
+        <a href="#" style="color:var(--purple-light)">Điều khoản sử dụng</a> và
+        <a href="#" style="color:var(--purple-light)">Chính sách bảo mật</a> của chúng tôi.
+      </div>
+      <button type="submit" class="btn-auth">✨ Tạo Tài Khoản</button>
+    </form>
+
+    <!-- Bottom note -->
+    <div style="text-align:center;margin-top:20px;font-size:13px;color:var(--text-muted)" id="switch-note">
+      Chưa có tài khoản?
+      <a href="#" onclick="switchTab('register');return false;" style="color:var(--purple-light);font-weight:600">Đăng ký ngay</a>
+    </div>
+  </div>
+</div>
+
+<script src="js/products-data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function switchTab(tab) {
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const note = document.getElementById('switch-note');
+
+    if (tab === 'login') {
+      loginForm.style.display = 'block';
+      registerForm.style.display = 'none';
+      tabLogin.classList.add('active');
+      tabRegister.classList.remove('active');
+      note.innerHTML = 'Chưa có tài khoản? <a href="#" onclick="switchTab(\'register\');return false;" style="color:var(--purple-light);font-weight:600">Đăng ký ngay</a>';
+    } else {
+      loginForm.style.display = 'none';
+      registerForm.style.display = 'block';
+      tabLogin.classList.remove('active');
+      tabRegister.classList.add('active');
+      note.innerHTML = 'Đã có tài khoản? <a href="#" onclick="switchTab(\'login\');return false;" style="color:var(--purple-light);font-weight:600">Đăng nhập ngay</a>';
+    }
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    showToast('🎉 Đăng nhập thành công! Chào mừng bạn trở lại!');
+    setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+  }
+
+  function handleRegister(e) {
+    e.preventDefault();
+    showToast('🎊 Đăng ký thành công! Chào mừng đến Tạp Hóa 23!');
+    setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+  }
+</script>
+</body>
+</html>

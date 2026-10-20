@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tất Cả Sản Phẩm - Tạp Hóa 23</title>
+  <meta name="description" content="Khám phá hàng trăm sản phẩm tài khoản game, key, giftcode, phần mềm tại Tạp Hóa 23." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Exo+2:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .nav-links a[href="products.html"] { color: var(--text-primary); background: rgba(255,255,255,0.06); }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">🛒</span>
+      <span class="nav-logo-text">Tạp Hóa 23</span>
+    </a>
+    <div id="hamburger" class="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+    <div id="nav-menu" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="index.html">Trang Chủ</a></li>
+        <li><a href="products.html" class="active">Sản Phẩm</a></li>
+        <li><a href="index.html#categories">Danh Mục</a></li>
+        <li><a href="index.html#about">Về Chúng Tôi</a></li>
+      </ul>
+      <div class="nav-search">
+        <span class="nav-search-icon">🔍</span>
+        <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm..." />
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a href="cart.html" class="nav-cart-btn">
+        🛒
+        <span class="cart-badge">0</span>
+      </a>
+      <a href="login.html" class="nav-login-btn">Đăng Nhập</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== PAGE HEADER ===== -->
+<div class="page-header">
+  <div class="container">
+    <h1>🛍️ Tất Cả <span class="gradient-text">Sản Phẩm</span></h1>
+    <p>Khám phá kho sản phẩm đa dạng – Giá tốt nhất, giao hàng tức thì</p>
+    <div class="breadcrumb">
+      <a href="index.html">Trang Chủ</a> › <span>Sản Phẩm</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PRODUCTS ===== -->
+<section style="padding: 60px 0 80px;">
+  <div class="container">
+    <!-- Search bar for products page -->
+    <div style="position:relative;margin-bottom:24px;max-width:480px">
+      <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--text-muted)">🔍</span>
+      <input
+        type="text"
+        class="search-input"
+        style="width:100%;padding:12px 16px 12px 46px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);color:var(--text-primary);font-size:15px;font-family:inherit;transition:var(--transition);"
+        placeholder="Tìm kiếm sản phẩm..."
+      />
+    </div>
+
+    <!-- Category filter -->
+    <div class="filter-bar">
+      <button class="category-btn active" data-category="all">🏪 Tất Cả</button>
+      <button class="category-btn" data-category="the-garena">🎟️ Thẻ Garena</button>
+      <button class="category-btn" data-category="steam-wallet">🎮 Key Steam Wallet</button>
+      <button class="category-btn" data-category="game-account">⚔️ Tài Khoản Game</button>
+      <button class="category-btn" data-category="key-game">🔑 Key Game</button>
+      <button class="category-btn" data-category="giftcode">🎁 Gift Code</button>
+      <button class="category-btn" data-category="software">💻 Phần Mềm</button>
+      <button class="category-btn" data-category="game-mobile">📱 Game Mobile</button>
+      <button class="category-btn" data-category="item-game">🛡️ Vật Phẩm Game</button>
+    </div>
+
+    <!-- Products header -->
+    <div class="products-section-header">
+      <span class="products-count">Hiển thị <strong id="count-display">35</strong> sản phẩm</span>
+      <select class="sort-select" id="sort-select">
+        <option value="default">Mặc định</option>
+        <option value="price-asc">Giá: Thấp đến Cao</option>
+        <option value="price-desc">Giá: Cao đến Thấp</option>
+        <option value="rating">Đánh giá cao nhất</option>
+        <option value="sold">Bán chạy nhất</option>
+      </select>
+    </div>
+
+    <!-- Products grid -->
+    <div id="products-grid" class="products-grid"></div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">
+          <span class="footer-logo-icon">🛒</span>
+          <span class="footer-logo-text">Tạp Hóa 23</span>
+        </div>
+        <p class="footer-desc">Nền tảng mua bán Thẻ Garena, Key Steam Wallet, tài khoản game, giftcode uy tín hàng đầu Việt Nam.</p>
+        <div class="footer-socials">
+          <a href="#" class="footer-social">📘</a>
+          <a href="#" class="footer-social">🎮</a>
+          <a href="#" class="footer-social">✈️</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Sản Phẩm</h4>
+        <ul>
+          <li><a href="products.html?cat=the-garena">Thẻ Garena</a></li>
+          <li><a href="products.html?cat=steam-wallet">Key Steam Wallet</a></li>
+          <li><a href="products.html?cat=game-account">Tài Khoản Game</a></li>
+          <li><a href="products.html?cat=key-game">Key Game</a></li>
+          <li><a href="products.html?cat=giftcode">Gift Code</a></li>
+          <li><a href="products.html?cat=software">Phần Mềm</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Hỗ Trợ</h4>
+        <ul>
+          <li><a href="#">Hướng Dẫn Mua Hàng</a></li>
+          <li><a href="#">Chính Sách Bảo Hành</a></li>
+          <li><a href="#">Liên Hệ Hỗ Trợ</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Thông Tin</h4>
+        <ul>
+          <li><a href="#">Về Chúng Tôi</a></li>
+          <li><a href="#">Điều Khoản Sử Dụng</a></li>
+          <li><a href="#">Chính Sách Bảo Mật</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 Tạp Hóa 23. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<button id="back-to-top">↑</button>
+
+<script src="js/products-data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  // Handle URL params for category filter
+  document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const cat = urlParams.get('cat');
+    if (cat) {
+      activeCategory = cat;
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.category === cat);
+      });
+      filterAndRender();
+    }
+
+    // Sort functionality
+    const sortSelect = document.getElementById('sort-select');
+    if (sortSelect) {
+      sortSelect.addEventListener('change', () => {
+        const val = sortSelect.value;
+        let sorted = [...PRODUCTS];
+        if (val === 'price-asc') sorted.sort((a, b) => a.price - b.price);
+        else if (val === 'price-desc') sorted.sort((a, b) => b.price - a.price);
+        else if (val === 'rating') sorted.sort((a, b) => b.rating - a.rating);
+        else if (val === 'sold') sorted.sort((a, b) => b.sold - a.sold);
+        renderProducts(sorted, 'products-grid');
+      });
+    }
+
+    // Update count display
+    function updateCount() {
+      const grid = document.getElementById('products-grid');
+      const count = grid ? grid.querySelectorAll('.product-card').length : 0;
+      const el = document.getElementById('count-display');
+      if (el) el.textContent = count;
+    }
+    const origRender = window.renderProducts;
+    window.renderProducts = function(...args) {
+      origRender(...args);
+      setTimeout(updateCount, 10);
+    };
+    setTimeout(updateCount, 100);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giỏ Hàng - Tạp Hóa 23</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Exo+2:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">🛒</span>
+      <span class="nav-logo-text">Tạp Hóa 23</span>
+    </a>
+    <div id="hamburger" class="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+    <div id="nav-menu" style="display:contents">
+      <ul class="nav-links">
+        <li><a href="index.html">Trang Chủ</a></li>
+        <li><a href="products.html">Sản Phẩm</a></li>
+        <li><a href="index.html#categories">Danh Mục</a></li>
+        <li><a href="index.html#about">Về Chúng Tôi</a></li>
+      </ul>
+      <div class="nav-search">
+        <span class="nav-search-icon">🔍</span>
+        <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm..." />
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a href="cart.html" class="nav-cart-btn">
+        🛒
+        <span class="cart-badge">0</span>
+      </a>
+      <a href="login.html" class="nav-login-btn">Đăng Nhập</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== CART CONTENT ===== -->
+<div class="container">
+  <div class="cart-page-layout">
+    <!-- Cart Items -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+        <h1 class="cart-title">🛒 Giỏ Hàng <span style="font-size:18px;color:var(--text-muted);font-weight:400">(<span id="cart-count">0 sản phẩm</span>)</span></h1>
+        <a href="products.html" style="font-size:14px;color:var(--purple-light);">← Tiếp tục mua hàng</a>
+      </div>
+      <div id="cart-items"></div>
+    </div>
+
+    <!-- Summary -->
+    <div>
+      <div class="cart-summary">
+        <h3>📋 Tóm Tắt Đơn Hàng</h3>
+        <div class="cart-summary-row">
+          <span>Tạm tính:</span>
+          <span id="cart-total">0đ</span>
+        </div>
+        <div class="cart-summary-row">
+          <span>Phí giao hàng:</span>
+          <span style="color:var(--green);font-weight:700">Miễn phí ⚡</span>
+        </div>
+        <div class="cart-summary-row">
+          <span>Giảm giá:</span>
+          <span style="color:var(--red)">-0đ</span>
+        </div>
+        <div class="cart-summary-row" style="border-top:1px solid var(--border-color);padding-top:16px;margin-top:4px">
+          <span style="font-weight:700;font-size:16px">Tổng cộng:</span>
+          <span class="cart-summary-total" id="cart-total-final">0đ</span>
+        </div>
+
+        <!-- Coupon -->
+        <div style="margin-top:20px">
+          <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:10px">🎟️ Mã Giảm Giá</div>
+          <div style="display:flex;gap:8px">
+            <input type="text" placeholder="Nhập mã coupon..." style="flex:1;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-sm);color:var(--text-primary);font-size:13px;font-family:inherit" />
+            <button onclick="showToast('🎉 Mã giảm giá áp dụng thành công!')" style="padding:10px 16px;background:var(--gradient-primary);color:white;border-radius:var(--radius-sm);font-size:13px;font-weight:700;transition:var(--transition)">Áp Dụng</button>
+          </div>
+        </div>
+
+        <a href="checkout.html" class="btn-checkout">🚀 Thanh Toán Ngay</a>
+
+        <!-- Payment icons -->
+        <div style="margin-top:20px;text-align:center">
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Thanh toán an toàn qua:</p>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <span style="padding:6px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:6px;font-size:12px;font-weight:600">📱 MoMo</span>
+            <span style="padding:6px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:6px;font-size:12px;font-weight:600">🏦 Banking</span>
+            <span style="padding:6px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:6px;font-size:12px;font-weight:600">💳 Thẻ Cào</span>
+            <span style="padding:6px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:6px;font-size:12px;font-weight:600">🐉 ZaloPay</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust box -->
+      <div style="margin-top:16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--text-secondary)">
+          <span style="font-size:20px">🔒</span><span>Thanh toán 100% an toàn & bảo mật</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--text-secondary)">
+          <span style="font-size:20px">⚡</span><span>Giao hàng tức thì sau khi thanh toán</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--text-secondary)">
+          <span style="font-size:20px">💬</span><span>Hỗ trợ 24/7 qua Facebook & Discord</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer" style="margin-top:60px">
+  <div class="container">
+    <div class="footer-bottom" style="border-top:none">
+      <p>© 2024 Tạp Hóa 23. All rights reserved. Made with ❤️ in Việt Nam.</p>
+    </div>
+  </div>
+</footer>
+
+<button id="back-to-top">↑</button>
+
+<script src="js/products-data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Sync total to final total display
+    const orig = window.renderCart;
+    const interval = setInterval(() => {
+      const total = document.getElementById('cart-total');
+      const final = document.getElementById('cart-total-final');
+      if (total && final) final.textContent = total.textContent;
+    }, 100);
+  });
+</script>
+</body>
+</html>
