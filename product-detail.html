@@ -235,22 +235,77 @@
       renderDetailLayout();
 
       function renderDetailLayout() {
+        const isOutOfStock = Boolean(product.isOutOfStock || product.status === 'out_of_stock' || Number(product.stock) <= 0);
         const discount = Math.round((1 - currentPrice / currentOrigPrice) * 100);
         const savings = currentOrigPrice - currentPrice;
         const stars = renderStars(product.rating);
+        const user = getCurrentUser();
+        const isAdmin = user && user.role === 'admin';
+
+        const productImages = (product.images && product.images.length > 0)
+          ? product.images
+          : (product.icon && (product.icon.startsWith('http') || product.icon.startsWith('data:image')) ? [product.icon] : []);
+
+        const initialPrimary = productImages.length > 0 ? productImages[0] : null;
+
+        const visualIconHtml = initialPrimary
+          ? `<img id="detail-main-img" src="${initialPrimary}" alt="${product.name}" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:var(--radius-lg);transition:opacity 0.25s ease, transform 0.25s ease;">`
+          : (product.icon && (product.icon.startsWith('http') || product.icon.startsWith('data:image'))
+              ? `<img id="detail-main-img" src="${product.icon}" alt="${product.name}" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:var(--radius-lg);">`
+              : `<div class="detail-visual-icon" id="detail-main-img">${product.icon || '📦'}</div>`);
+
+        const galleryThumbsHtml = productImages.length > 1 ? `
+          <div class="detail-gallery-thumbs" id="detail-gallery-thumbs">
+            ${productImages.map((imgSrc, i) => `
+              <div class="detail-thumb-item ${i === 0 ? 'active' : ''}" onclick="switchDetailMainImage('${imgSrc}', this)">
+                <img src="${imgSrc}" alt="${product.name} ${i+1}">
+              </div>
+            `).join('')}
+          </div>
+        ` : '';
+
+        const badgeHtml = isOutOfStock
+          ? `<span class="detail-badge" style="background:#ef4444;color:white;font-weight:700">🔴 HẾT HÀNG</span>`
+          : `<span class="detail-badge" style="background:${getBadgeColor(product.badge)}">${product.badge}</span>`;
+
+        const stockStatusHtml = isOutOfStock
+          ? `<div class="detail-stock-status" style="color:#ef4444;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);padding:6px 14px;border-radius:99px;font-weight:700"><span style="color:#ef4444">●</span> Hết hàng (Kho: 0)</div>`
+          : `<div class="detail-stock-status" style="color:var(--green);background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);padding:6px 14px;border-radius:99px;font-weight:600"><span style="color:var(--green)">●</span> Còn hàng (Kho: ${product.stock})</div>`;
+
+        const adminBar = isAdmin ? `
+          <div style="background:linear-gradient(135deg,rgba(234,179,8,0.15),rgba(124,58,237,0.15));border:1px solid rgba(234,179,8,0.4);border-radius:var(--radius);padding:14px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:18px">🛡️</span>
+              <span style="font-size:13px;font-weight:700;color:var(--gold)">QUẢN TRỊ VIÊN:</span>
+              <span style="font-size:13px;color:var(--text-secondary)">Trạng thái hiện tại: <strong>${isOutOfStock ? '🔴 HẾT HÀNG' : '🟢 CÒN HÀNG'}</strong></span>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button onclick="handleDetailToggleStock()" style="padding:6px 14px;border-radius:6px;background:${isOutOfStock ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)'};color:${isOutOfStock ? '#22c55e' : '#ef4444'};border:1px solid ${isOutOfStock ? '#22c55e' : '#ef4444'};cursor:pointer;font-weight:700;font-size:12px">
+                ${isOutOfStock ? '🟢 Đổi thành Còn Hàng' : '🔴 Đổi thành Hết Hàng'}
+              </button>
+              <a href="admin.html?edit=${product.id}" style="padding:6px 14px;border-radius:6px;background:var(--gold);color:#0d0d1a;text-decoration:none;font-weight:700;font-size:12px">
+                ✏️ Chỉnh Sửa Sản Phẩm
+              </a>
+            </div>
+          </div>
+        ` : '';
 
         container.innerHTML = `
-          <div class="product-detail-layout">
+          ${adminBar}
+          <div class="product-detail-layout ${isOutOfStock ? 'card-out-of-stock' : ''}">
             
             <!-- Left: Visual & Trust Column -->
             <div class="detail-visual-column">
-              <div class="detail-visual-card">
-                <div class="detail-badge-group">
-                  <span class="detail-badge" style="background:${getBadgeColor(product.badge)}">${product.badge}</span>
+              <div class="detail-visual-card" style="padding:0;position:relative;height:380px;overflow:hidden;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;background:#0d0d1a;">
+                <div class="detail-badge-group" style="z-index:4;">
+                  ${badgeHtml}
                 </div>
-                ${discount > 0 ? `<div class="detail-discount-pill">-${discount}%</div>` : ''}
-                <div class="detail-visual-icon">${product.icon}</div>
+                ${discount > 0 && !isOutOfStock ? `<div class="detail-discount-pill" style="z-index:4;">-${discount}%</div>` : ''}
+                <div style="width:100%;height:100%;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                  ${visualIconHtml}
+                </div>
               </div>
+              ${galleryThumbsHtml}
 
               <!-- Trust perks -->
               <div class="detail-trust-list">
@@ -288,7 +343,7 @@
             <!-- Right: Product Info & Actions Column -->
             <div class="detail-info-column">
               <a href="products.html?cat=${product.category}" class="detail-category-link">
-                <span>📂</span> ${product.categoryLabel}
+                <span>📂</span> ${product.categoryLabel || product.category}
               </a>
 
               <h1 class="detail-title">${product.name}</h1>
@@ -310,11 +365,9 @@
                 <div class="detail-price-main">
                   <span class="detail-price-current" id="detail-current-price">${formatPrice(currentPrice)}</span>
                   ${currentOrigPrice > currentPrice ? `<span class="detail-price-original" id="detail-orig-price">${formatPrice(currentOrigPrice)}</span>` : ''}
-                  ${savings > 0 ? `<span class="detail-savings-badge" id="detail-savings-pill">Tiết kiệm ${formatPrice(savings)}</span>` : ''}
+                  ${savings > 0 && !isOutOfStock ? `<span class="detail-savings-badge" id="detail-savings-pill">Tiết kiệm ${formatPrice(savings)}</span>` : ''}
                 </div>
-                <div class="detail-stock-status">
-                  <span>●</span> Còn hàng (Kho: ${product.stock})
-                </div>
+                ${stockStatusHtml}
               </div>
 
               <!-- Denomination / Variant Selector (if available) -->
@@ -339,23 +392,29 @@
               <div class="detail-qty-group">
                 <div class="detail-group-label" style="margin-right: -10px;">Số lượng:</div>
                 <div class="qty-stepper">
-                  <button type="button" class="qty-btn" id="qty-minus">−</button>
-                  <input type="text" class="qty-input" id="qty-input" value="${quantity}" readonly />
-                  <button type="button" class="qty-btn" id="qty-plus">+</button>
+                  <button type="button" class="qty-btn" id="qty-minus" ${isOutOfStock ? 'disabled' : ''}>−</button>
+                  <input type="text" class="qty-input" id="qty-input" value="${isOutOfStock ? 0 : quantity}" readonly />
+                  <button type="button" class="qty-btn" id="qty-plus" ${isOutOfStock ? 'disabled' : ''}>+</button>
                 </div>
                 <div class="detail-subtotal">
-                  Tổng tiền: <strong id="detail-subtotal-val">${formatPrice(currentPrice * quantity)}</strong>
+                  Tổng tiền: <strong id="detail-subtotal-val">${formatPrice(isOutOfStock ? 0 : currentPrice * quantity)}</strong>
                 </div>
               </div>
 
               <!-- CTA Action Buttons -->
               <div class="detail-cta-row">
-                <button type="button" class="btn-detail-cart" id="btn-add-cart">
-                  <span>🛒 Thêm Vào Giỏ Hàng</span>
-                </button>
-                <button type="button" class="btn-detail-buy" id="btn-buy-now">
-                  <span>⚡ Mua Ngay (Thanh Toán)</span>
-                </button>
+                ${isOutOfStock ? `
+                  <button type="button" class="btn-detail-cart disabled-btn" style="width:100%;cursor:not-allowed" disabled>
+                    <span>⚠️ Sản Phẩm Tạm Hết Hàng (Out of Stock)</span>
+                  </button>
+                ` : `
+                  <button type="button" class="btn-detail-cart" id="btn-add-cart">
+                    <span>🛒 Thêm Vào Giỏ Hàng</span>
+                  </button>
+                  <button type="button" class="btn-detail-buy" id="btn-buy-now">
+                    <span>⚡ Mua Ngay (Thanh Toán)</span>
+                  </button>
+                `}
               </div>
 
               <!-- Delivery notice box -->
@@ -682,6 +741,42 @@
         relatedGrid.innerHTML = related.map(renderProductCard).join('');
       }
     });
+
+    window.switchDetailMainImage = function(src, el) {
+      const mainImg = document.getElementById('detail-main-img');
+      if (mainImg) {
+        mainImg.style.opacity = '0';
+        mainImg.style.transform = 'scale(0.96)';
+        setTimeout(() => {
+          if (mainImg.tagName === 'IMG') {
+            mainImg.src = src;
+            mainImg.style.width = '100%';
+            mainImg.style.height = '100%';
+            mainImg.style.objectFit = 'cover';
+          } else {
+            mainImg.outerHTML = `<img id="detail-main-img" src="${src}" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:var(--radius-lg);transition:opacity 0.25s ease, transform 0.25s ease;">`;
+          }
+          const updatedImg = document.getElementById('detail-main-img');
+          if (updatedImg) {
+            updatedImg.style.opacity = '1';
+            updatedImg.style.transform = 'scale(1)';
+          }
+        }, 150);
+      }
+      document.querySelectorAll('.detail-thumb-item').forEach(item => item.classList.remove('active'));
+      if (el) el.classList.add('active');
+    };
+
+    function handleDetailToggleStock() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const prodId = parseInt(urlParams.get('id'), 10);
+      if (!prodId) return;
+      const updated = toggleProductStock(prodId);
+      if (updated) {
+        showToast(`Đã chuyển sản phẩm sang: ${updated.isOutOfStock ? '🔴 HẾT HÀNG' : '🟢 CÒN HÀNG'}`);
+        setTimeout(() => location.reload(), 600);
+      }
+    }
 
     function handleReviewSubmit(e) {
       e.preventDefault();

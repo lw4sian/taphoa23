@@ -107,9 +107,77 @@
 }
 
 /* Stagger children */
-.stagger-children > *:nth-child(1) { transition-delay: 0.1s; }
-.stagger-children > *:nth-child(2) { transition-delay: 0.2s; }
-.stagger-children > *:nth-child(3) { transition-delay: 0.3s; }
-.stagger-children > *:nth-child(4) { transition-delay: 0.4s; }
-.stagger-children > *:nth-child(5) { transition-delay: 0.5s; }
-.stagger-children > *:nth-child(6) { transition-delay: 0.6s; }
+.stagger-children > *:nth-child(1) { transition-delay: 0.08s; }
+.stagger-children > *:nth-child(2) { transition-delay: 0.16s; }
+.stagger-children > *:nth-child(3) { transition-delay: 0.24s; }
+.stagger-children > *:nth-child(4) { transition-delay: 0.32s; }
+.stagger-children > *:nth-child(5) { transition-delay: 0.40s; }
+.stagger-children > *:nth-child(6) { transition-delay: 0.48s; }
+.stagger-children > *:nth-child(7) { transition-delay: 0.56s; }
+.stagger-children > *:nth-child(8) { transition-delay: 0.64s; }
+
+/* Slide down smooth */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Subtle glow border pulse */
+@keyframes glowBorderPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.3), inset 0 0 10px rgba(124, 58, 237, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(124, 58, 237, 0.6), inset 0 0 18px rgba(124, 58, 237, 0.3);
+  }
+}
+
+/* Interactive Card Hover Shine */
+.shine-hover {
+  position: relative;
+  overflow: hidden;
+}
+.shine-hover::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.12), transparent);
+  transform: rotate(30deg);
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+.shine-hover:hover::after {
+  transform: translateX(350%) rotate(30deg);
+}
+
+/* Button & Card tactile press */
+.btn-primary:active, .btn-secondary:active, .btn-quick-amount:active, .category-btn:active {
+  transform: scale(0.97) !important;
+}
+
+/* Gold Glow Animation for VIP / Highlights */
+@keyframes goldPulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(234, 179, 8, 0.25), inset 0 0 10px rgba(234, 179, 8, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(234, 179, 8, 0.5), inset 0 0 16px rgba(234, 179, 8, 0.25);
+  }
+}
+
+.gold-pulse-effect {
+  animation: goldPulseGlow 2.5s infinite ease-in-out;
+}
+
+/* Micro smooth transitions for form controls */
+.form-input, select, textarea {
+  transition: border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease;
+}
+.form-input:focus, select:focus, textarea:focus {
+  border-color: var(--purple-light) !important;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.25) !important;
+}
+

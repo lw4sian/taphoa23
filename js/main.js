@@ -78,36 +78,70 @@ function showToast(message, type = 'success') {
 
 // ===== Render Product Card =====
 function renderProductCard(product) {
+  const isOutOfStock = Boolean(product.isOutOfStock || product.status === 'out_of_stock' || Number(product.stock) <= 0);
   const discount = Math.round((1 - product.price / product.originalPrice) * 100);
-  const stars = renderStars(product.rating);
+  const stars = renderStars(product.rating || 5);
+  const user = getCurrentUser();
+  const isAdmin = user && user.role === 'admin';
+
+  const stockBadgeHtml = isOutOfStock
+    ? `<span class="product-badge badge-out-of-stock" style="background:#ef4444;color:white;font-weight:700">🔴 HẾT HÀNG</span>`
+    : `<span class="product-badge" style="background:${getBadgeColor(product.badge)}">${product.badge}</span>`;
+
+  const stockMetaHtml = isOutOfStock
+    ? `<span class="stock-count out-of-stock" style="color:#ef4444;font-weight:700">🔴 Hết Hàng (0)</span>`
+    : `<span class="stock-count ${Number(product.stock) <= 10 ? 'low-stock' : ''}" style="color:var(--green);font-weight:600">🟢 Còn: ${product.stock}</span>`;
+
+  const adminControls = isAdmin ? `
+    <div style="margin-top:10px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.15);display:flex;gap:6px;align-items:center;justify-content:space-between">
+      <button onclick="event.stopPropagation(); quickToggleStock(${product.id})" style="font-size:11px;padding:4px 8px;border-radius:6px;background:${isOutOfStock ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)'};color:${isOutOfStock ? '#22c55e' : '#ef4444'};border:1px solid ${isOutOfStock ? '#22c55e' : '#ef4444'};cursor:pointer;font-weight:600">
+        ${isOutOfStock ? '🟢 Đổi Còn hàng' : '🔴 Đổi Hết hàng'}
+      </button>
+      <a href="admin.html?edit=${product.id}" onclick="event.stopPropagation()" style="font-size:11px;color:var(--gold);text-decoration:none;font-weight:700">✏️ Sửa</a>
+    </div>
+  ` : '';
+
+  const iconHtml = (product.icon && (product.icon.startsWith('http') || product.icon.startsWith('data:image')))
+    ? `<img src="${product.icon}" alt="${product.name}" style="width:52px;height:52px;object-fit:cover;border-radius:8px">`
+    : `<span class="product-icon">${product.icon || '📦'}</span>`;
+
   return `
-    <div class="product-card" data-id="${product.id}" data-category="${product.category}" onclick="goToProductDetail(${product.id})" style="cursor: pointer;" title="Nhấn để xem chi tiết ${product.name}">
+    <div class="product-card shine-hover ${isOutOfStock ? 'card-out-of-stock' : ''}" data-id="${product.id}" data-category="${product.category}" onclick="goToProductDetail(${product.id})" style="cursor: pointer;" title="Nhấn để xem chi tiết ${product.name}">
       <div class="product-image">
-        <span class="product-icon">${product.icon}</span>
-        <span class="product-badge" style="background:${getBadgeColor(product.badge)}">${product.badge}</span>
-        ${discount > 0 ? `<span class="discount-badge">-${discount}%</span>` : ''}
+        ${iconHtml}
+        ${stockBadgeHtml}
+        ${discount > 0 && !isOutOfStock ? `<span class="discount-badge">-${discount}%</span>` : ''}
       </div>
       <div class="product-info">
-        <span class="product-category-tag">${product.categoryLabel}</span>
+        <span class="product-category-tag">${product.categoryLabel || product.category}</span>
         <h3 class="product-name" title="${product.name}">${product.name}</h3>
         <div class="product-rating">
           ${stars}
-          <span class="rating-text">${product.rating} (${product.reviews.toLocaleString()})</span>
+          <span class="rating-text">${product.rating || 5} (${(product.reviews || 1).toLocaleString()})</span>
         </div>
         <div class="product-prices">
           <span class="price-new">${formatPrice(product.price)}</span>
           ${product.originalPrice > product.price ? `<span class="price-old">${formatPrice(product.originalPrice)}</span>` : ''}
         </div>
         <div class="product-meta">
-          <span class="sold-count">Đã bán: ${product.sold.toLocaleString()}</span>
-          <span class="stock-count ${product.stock <= 10 ? 'low-stock' : ''}">Còn: ${product.stock}</span>
+          <span class="sold-count">Đã bán: ${(product.sold || 0).toLocaleString()}</span>
+          ${stockMetaHtml}
         </div>
-        <button class="btn-add-cart btn-view-detail" onclick="event.stopPropagation(); goToProductDetail(${product.id})" title="Xem chi tiết sản phẩm">
-          <span>🔍 Xem Chi Tiết</span>
+        <button class="btn-add-cart btn-view-detail ${isOutOfStock ? 'disabled-btn' : ''}" onclick="event.stopPropagation(); goToProductDetail(${product.id})" title="${isOutOfStock ? 'Sản phẩm tạm hết hàng' : 'Xem chi tiết sản phẩm'}">
+          <span>${isOutOfStock ? '⚠️ Tạm Hết Hàng' : '🔍 Xem Chi Tiết'}</span>
         </button>
+        ${adminControls}
       </div>
     </div>
   `;
+}
+
+function quickToggleStock(id) {
+  const p = toggleProductStock(id);
+  if (p) {
+    showToast(`Đã chuyển trạng thái "${p.name}" sang: ${p.isOutOfStock ? '🔴 HẾT HÀNG' : '🟢 CÒN HÀNG'}`);
+    filterAndRender();
+  }
 }
 
 function renderStars(rating) {
@@ -174,6 +208,29 @@ function filterAndRender(containerId = 'products-grid') {
 
 // ===== Category Filter =====
 function initCategoryFilter() {
+  loadProductsAndCategories();
+  const urlParams = new URLSearchParams(window.location.search);
+  const catParam = urlParams.get('cat');
+  if (catParam) {
+    activeCategory = catParam;
+  }
+
+  const filterBar = document.getElementById('category-filter-bar') || document.querySelector('.filter-bar');
+  if (filterBar && typeof CATEGORIES !== 'undefined' && CATEGORIES.length > 0) {
+    filterBar.innerHTML = CATEGORIES.map(cat => {
+      let icon = cat.icon || '🏷️';
+      if (typeof icon === 'string' && (icon.includes('http') || icon.includes('data:') || icon.length > 8)) {
+        icon = '🏷️';
+      }
+      let label = (cat.label || '').replace(/https?:\/\/[^\s]+/g, '').trim() || cat.id;
+      return `
+        <button class="category-btn ${activeCategory === cat.id ? 'active' : ''}" data-category="${cat.id}">
+          ${icon} ${label}
+        </button>
+      `;
+    }).join('');
+  }
+
   document.querySelectorAll('.category-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
@@ -181,6 +238,20 @@ function initCategoryFilter() {
       activeCategory = btn.dataset.category;
       filterAndRender();
     });
+  });
+}
+
+// Dynamically sync categories to footer links
+function renderFooterCategories() {
+  const footerCatLists = document.querySelectorAll('.footer-col ul');
+  footerCatLists.forEach(ul => {
+    const firstLink = ul.querySelector('a');
+    if (firstLink && firstLink.getAttribute('href') && firstLink.getAttribute('href').includes('products.html?cat=')) {
+      const nonAll = (typeof CATEGORIES !== 'undefined' ? CATEGORIES : []).filter(c => c.id !== 'all').slice(0, 8);
+      ul.innerHTML = nonAll.map(c => `
+        <li><a href="products.html?cat=${c.id}">${c.label}</a></li>
+      `).join('');
+    }
   });
 }
 
@@ -392,8 +463,379 @@ function initStickyNav() {
   });
 }
 
+// ===== User Authentication, VIP & Profile System =====
+function getVipInfo(totalDeposited = 0, role = 'customer') {
+  if (role === 'admin') {
+    return {
+      tier: 'ADMIN',
+      name: 'Quản Trị Viên (Admin)',
+      badgeClass: 'badge-admin-crown',
+      color: '#f43f5e',
+      icon: '👑',
+      discount: 100,
+      nextTier: null,
+      nextTierAmount: 0,
+      progress: 100
+    };
+  }
+
+  const deposited = Number(totalDeposited) || 0;
+  if (deposited >= 5000000) {
+    return {
+      tier: 'VIP++',
+      name: 'Thành viên VIP++',
+      badgeClass: 'badge-vip-plus-plus',
+      color: '#ec4899',
+      icon: '💎',
+      discount: 10,
+      nextTier: null,
+      nextTierAmount: 0,
+      progress: 100
+    };
+  } else if (deposited >= 2000000) {
+    return {
+      tier: 'VIP+',
+      name: 'Thành viên VIP+',
+      badgeClass: 'badge-vip-plus',
+      color: '#eab308',
+      icon: '👑',
+      discount: 5,
+      nextTier: 'VIP++',
+      nextTierAmount: 5000000 - deposited,
+      progress: Math.min(100, Math.round(((deposited - 2000000) / 3000000) * 100))
+    };
+  } else if (deposited >= 500000) {
+    return {
+      tier: 'VIP',
+      name: 'Thành viên VIP',
+      badgeClass: 'badge-vip',
+      color: '#22c55e',
+      icon: '⭐',
+      discount: 3,
+      nextTier: 'VIP+',
+      nextTierAmount: 2000000 - deposited,
+      progress: Math.min(100, Math.round(((deposited - 500000) / 1500000) * 100))
+    };
+  } else {
+    return {
+      tier: 'Thường',
+      name: 'Thành viên thường',
+      badgeClass: 'badge-normal',
+      color: '#94a3b8',
+      icon: '👤',
+      discount: 0,
+      nextTier: 'VIP',
+      nextTierAmount: 500000 - deposited,
+      progress: Math.min(100, Math.round((deposited / 500000) * 100))
+    };
+  }
+}
+
+function updateUserVipTier(user) {
+  if (!user || user.role === 'admin') return user;
+  const vip = getVipInfo(user.totalDeposited || 0, user.role);
+  user.vipTier = vip.tier;
+  user.vipName = vip.name;
+  return user;
+}
+
+function getCurrentUser() {
+  try {
+    const raw = localStorage.getItem('tapHoa23User');
+    if (!raw) return null;
+    const user = JSON.parse(raw);
+    updateUserVipTier(user);
+    return user;
+  } catch (e) {
+    return null;
+  }
+}
+
+function setCurrentUser(user) {
+  if (user) {
+    updateUserVipTier(user);
+    localStorage.setItem('tapHoa23User', JSON.stringify(user));
+  } else {
+    localStorage.removeItem('tapHoa23User');
+  }
+  renderAuthNavbar();
+  autofillBuyerInfo();
+}
+
+function handleLogout() {
+  localStorage.removeItem('tapHoa23User');
+  showToast('👋 Đã đăng xuất thành công!');
+  renderAuthNavbar();
+  autofillBuyerInfo();
+  if (window.location.pathname.includes('admin.html')) {
+    window.location.href = 'index.html';
+  }
+}
+
+function toggleUserDropdown(event) {
+  event.stopPropagation();
+  const container = event.currentTarget.closest('.nav-user-dropdown-container');
+  if (container) {
+    container.classList.toggle('active');
+  }
+}
+
+// Deposit Requests System
+function getDepositRequests() {
+  try {
+    return JSON.parse(localStorage.getItem('tapHoa23DepositRequests') || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveDepositRequests(requests) {
+  localStorage.setItem('tapHoa23DepositRequests', JSON.stringify(requests));
+}
+
+function createDepositRequest(username, amount, method) {
+  const requests = getDepositRequests();
+  const req = {
+    id: 'NAP-' + Date.now().toString().slice(-6),
+    username: username,
+    amount: Number(amount),
+    method: method,
+    status: 'pending',
+    createdAt: new Date().toLocaleString('vi-VN')
+  };
+  requests.unshift(req);
+  saveDepositRequests(requests);
+  return req;
+}
+
+function approveDepositRequest(reqId) {
+  const requests = getDepositRequests();
+  const req = requests.find(r => r.id === reqId);
+  if (!req || req.status === 'approved') return false;
+
+  req.status = 'approved';
+  req.approvedAt = new Date().toLocaleString('vi-VN');
+  saveDepositRequests(requests);
+
+  pumpCustomerWallet(req.username, req.amount);
+  return true;
+}
+
+function pumpCustomerWallet(username, amount) {
+  const numAmount = Number(amount);
+  if (isNaN(numAmount) || numAmount <= 0) return false;
+
+  let users = [];
+  try {
+    users = JSON.parse(localStorage.getItem('tapHoa23RegisteredUsers') || '[]');
+  } catch (e) {}
+
+  let targetUser = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+  if (targetUser) {
+    targetUser.balance = (targetUser.balance || 0) + numAmount;
+    targetUser.totalDeposited = (targetUser.totalDeposited || 0) + numAmount;
+    updateUserVipTier(targetUser);
+    localStorage.setItem('tapHoa23RegisteredUsers', JSON.stringify(users));
+  }
+
+  const currentUser = getCurrentUser();
+  if (currentUser && currentUser.username.toLowerCase() === username.toLowerCase()) {
+    currentUser.balance = (currentUser.balance || 0) + numAmount;
+    currentUser.totalDeposited = (currentUser.totalDeposited || 0) + numAmount;
+    updateUserVipTier(currentUser);
+    setCurrentUser(currentUser);
+  }
+
+  return true;
+}
+
+function renderAuthNavbar() {
+  const user = getCurrentUser();
+  const loginBtns = document.querySelectorAll('.nav-login-btn');
+
+  loginBtns.forEach(btn => {
+    let container = btn.parentElement.querySelector('.nav-user-dropdown-container');
+    if (user) {
+      if (!container) {
+        container = document.createElement('div');
+        container.className = 'nav-user-dropdown-container';
+        btn.parentElement.insertBefore(container, btn);
+      }
+      btn.style.display = 'none';
+      container.style.display = 'inline-block';
+
+      const isAdmin = user.role === 'admin';
+      const vip = getVipInfo(user.totalDeposited || 0, user.role);
+
+      const avatarHtml = (user.avatar && (user.avatar.startsWith('http') || user.avatar.startsWith('data:image')))
+        ? `<img src="${user.avatar}" alt="${user.username}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`
+        : `<span>${user.avatar || (isAdmin ? '👑' : '👤')}</span>`;
+
+      const avatarBadgeClass = isAdmin ? 'user-avatar-badge admin-avatar' : 'user-avatar-badge';
+
+      const adminMenuItem = isAdmin ? `
+        <a href="admin.html" class="user-dropdown-item admin-link" style="color:var(--gold);font-weight:700;background:rgba(234,179,8,0.12);border:1px solid rgba(234,179,8,0.3)">
+          <span>🛡️</span> Bảng Quản Trị Admin
+        </a>
+      ` : '';
+
+      container.innerHTML = `
+        <div class="nav-user-pill ${isAdmin ? 'pill-admin' : ''}" onclick="toggleUserDropdown(event)" title="Tài khoản: ${user.username}">
+          <div class="${avatarBadgeClass}">${avatarHtml}</div>
+          <span class="user-pill-name">${user.username}</span>
+          <span class="user-pill-arrow">▾</span>
+        </div>
+        <div class="nav-user-dropdown-menu">
+          <div class="user-dropdown-header">
+            <div class="user-dropdown-avatar ${isAdmin ? 'admin-glow' : ''}">${avatarHtml}</div>
+            <div class="user-dropdown-meta">
+              <div class="user-dropdown-name">${user.username}</div>
+              <div class="user-dropdown-email">${user.email || 'Chưa cập nhật email'}</div>
+              <span class="user-dropdown-badge ${vip.badgeClass}" style="border-color:${vip.color};color:${vip.color}">
+                ${vip.icon} ${vip.name}
+              </span>
+            </div>
+          </div>
+          <div class="user-balance-box">
+            <div class="balance-title">💰 Số dư tài khoản:</div>
+            <div class="balance-amount">${formatPrice(user.balance || 0)}</div>
+            <a href="deposit.html" class="btn-topup-balance" style="text-decoration:none;display:block;text-align:center">⚡ Nạp Tiền Vào Ví</a>
+          </div>
+          <div class="user-dropdown-links">
+            ${adminMenuItem}
+            <a href="profile.html" class="user-dropdown-item">
+              <span>👤</span> Quản Lý Tài Khoản
+            </a>
+            <a href="deposit.html" class="user-dropdown-item">
+              <span>💳</span> Nạp Tiền Tài Khoản
+            </a>
+            <a href="checkout.html" class="user-dropdown-item">
+              <span>🚀</span> Thanh Toán Đơn Hàng
+            </a>
+            <a href="cart.html" class="user-dropdown-item">
+              <span>🛒</span> Giỏ Hàng Của Tôi
+            </a>
+          </div>
+          <div class="user-dropdown-divider"></div>
+          <button class="user-dropdown-logout" onclick="handleLogout()">
+            <span>🚪</span> Đăng Xuất
+          </button>
+        </div>
+      `;
+    } else {
+      btn.style.display = 'inline-flex';
+      if (container) {
+        container.style.display = 'none';
+      }
+    }
+  });
+}
+
+// Close dropdown on outside click
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.nav-user-dropdown-container')) {
+    document.querySelectorAll('.nav-user-dropdown-container').forEach(c => c.classList.remove('active'));
+  }
+});
+
+// Auto-fill buyer info on checkout page
+function autofillBuyerInfo() {
+  const user = getCurrentUser();
+  const nameInput = document.getElementById('buyer-name');
+  const emailInput = document.getElementById('buyer-email');
+  const phoneInput = document.getElementById('buyer-phone');
+  const notice = document.getElementById('buyer-autofill-notice');
+  const guestNotice = document.getElementById('buyer-guest-notice');
+
+  if (user) {
+    if (nameInput) nameInput.value = user.username || user.name || '';
+    if (emailInput) emailInput.value = user.email || '';
+    if (phoneInput && user.phone) phoneInput.value = user.phone;
+    if (notice) {
+      notice.style.display = 'flex';
+      const uEl = document.getElementById('autofill-username');
+      if (uEl) uEl.textContent = user.username;
+    }
+    if (guestNotice) guestNotice.style.display = 'none';
+  } else {
+    if (notice) notice.style.display = 'none';
+    if (guestNotice) guestNotice.style.display = 'block';
+  }
+}
+
+// Render Dynamic Categories Grid on Homepage
+function renderHomeCategories() {
+  const catGrid = document.querySelector('.categories-grid') || document.getElementById('categories-grid');
+  if (!catGrid || typeof CATEGORIES === 'undefined') return;
+
+  loadProductsAndCategories();
+  const displayCats = CATEGORIES.filter(c => c.id !== 'all');
+  if (displayCats.length === 0) return;
+
+  catGrid.innerHTML = displayCats.map(c => {
+    const count = PRODUCTS.filter(p => p.category === c.id).length;
+    let icon = c.icon || '🏷️';
+    if (typeof icon === 'string' && (icon.includes('http') || icon.includes('data:') || icon.length > 8)) {
+      icon = '🏷️';
+    }
+    let label = (c.label || '').replace(/https?:\/\/[^\s]+/g, '').trim() || c.id;
+
+    return `
+      <div class="category-card shine-hover" data-category="${c.id}" onclick="location.href='products.html?cat=${c.id}'" style="cursor:pointer" title="Xem danh mục ${label}">
+        <div class="category-icon">${icon}</div>
+        <div class="category-label">${label}</div>
+        <div class="category-count">${count > 0 ? `${count} sản phẩm` : 'Sản phẩm mới'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Render Admin Quick Access Topbar on Public Store Pages
+function renderAdminHomeBar() {
+  // If already on admin.html, don't inject topbar
+  if (window.location.pathname.includes('admin.html')) return;
+
+  const user = getCurrentUser();
+  let existingBar = document.getElementById('admin-quick-topbar');
+
+  if (user && user.role === 'admin') {
+    if (!existingBar) {
+      existingBar = document.createElement('div');
+      existingBar.id = 'admin-quick-topbar';
+      existingBar.className = 'admin-quick-topbar';
+      existingBar.innerHTML = `
+        <div class="container admin-quick-inner">
+          <div class="admin-quick-left" style="display:flex;align-items:center;gap:10px">
+            <span class="admin-quick-badge">🛡️ ADMIN ĐANG TRỰC TUYẾN</span>
+            <span class="admin-quick-text">Tài khoản: <strong style="color:var(--gold)">${user.username}</strong> — Đang duyệt hệ thống ở quyền Quản Trị</span>
+          </div>
+          <div class="admin-quick-actions">
+            <a href="admin.html" class="btn-admin-bar-primary">📊 Vào Bảng Điều Khiển Quản Trị Viên →</a>
+            <a href="admin.html?tab=add" class="btn-admin-bar-secondary">➕ Thêm Hàng Mới</a>
+            <a href="admin.html?tab=wallet" class="btn-admin-bar-secondary">💰 Quản Lý Ví & Nạp Tiền</a>
+          </div>
+        </div>
+      `;
+      const navbar = document.querySelector('.navbar');
+      if (navbar && navbar.parentNode) {
+        navbar.parentNode.insertBefore(existingBar, navbar.nextSibling);
+      } else {
+        document.body.prepend(existingBar);
+      }
+    }
+  } else if (existingBar) {
+    existingBar.remove();
+  }
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
+  loadProductsAndCategories();
+  renderAuthNavbar();
+  renderAdminHomeBar();
+  renderHomeCategories();
+  renderFooterCategories();
+  autofillBuyerInfo();
   updateCartBadge();
   initSearch();
   initCategoryFilter();

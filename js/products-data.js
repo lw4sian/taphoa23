@@ -1,5 +1,5 @@
 // ==================== TẠP HÓA 23 - Product Data ====================
-const PRODUCTS = [
+const DEFAULT_PRODUCTS = [
   {
     id: 1,
     name: "Tài Khoản Liên Quân Mobile - Rank Cao Thủ",
@@ -783,7 +783,7 @@ const PRODUCTS = [
   }
 ];
 
-const CATEGORIES = [
+const DEFAULT_CATEGORIES = [
   { id: "all", label: "Tất Cả", icon: "🏪" },
   { id: "the-garena", label: "Thẻ Garena", icon: "🎟️" },
   { id: "steam-wallet", label: "Key Steam Wallet", icon: "🎮" },
@@ -794,6 +794,73 @@ const CATEGORIES = [
   { id: "game-mobile", label: "Game Mobile", icon: "📱" },
   { id: "item-game", label: "Vật Phẩm Game", icon: "🛡️" }
 ];
+
+let PRODUCTS = [];
+let CATEGORIES = [];
+
+function loadProductsAndCategories() {
+  try {
+    const savedP = localStorage.getItem('tapHoa23Products');
+    PRODUCTS = savedP ? JSON.parse(savedP) : [...DEFAULT_PRODUCTS];
+  } catch (e) {
+    PRODUCTS = [...DEFAULT_PRODUCTS];
+  }
+
+  try {
+    const savedC = localStorage.getItem('tapHoa23Categories');
+    CATEGORIES = savedC ? JSON.parse(savedC) : [...DEFAULT_CATEGORIES];
+  } catch (e) {
+    CATEGORIES = [...DEFAULT_CATEGORIES];
+  }
+
+  // Automatically discover and sync any new categories from custom products
+  let hasNewCat = false;
+  PRODUCTS.forEach(p => {
+    if (p.category && p.category !== 'all') {
+      const exists = CATEGORIES.some(c => c.id === p.category);
+      if (!exists) {
+        let cleanIcon = '🏷️';
+        if (p.icon && typeof p.icon === 'string' && !p.icon.startsWith('http') && !p.icon.startsWith('data:') && p.icon.length <= 8) {
+          cleanIcon = p.icon;
+        }
+        let cleanLabel = (p.categoryLabel || p.category || '').replace(/https?:\/\/[^\s]+/g, '').trim() || p.category;
+        CATEGORIES.push({
+          id: p.category,
+          label: cleanLabel,
+          icon: cleanIcon
+        });
+        hasNewCat = true;
+      }
+    }
+  });
+
+  // Strict Sanitizer: Clean existing CATEGORIES in case a URL was previously stored
+  CATEGORIES.forEach(c => {
+    if (!c.icon || typeof c.icon !== 'string' || c.icon.includes('http') || c.icon.includes('data:') || c.icon.length > 8) {
+      c.icon = '🏷️';
+      hasNewCat = true;
+    }
+    if (c.label && typeof c.label === 'string' && (c.label.includes('http://') || c.label.includes('https://'))) {
+      c.label = c.label.replace(/https?:\/\/[^\s]+/g, '').trim() || c.id || 'Mặt Hàng Mới';
+      hasNewCat = true;
+    }
+  });
+
+  if (hasNewCat) {
+    try {
+      localStorage.setItem('tapHoa23Categories', JSON.stringify(CATEGORIES));
+    } catch(e) {}
+  }
+}
+loadProductsAndCategories();
+
+function saveProducts() {
+  localStorage.setItem('tapHoa23Products', JSON.stringify(PRODUCTS));
+}
+
+function saveCategories() {
+  localStorage.setItem('tapHoa23Categories', JSON.stringify(CATEGORIES));
+}
 
 // Format VND price
 function formatPrice(price) {
@@ -808,22 +875,131 @@ function getBadgeColor(badge) {
     'Sale': '#f97316',
     'New': '#22c55e',
     'Best': '#eab308',
-    'Rare': '#a855f7'
+    'Rare': '#a855f7',
+    'Hết Hàng': '#ef4444'
   };
   return colors[badge] || '#6b7280';
 }
 
 // Helper: Get product by ID
 function getProductById(id) {
+  loadProductsAndCategories();
   const numId = parseInt(id, 10);
   return PRODUCTS.find(p => p.id === numId) || null;
 }
 
 // Helper: Get related products
 function getRelatedProducts(product, limit = 4) {
+  loadProductsAndCategories();
   if (!product) return [];
   return PRODUCTS
     .filter(p => p.id !== product.id && (p.category === product.category || p.badge === 'Hot' || p.badge === 'Best'))
     .slice(0, limit);
+}
+
+// Product Management Helpers for Admin
+function addProduct(newProduct) {
+  loadProductsAndCategories();
+  const maxId = PRODUCTS.reduce((max, p) => Math.max(max, p.id || 0), 0);
+  newProduct.id = maxId + 1;
+  if (!newProduct.rating) newProduct.rating = 5.0;
+  if (!newProduct.reviews) newProduct.reviews = 1;
+  newProduct.sold = Number(newProduct.sold) || 0;
+  if (newProduct.isOutOfStock === undefined) {
+    newProduct.isOutOfStock = Number(newProduct.stock) <= 0;
+  }
+  
+  // Normalize images array
+  if (!Array.isArray(newProduct.images)) {
+    newProduct.images = newProduct.images ? [newProduct.images] : [];
+  }
+  if (newProduct.images.length > 0 && (!newProduct.icon || newProduct.icon === '📦')) {
+    newProduct.icon = newProduct.images[0];
+  } else if (newProduct.icon && newProduct.images.length === 0) {
+    newProduct.images = [newProduct.icon];
+  }
+
+  // Check if category exists; if not, auto-create category!
+  const catSlug = newProduct.category || 'other';
+  const existingCat = CATEGORIES.find(c => c.id === catSlug);
+  if (!existingCat) {
+    let cleanIcon = '🏷️';
+    if (newProduct.icon && typeof newProduct.icon === 'string' && !newProduct.icon.startsWith('http') && !newProduct.icon.startsWith('data:') && newProduct.icon.length <= 8) {
+      cleanIcon = newProduct.icon;
+    }
+    let cleanLabel = (newProduct.categoryLabel || catSlug).replace(/https?:\/\/[^\s]+/g, '').trim() || catSlug;
+    CATEGORIES.push({
+      id: catSlug,
+      label: cleanLabel,
+      icon: cleanIcon
+    });
+    saveCategories();
+  }
+
+  PRODUCTS.unshift(newProduct);
+  saveProducts();
+  return newProduct;
+}
+
+function updateProduct(id, updatedFields) {
+  loadProductsAndCategories();
+  const numId = parseInt(id, 10);
+  const idx = PRODUCTS.findIndex(p => p.id === numId);
+  if (idx !== -1) {
+    if (updatedFields.sold !== undefined) {
+      updatedFields.sold = Number(updatedFields.sold) || 0;
+    }
+    if (updatedFields.images && !Array.isArray(updatedFields.images)) {
+      updatedFields.images = [updatedFields.images];
+    }
+    PRODUCTS[idx] = { ...PRODUCTS[idx], ...updatedFields };
+
+    // Check category auto-creation
+    if (updatedFields.category) {
+      const catSlug = updatedFields.category;
+      const existingCat = CATEGORIES.find(c => c.id === catSlug);
+      if (!existingCat) {
+        let cleanIcon = '🏷️';
+        if (updatedFields.icon && typeof updatedFields.icon === 'string' && !updatedFields.icon.startsWith('http') && !updatedFields.icon.startsWith('data:') && updatedFields.icon.length <= 8) {
+          cleanIcon = updatedFields.icon;
+        }
+        let cleanLabel = (updatedFields.categoryLabel || catSlug).replace(/https?:\/\/[^\s]+/g, '').trim() || catSlug;
+        CATEGORIES.push({
+          id: catSlug,
+          label: cleanLabel,
+          icon: cleanIcon
+        });
+        saveCategories();
+      }
+    }
+    saveProducts();
+    return PRODUCTS[idx];
+  }
+  return null;
+}
+
+function toggleProductStock(id) {
+  loadProductsAndCategories();
+  const numId = parseInt(id, 10);
+  const p = PRODUCTS.find(item => item.id === numId);
+  if (p) {
+    p.isOutOfStock = !p.isOutOfStock;
+    if (p.isOutOfStock) {
+      p.status = 'out_of_stock';
+    } else {
+      p.status = 'available';
+      if (Number(p.stock) <= 0) p.stock = 10;
+    }
+    saveProducts();
+    return p;
+  }
+  return null;
+}
+
+function deleteProduct(id) {
+  loadProductsAndCategories();
+  const numId = parseInt(id, 10);
+  PRODUCTS = PRODUCTS.filter(p => p.id !== numId);
+  saveProducts();
 }
 
