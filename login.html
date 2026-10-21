@@ -1,497 +1,538 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Đăng Nhập / Đăng Ký - Tạp Hóa 23</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Exo+2:wght@700;800;900&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Exo+2:wght@700;800;900&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="css/animations.css" />
   <link rel="stylesheet" href="css/style.css" />
   <style>
-    .register-form { display: none; }
+    .register-form {
+      display: none;
+    }
   </style>
 </head>
+
 <body>
 
-<!-- BACK LINK & TOP SOCIALS -->
-<div style="position:fixed;top:24px;left:24px;z-index:100">
-  <a href="index.html" class="auth-back-btn">
-    ← Trang Chủ
-  </a>
-</div>
-<div style="position:fixed;top:24px;right:24px;z-index:100;display:flex;align-items:center;gap:10px">
-  <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer" class="nav-social-btn nav-btn-fb" title="Trang Facebook Tạp Hóa 23">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-  </a>
-  <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer" class="nav-social-btn nav-btn-discord" title="Máy chủ Discord Tạp Hóa 23">
-    <svg width="17" height="14" viewBox="0 0 24 19" fill="currentColor"><path d="M20.317 1.492a19.742 19.742 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.182-.32 10.755.099 15.277a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 12.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
-  </a>
-</div>
+  <!-- BACK LINK & TOP SOCIALS -->
+  <div style="position:fixed;top:24px;left:24px;z-index:100">
+    <a href="index.html"
+      style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:99px;font-size:14px;color:var(--text-secondary);transition:var(--transition)">
+      ← Trang Chủ
+    </a>
+  </div>
+  <div style="position:fixed;top:24px;right:24px;z-index:100;display:flex;align-items:center;gap:10px">
+    <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer" class="nav-social-btn nav-btn-fb"
+      title="Trang Facebook Tạp Hóa 23">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+      </svg>
+    </a>
+    <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer"
+      class="nav-social-btn nav-btn-discord" title="Máy chủ Discord Tạp Hóa 23">
+      <svg width="17" height="14" viewBox="0 0 24 19" fill="currentColor">
+        <path
+          d="M20.317 1.492a19.742 19.742 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.182-.32 10.755.099 15.277a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 12.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+      </svg>
+    </a>
+  </div>
 
-<!-- BACKGROUND AMBIENT SPOTLIGHT -->
-<canvas id="particles" style="position:fixed;inset:0;z-index:0;pointer-events:none"></canvas>
-<div class="auth-spotlight"></div>
+  <!-- BACKGROUND PARTICLES -->
+  <canvas id="particles" style="position:fixed;inset:0;z-index:0"></canvas>
+  <div
+    style="position:fixed;width:500px;height:500px;background:rgba(124,58,237,0.12);border-radius:50%;filter:blur(80px);top:-150px;left:-150px;z-index:0">
+  </div>
+  <div
+    style="position:fixed;width:400px;height:400px;background:rgba(37,99,235,0.1);border-radius:50%;filter:blur(80px);bottom:-100px;right:-100px;z-index:0">
+  </div>
 
-<div class="auth-page">
-  <div class="auth-card" style="animation:scaleIn 0.4s ease">
-    <!-- Logo -->
-    <div class="auth-logo">
-      <span class="auth-logo-icon">🛒</span>
-      <span class="auth-logo-text">Tạp Hóa 23</span>
-      <p style="font-size:13px;color:var(--text-muted);margin-top:6px">Thiên đường key & tài khoản game</p>
-    </div>
-
-    <!-- Tabs -->
-    <div class="auth-tabs">
-      <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">Đăng Nhập</div>
-      <div class="auth-tab" id="tab-register" onclick="switchTab('register')">Đăng Ký</div>
-    </div>
-
-    <!-- LOGIN FORM -->
-    <form id="login-form" class="login-form" onsubmit="handleLogin(event)">
-      <div class="form-group">
-        <label class="form-label">Email hoặc Tên đăng nhập</label>
-        <input type="text" class="form-input" id="login-identifier" placeholder="Nhập email / tên đăng nhập..." required />
+  <div class="auth-page" style="position:relative;z-index:1">
+    <div class="auth-card" style="animation:scaleIn 0.4s ease">
+      <!-- Logo -->
+      <div class="auth-logo">
+        <span class="auth-logo-icon">🛒</span>
+        <span class="auth-logo-text">Tạp Hóa 23</span>
+        <p style="font-size:13px;color:var(--text-muted);margin-top:6px">Thiên đường key & tài khoản game</p>
       </div>
-      <div class="form-group">
-        <label class="form-label">Mật Khẩu</label>
-        <input type="password" class="form-input" id="login-password" placeholder="Nhập mật khẩu..." required />
-      </div>
-      <div class="form-forgot">
-        <a href="#" onclick="openForgotModal(); return false;">Quên mật khẩu?</a>
-      </div>
-      <button type="submit" class="btn-auth">🔐 Đăng Nhập</button>
 
-      <div class="auth-divider">hoặc đăng nhập nhanh với</div>
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">Đăng Nhập</div>
+        <div class="auth-tab" id="tab-register" onclick="switchTab('register')">Đăng Ký</div>
+      </div>
 
-      <button type="button" class="btn-social" onclick="quickLogin('Google')">
-        <span>🌐</span> Tiếp tục với Google
-      </button>
-      <button type="button" class="btn-social" onclick="quickLogin('Facebook')">
-        <span>📘</span> Tiếp tục với Facebook
-      </button>
-    </form>
-
-    <!-- REGISTER FORM -->
-    <form id="register-form" class="register-form" onsubmit="handleRegister(event)">
-      <div class="form-group">
-        <label class="form-label">Tên đăng nhập / Nickname (tối thiểu 5 ký tự)</label>
-        <input type="text" class="form-input" id="register-username" placeholder="Ví dụ: gamer99" minlength="5" required oninput="validateRegisterInputs()" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Email nhận key & hóa đơn</label>
-        <input type="email" class="form-input" id="register-email" placeholder="email@example.com" required />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Số điện thoại (để bảo hành đơn hàng)</label>
-        <input type="tel" class="form-input" id="register-phone" placeholder="09xx xxx xxx" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Mật Khẩu</label>
-        <input type="password" class="form-input" id="register-password" placeholder="Tối thiểu 5 ký tự, 1 chữ HOA, 1 ký tự đặc biệt..." required oninput="validateRegisterInputs()" />
-        
-        <!-- LIVE REQUIREMENT CHECKLIST -->
-        <div class="pwd-checklist" id="pwd-checklist">
-          <div class="pwd-check-item" id="chk-userlen"><span>○</span> Nickname ≥ 5 ký tự</div>
-          <div class="pwd-check-item" id="chk-len"><span>○</span> Mật khẩu ≥ 5 ký tự</div>
-          <div class="pwd-check-item" id="chk-upper"><span>○</span> Có 1 chữ viết HOA (A-Z)</div>
-          <div class="pwd-check-item" id="chk-special"><span>○</span> Có 1 ký tự đặc biệt (!@#$...)</div>
+      <!-- LOGIN FORM -->
+      <form id="login-form" class="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Email hoặc Tên đăng nhập</label>
+          <input type="text" class="form-input" id="login-identifier" placeholder="Nhập email / tên đăng nhập..."
+            required />
         </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Xác Nhận Mật Khẩu</label>
-        <input type="password" class="form-input" id="register-password-confirm" placeholder="Nhập lại mật khẩu..." required />
-      </div>
-      <div class="auth-terms-note" style="font-size:12px;color:var(--text-muted);margin-bottom:20px;line-height:1.6">
-        Bằng cách đăng ký, bạn đồng ý với 
-        <a href="#">Điều khoản sử dụng</a> và
-        <a href="#">Chính sách bảo mật</a> của chúng tôi.
-      </div>
-      <button type="submit" class="btn-auth">✨ Tạo Tài Khoản</button>
-    </form>
+        <div class="form-group">
+          <label class="form-label">Mật Khẩu</label>
+          <input type="password" class="form-input" id="login-password" placeholder="Nhập mật khẩu..." required />
+        </div>
+        <div class="form-forgot">
+          <a href="#" onclick="openForgotModal(); return false;" style="color:var(--purple-light)">Quên mật khẩu?</a>
+        </div>
+        <button type="submit" class="btn-auth">🔐 Đăng Nhập</button>
 
-    <!-- Bottom note -->
-    <div style="text-align:center;margin-top:20px;font-size:13px;color:var(--text-muted)" id="switch-note">
-      Chưa có tài khoản?
-      <a href="#" onclick="switchTab('register');return false;">Đăng ký ngay</a>
-    </div>
+        <div class="auth-divider">hoặc đăng nhập nhanh với</div>
 
-    <!-- Contact support -->
-    <div style="text-align:center;margin-top:24px;font-size:12px;color:var(--text-muted);border-top:1px solid rgba(255,255,255,0.08);padding-top:16px">
-      Cần hỗ trợ? Hotline: <a href="tel:0987654321" style="color:var(--gold);font-weight:600">0987 654 321</a> • Email: <a href="mailto:taphoa23@gmail.com" style="color:#cbd5e1;font-weight:600">taphoa23@gmail.com</a>
+        <button type="button" class="btn-social" onclick="quickLogin('Google')">
+          <span>🌐</span> Tiếp tục với Google
+        </button>
+        <button type="button" class="btn-social" onclick="quickLogin('Facebook')">
+          <span>📘</span> Tiếp tục với Facebook
+        </button>
+      </form>
+
+      <!-- REGISTER FORM -->
+      <form id="register-form" class="register-form" onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label class="form-label">Tên đăng nhập / Nickname (tối thiểu 5 ký tự)</label>
+          <input type="text" class="form-input" id="register-username" placeholder="Ví dụ: gamer99" minlength="5"
+            required oninput="validateRegisterInputs()" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email nhận key & hóa đơn</label>
+          <input type="email" class="form-input" id="register-email" placeholder="email@example.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Số điện thoại (để bảo hành đơn hàng)</label>
+          <input type="tel" class="form-input" id="register-phone" placeholder="09xx xxx xxx" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mật Khẩu</label>
+          <input type="password" class="form-input" id="register-password"
+            placeholder="Tối thiểu 5 ký tự, 1 chữ HOA, 1 ký tự đặc biệt..." required
+            oninput="validateRegisterInputs()" />
+
+          <!-- LIVE REQUIREMENT CHECKLIST -->
+          <div class="pwd-checklist" id="pwd-checklist" style="margin-top:10px">
+            <div class="pwd-check-item" id="chk-userlen"><span>○</span> Nickname ≥ 5 ký tự</div>
+            <div class="pwd-check-item" id="chk-len"><span>○</span> Mật khẩu ≥ 5 ký tự</div>
+            <div class="pwd-check-item" id="chk-upper"><span>○</span> Có 1 chữ viết HOA (A-Z)</div>
+            <div class="pwd-check-item" id="chk-special"><span>○</span> Có 1 ký tự đặc biệt (!@#$...)</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Xác Nhận Mật Khẩu</label>
+          <input type="password" class="form-input" id="register-password-confirm" placeholder="Nhập lại mật khẩu..."
+            required />
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:20px;line-height:1.6">
+          Bằng cách đăng ký, bạn đồng ý với
+          <a href="#" style="color:var(--purple-light)">Điều khoản sử dụng</a> và
+          <a href="#" style="color:var(--purple-light)">Chính sách bảo mật</a> của chúng tôi.
+        </div>
+        <button type="submit" class="btn-auth">✨ Tạo Tài Khoản</button>
+      </form>
+
+      <!-- Bottom note -->
+      <div style="text-align:center;margin-top:20px;font-size:13px;color:var(--text-muted)" id="switch-note">
+        Chưa có tài khoản?
+        <a href="#" onclick="switchTab('register');return false;" style="color:var(--purple-light);font-weight:600">Đăng
+          ký ngay</a>
+      </div>
+
+      <!-- Contact support -->
+      <div
+        style="text-align:center;margin-top:24px;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border-color);padding-top:16px">
+        Cần hỗ trợ? Hotline: <a href="tel:0987654321" style="color:var(--gold);font-weight:600">0987 654 321</a> •
+        Email: <a href="mailto:taphoa23@gmail.com"
+          style="color:var(--purple-light);font-weight:600">taphoa23@gmail.com</a>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- FORGOT PASSWORD MODAL -->
-<div id="forgot-modal" class="auth-modal-overlay">
-  <div class="modal-card-auth">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <h3 style="font-size:18px;margin:0;display:flex;align-items:center;gap:8px;color:#ffffff">
-        <span>🔑</span> Quên Mật Khẩu
-      </h3>
-      <button onclick="closeForgotModal()" class="modal-close-btn">&times;</button>
-    </div>
-    <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.6">
-      Nhập địa chỉ email bạn đã xác thực khi đăng ký để nhận mã OTP khôi phục mật khẩu.
-    </p>
+  <!-- FORGOT PASSWORD MODAL -->
+  <div id="forgot-modal"
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(10px)">
+    <div
+      style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:32px;max-width:440px;width:90%;box-shadow:0 12px 40px rgba(0,0,0,0.6);animation:scaleIn 0.3s ease">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h3 style="font-size:18px;margin:0;display:flex;align-items:center;gap:8px">
+          <span>🔑</span> Quên Mật Khẩu
+        </h3>
+        <button onclick="closeForgotModal()"
+          style="background:transparent;border:none;color:var(--text-muted);font-size:20px;cursor:pointer">✕</button>
+      </div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;line-height:1.6">
+        Nhập địa chỉ email bạn đã xác thực khi đăng ký để nhận mã OTP khôi phục mật khẩu.
+      </p>
 
-    <!-- Step 1: Input Email -->
-    <div id="forgot-step-1">
-      <div class="form-group">
-        <label class="form-label">Email đã xác thực</label>
-        <input type="email" class="form-input" id="forgot-email" placeholder="email@example.com" required />
+      <!-- Step 1: Input Email -->
+      <div id="forgot-step-1">
+        <div class="form-group">
+          <label class="form-label">Email đã xác thực</label>
+          <input type="email" class="form-input" id="forgot-email" placeholder="email@example.com" required />
+        </div>
+        <button type="button" class="btn-primary" style="width:100%;justify-content:center;margin-top:10px"
+          onclick="sendResetOtp()">
+          <span>📩 Gửi Mã Xác Thực OTP</span>
+        </button>
       </div>
-      <button type="button" class="btn-auth" style="margin-top:10px" onclick="sendResetOtp()">
-        <span>📩 Gửi Mã Xác Thực OTP</span>
-      </button>
-    </div>
 
-    <!-- Step 2: Input OTP & New Password -->
-    <div id="forgot-step-2" style="display:none">
-      <div id="otp-hint-box" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--green)">
-        Mã OTP đã được gửi đến email.
+      <!-- Step 2: Input OTP & New Password -->
+      <div id="forgot-step-2" style="display:none">
+        <div id="otp-hint-box"
+          style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.3);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--green)">
+          Mã OTP đã được gửi đến email.
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nhập Mã OTP (6 số)</label>
+          <input type="text" class="form-input" id="forgot-otp" placeholder="Nhập 6 chữ số..." maxlength="6" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mật khẩu mới</label>
+          <input type="password" class="form-input" id="forgot-new-pwd" placeholder="Tối thiểu 6 ký tự..." required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Xác nhận mật khẩu mới</label>
+          <input type="password" class="form-input" id="forgot-new-pwd-confirm" placeholder="Nhập lại mật khẩu mới..."
+            required />
+        </div>
+        <button type="button" class="btn-primary" style="width:100%;justify-content:center;margin-top:10px"
+          onclick="confirmResetPassword()">
+          <span>✅ Đặt Lại Mật Khẩu</span>
+        </button>
       </div>
-      <div class="form-group">
-        <label class="form-label">Nhập Mã OTP (6 số)</label>
-        <input type="text" class="form-input" id="forgot-otp" placeholder="Nhập 6 chữ số..." maxlength="6" required />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Mật khẩu mới</label>
-        <input type="password" class="form-input" id="forgot-new-pwd" placeholder="Tối thiểu 6 ký tự..." required />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Xác nhận mật khẩu mới</label>
-        <input type="password" class="form-input" id="forgot-new-pwd-confirm" placeholder="Nhập lại mật khẩu mới..." required />
-      </div>
-      <button type="button" class="btn-auth" style="margin-top:10px" onclick="confirmResetPassword()">
-        <span>✅ Đặt Lại Mật Khẩu</span>
-      </button>
     </div>
   </div>
-</div>
 
-<script src="js/products-data.js"></script>
-<script src="js/main.js"></script>
-<script>
-  let generatedOtp = '';
-  let targetEmail = '';
+  <script src="js/products-data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    let generatedOtp = '';
+    let targetEmail = '';
 
-  function openForgotModal() {
-    document.getElementById('forgot-modal').style.display = 'flex';
-    document.getElementById('forgot-step-1').style.display = 'block';
-    document.getElementById('forgot-step-2').style.display = 'none';
-    document.getElementById('forgot-email').value = '';
-  }
-
-  function closeForgotModal() {
-    document.getElementById('forgot-modal').style.display = 'none';
-  }
-
-  function sendResetOtp() {
-    const email = document.getElementById('forgot-email').value.trim();
-    if (!email) {
-      showToast('⚠️ Vui lòng nhập địa chỉ email!', 'error');
-      return;
+    function openForgotModal() {
+      document.getElementById('forgot-modal').style.display = 'flex';
+      document.getElementById('forgot-step-1').style.display = 'block';
+      document.getElementById('forgot-step-2').style.display = 'none';
+      document.getElementById('forgot-email').value = '';
     }
 
-    targetEmail = email;
-    generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
+    function closeForgotModal() {
+      document.getElementById('forgot-modal').style.display = 'none';
+    }
 
-    document.getElementById('forgot-step-1').style.display = 'none';
-    document.getElementById('forgot-step-2').style.display = 'block';
-    document.getElementById('otp-hint-box').innerHTML = `
+    function sendResetOtp() {
+      const email = document.getElementById('forgot-email').value.trim();
+      if (!email) {
+        showToast('⚠️ Vui lòng nhập địa chỉ email!', 'error');
+        return;
+      }
+
+      targetEmail = email;
+      generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
+
+      document.getElementById('forgot-step-1').style.display = 'none';
+      document.getElementById('forgot-step-2').style.display = 'block';
+      document.getElementById('otp-hint-box').innerHTML = `
       📧 Mã OTP xác thực email đã được gửi: <strong style="color:white;font-size:15px;letter-spacing:2px">${generatedOtp}</strong>
       <div style="font-size:11px;color:var(--text-muted);margin-top:4px">(Hệ thống hiển thị mã OTP giả lập để bạn thử nghiệm ngay)</div>
     `;
-    showToast('📩 Đã gửi mã xác thực OTP về email của bạn!');
-  }
-
-  function confirmResetPassword() {
-    const inputOtp = document.getElementById('forgot-otp').value.trim();
-    const newPwd = document.getElementById('forgot-new-pwd').value;
-    const confirmPwd = document.getElementById('forgot-new-pwd-confirm').value;
-
-    if (inputOtp !== generatedOtp) {
-      showToast('⚠️ Mã OTP không chính xác!', 'error');
-      return;
-    }
-    if (!newPwd || newPwd.length < 6) {
-      showToast('⚠️ Mật khẩu mới phải có tối thiểu 6 ký tự!', 'error');
-      return;
-    }
-    if (newPwd !== confirmPwd) {
-      showToast('⚠️ Mật khẩu xác nhận không khớp!', 'error');
-      return;
+      showToast('📩 Đã gửi mã xác thực OTP về email của bạn!');
     }
 
-    let users = [];
-    try {
-      users = JSON.parse(localStorage.getItem('tapHoa23RegisteredUsers') || '[]');
-    } catch (e) {}
+    function confirmResetPassword() {
+      const inputOtp = document.getElementById('forgot-otp').value.trim();
+      const newPwd = document.getElementById('forgot-new-pwd').value;
+      const confirmPwd = document.getElementById('forgot-new-pwd-confirm').value;
 
-    const u = users.find(user => user.email && user.email.toLowerCase() === targetEmail.toLowerCase());
-    if (u) {
-      u.password = newPwd;
-      localStorage.setItem('tapHoa23RegisteredUsers', JSON.stringify(users));
-    }
-
-    closeForgotModal();
-    showToast('🎉 Đổi mật khẩu thành công! Vui lòng đăng nhập với mật khẩu mới.');
-  }
-
-  function switchTab(tab) {
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    const tabLogin = document.getElementById('tab-login');
-    const tabRegister = document.getElementById('tab-register');
-    const note = document.getElementById('switch-note');
-
-    if (tab === 'login') {
-      loginForm.style.display = 'block';
-      registerForm.style.display = 'none';
-      tabLogin.classList.add('active');
-      tabRegister.classList.remove('active');
-      note.innerHTML = 'Chưa có tài khoản? <a href="#" onclick="switchTab(\'register\');return false;" style="color:var(--purple-light);font-weight:600">Đăng ký ngay</a>';
-    } else {
-      loginForm.style.display = 'none';
-      registerForm.style.display = 'block';
-      tabLogin.classList.remove('active');
-      tabRegister.classList.add('active');
-      note.innerHTML = 'Đã có tài khoản? <a href="#" onclick="switchTab(\'login\');return false;" style="color:var(--purple-light);font-weight:600">Đăng nhập ngay</a>';
-    }
-  }
-
-  function handleLogin(e) {
-    e.preventDefault();
-    const idInput = document.getElementById('login-identifier').value.trim();
-    const pwdInput = document.getElementById('login-password').value;
-    if (!idInput) return;
-
-    // 1. ADMIN LOGIN CHECK
-    if (idInput === '4siankollective') {
-      if (pwdInput === 'nguyenthanhbien23') {
-        const adminUser = {
-          username: '4siankollective',
-          name: 'Nguyễn Thanh Biên (Admin)',
-          email: 'admin.4sian@taphoa23.vn',
-          phone: '0987 654 321',
-          role: 'admin',
-          avatar: '👑',
-          balance: 999999999,
-          totalDeposited: 99999999,
-          vipTier: 'ADMIN',
-          vipName: 'Quản Trị Viên (Admin)',
-          createdAt: '2024-01-01'
-        };
-        setCurrentUser(adminUser);
-        showToast('👑 Chào mừng Quản Trị Viên 4siankollective đăng nhập thành công!');
-        setTimeout(() => {
-          const params = new URLSearchParams(window.location.search);
-          const redirect = params.get('redirect') || 'admin.html';
-          window.location.href = redirect;
-        }, 1000);
+      if (inputOtp !== generatedOtp) {
+        showToast('⚠️ Mã OTP không chính xác!', 'error');
         return;
+      }
+      if (!newPwd || newPwd.length < 6) {
+        showToast('⚠️ Mật khẩu mới phải có tối thiểu 6 ký tự!', 'error');
+        return;
+      }
+      if (newPwd !== confirmPwd) {
+        showToast('⚠️ Mật khẩu xác nhận không khớp!', 'error');
+        return;
+      }
+
+      let users = [];
+      try {
+        users = JSON.parse(localStorage.getItem('tapHoa23RegisteredUsers') || '[]');
+      } catch (e) { }
+
+      const u = users.find(user => user.email && user.email.toLowerCase() === targetEmail.toLowerCase());
+      if (u) {
+        u.password = newPwd;
+        localStorage.setItem('tapHoa23RegisteredUsers', JSON.stringify(users));
+      }
+
+      closeForgotModal();
+      showToast('🎉 Đổi mật khẩu thành công! Vui lòng đăng nhập với mật khẩu mới.');
+    }
+
+    function switchTab(tab) {
+      const loginForm = document.getElementById('login-form');
+      const registerForm = document.getElementById('register-form');
+      const tabLogin = document.getElementById('tab-login');
+      const tabRegister = document.getElementById('tab-register');
+      const note = document.getElementById('switch-note');
+
+      if (tab === 'login') {
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+        note.innerHTML = 'Chưa có tài khoản? <a href="#" onclick="switchTab(\'register\');return false;" style="color:var(--purple-light);font-weight:600">Đăng ký ngay</a>';
       } else {
-        showToast('⚠️ Mật khẩu tài khoản Admin không chính xác!', 'error');
-        return;
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+        tabLogin.classList.remove('active');
+        tabRegister.classList.add('active');
+        note.innerHTML = 'Đã có tài khoản? <a href="#" onclick="switchTab(\'login\');return false;" style="color:var(--purple-light);font-weight:600">Đăng nhập ngay</a>';
       }
     }
 
-    // 2. CUSTOMER LOGIN CHECK
-    let users = [];
-    try {
-      users = JSON.parse(localStorage.getItem('tapHoa23RegisteredUsers') || '[]');
-    } catch (e) {}
+    function handleLogin(e) {
+      e.preventDefault();
+      const idInput = document.getElementById('login-identifier').value.trim();
+      const pwdInput = document.getElementById('login-password').value;
+      if (!idInput) return;
 
-    let existing = users.find(u =>
-      (u.username && u.username.toLowerCase() === idInput.toLowerCase()) ||
-      (u.email && u.email.toLowerCase() === idInput.toLowerCase())
-    );
+      // 1. ADMIN LOGIN CHECK
+      if (idInput === '4siankollective') {
+        if (pwdInput === 'nguyenthanhbien23') {
+          const adminUser = {
+            username: '4siankollective',
+            name: 'Nguyễn Thanh Biên (Admin)',
+            email: 'admin.4sian@taphoa23.vn',
+            phone: '0987 654 321',
+            role: 'admin',
+            avatar: '👑',
+            balance: 999999999,
+            totalDeposited: 99999999,
+            vipTier: 'ADMIN',
+            vipName: 'Quản Trị Viên (Admin)',
+            createdAt: '2024-01-01'
+          };
+          setCurrentUser(adminUser);
+          showToast('👑 Chào mừng Quản Trị Viên 4siankollective đăng nhập thành công!');
+          setTimeout(() => {
+            const params = new URLSearchParams(window.location.search);
+            const redirect = params.get('redirect') || 'admin.html';
+            window.location.href = redirect;
+          }, 1000);
+          return;
+        } else {
+          showToast('⚠️ Mật khẩu tài khoản Admin không chính xác!', 'error');
+          return;
+        }
+      }
 
-    if (existing && existing.password && existing.password !== pwdInput) {
-      showToast('⚠️ Mật khẩu đăng nhập không chính xác!', 'error');
-      return;
+      // 2. CUSTOMER LOGIN CHECK
+      let users = [];
+      try {
+        users = JSON.parse(localStorage.getItem('tapHoa23RegisteredUsers') || '[]');
+      } catch (e) { }
+
+      let existing = users.find(u =>
+        (u.username && u.username.toLowerCase() === idInput.toLowerCase()) ||
+        (u.email && u.email.toLowerCase() === idInput.toLowerCase())
+      );
+
+      if (existing && existing.password && existing.password !== pwdInput) {
+        showToast('⚠️ Mật khẩu đăng nhập không chính xác!', 'error');
+        return;
+      }
+
+      const isEmail = idInput.includes('@');
+      const username = existing ? existing.username : (isEmail ? idInput.split('@')[0] : idInput);
+      const email = existing ? existing.email : (isEmail ? idInput : `${username.toLowerCase().replace(/\s+/g, '')}@gmail.com`);
+
+      const user = existing || {
+        username: username,
+        email: email,
+        phone: '0987 654 321',
+        balance: 0,
+        totalDeposited: 0,
+        avatar: '👤',
+        role: 'customer',
+        password: pwdInput,
+        createdAt: new Date().toLocaleDateString('vi-VN')
+      };
+
+      updateUserVipTier(user);
+      setCurrentUser(user);
+      showToast(`🎉 Đăng nhập thành công! Chào mừng ${user.username}!`);
+      setTimeout(() => {
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get('redirect') || 'index.html';
+        window.location.href = redirect;
+      }, 1000);
     }
 
-    const isEmail = idInput.includes('@');
-    const username = existing ? existing.username : (isEmail ? idInput.split('@')[0] : idInput);
-    const email = existing ? existing.email : (isEmail ? idInput : `${username.toLowerCase().replace(/\s+/g, '')}@gmail.com`);
+    function validateRegisterInputs() {
+      const u = document.getElementById('register-username').value.trim();
+      const p = document.getElementById('register-password').value;
 
-    const user = existing || {
-      username: username,
-      email: email,
-      phone: '0987 654 321',
-      balance: 0,
-      totalDeposited: 0,
-      avatar: '👤',
-      role: 'customer',
-      password: pwdInput,
-      createdAt: new Date().toLocaleDateString('vi-VN')
-    };
+      const elUserLen = document.getElementById('chk-userlen');
+      const elLen = document.getElementById('chk-len');
+      const elUpper = document.getElementById('chk-upper');
+      const elSpecial = document.getElementById('chk-special');
 
-    updateUserVipTier(user);
-    setCurrentUser(user);
-    showToast(`🎉 Đăng nhập thành công! Chào mừng ${user.username}!`);
-    setTimeout(() => {
-      const params = new URLSearchParams(window.location.search);
-      const redirect = params.get('redirect') || 'index.html';
-      window.location.href = redirect;
-    }, 1000);
-  }
-
-  function validateRegisterInputs() {
-    const u = document.getElementById('register-username').value.trim();
-    const p = document.getElementById('register-password').value;
-
-    const elUserLen = document.getElementById('chk-userlen');
-    const elLen = document.getElementById('chk-len');
-    const elUpper = document.getElementById('chk-upper');
-    const elSpecial = document.getElementById('chk-special');
-
-    if (elUserLen) {
-      const valid = u.length >= 5;
-      elUserLen.classList.toggle('valid', valid);
-      elUserLen.querySelector('span').textContent = valid ? '✓' : '○';
-    }
-    if (elLen) {
-      const valid = p.length >= 5;
-      elLen.classList.toggle('valid', valid);
-      elLen.querySelector('span').textContent = valid ? '✓' : '○';
-    }
-    if (elUpper) {
-      const valid = /[A-Z]/.test(p);
-      elUpper.classList.toggle('valid', valid);
-      elUpper.querySelector('span').textContent = valid ? '✓' : '○';
-    }
-    if (elSpecial) {
-      const valid = /[!@#$%^&*(),.?":{}|<>_\-+=[\]\\\/~`]/.test(p);
-      elSpecial.classList.toggle('valid', valid);
-      elSpecial.querySelector('span').textContent = valid ? '✓' : '○';
-    }
-  }
-
-  function handleRegister(e) {
-    e.preventDefault();
-    const username = document.getElementById('register-username').value.trim();
-    const email = document.getElementById('register-email').value.trim();
-    const phone = document.getElementById('register-phone').value.trim() || '0987 654 321';
-
-    const pwd = document.getElementById('register-password').value;
-    const pwdConfirm = document.getElementById('register-password-confirm').value;
-
-    // 1. Username length check (min 5 chars)
-    if (username.length < 5) {
-      showToast('⚠️ Tên tài khoản phải có tối thiểu 5 ký tự!', 'error');
-      document.getElementById('register-username').focus();
-      return;
+      if (elUserLen) {
+        const valid = u.length >= 5;
+        elUserLen.classList.toggle('valid', valid);
+        elUserLen.querySelector('span').textContent = valid ? '✓' : '○';
+      }
+      if (elLen) {
+        const valid = p.length >= 5;
+        elLen.classList.toggle('valid', valid);
+        elLen.querySelector('span').textContent = valid ? '✓' : '○';
+      }
+      if (elUpper) {
+        const valid = /[A-Z]/.test(p);
+        elUpper.classList.toggle('valid', valid);
+        elUpper.querySelector('span').textContent = valid ? '✓' : '○';
+      }
+      if (elSpecial) {
+        const valid = /[!@#$%^&*(),.?":{}|<>_\-+=[\]\\\/~`]/.test(p);
+        elSpecial.classList.toggle('valid', valid);
+        elSpecial.querySelector('span').textContent = valid ? '✓' : '○';
+      }
     }
 
-    if (username.toLowerCase() === '4siankollective') {
-      showToast('⚠️ Tên tài khoản này được bảo lưu riêng cho Quản trị viên!', 'error');
-      return;
+    function handleRegister(e) {
+      e.preventDefault();
+      const username = document.getElementById('register-username').value.trim();
+      const email = document.getElementById('register-email').value.trim();
+      const phone = document.getElementById('register-phone').value.trim() || '0987 654 321';
+
+      const pwd = document.getElementById('register-password').value;
+      const pwdConfirm = document.getElementById('register-password-confirm').value;
+
+      // 1. Username length check (min 5 chars)
+      if (username.length < 5) {
+        showToast('⚠️ Tên tài khoản phải có tối thiểu 5 ký tự!', 'error');
+        document.getElementById('register-username').focus();
+        return;
+      }
+
+      if (username.toLowerCase() === '4siankollective') {
+        showToast('⚠️ Tên tài khoản này được bảo lưu riêng cho Quản trị viên!', 'error');
+        return;
+      }
+
+      // 2. Password length check (min 5 chars)
+      if (pwd.length < 5) {
+        showToast('⚠️ Mật khẩu phải có ít nhất 5 ký tự!', 'error');
+        document.getElementById('register-password').focus();
+        return;
+      }
+
+      // 3. Password uppercase check (at least 1 uppercase)
+      if (!/[A-Z]/.test(pwd)) {
+        showToast('⚠️ Mật khẩu phải chứa ít nhất 1 ký tự viết HOA (A-Z)!', 'error');
+        document.getElementById('register-password').focus();
+        return;
+      }
+
+      // 4. Password special character check (at least 1 special character)
+      if (!/[!@#$%^&*(),.?":{}|<>_\-+=[\]\\\/~`]/.test(pwd)) {
+        showToast('⚠️ Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt (!@#$%^&*...)!', 'error');
+        document.getElementById('register-password').focus();
+        return;
+      }
+
+      // 5. Password confirmation check
+      if (pwd !== pwdConfirm) {
+        showToast('⚠️ Mật khẩu xác nhận không khớp! Vui lòng nhập lại.', 'error');
+        document.getElementById('register-password-confirm').focus();
+        return;
+      }
+
+      let users = [];
+      try {
+        users = JSON.parse(localStorage.getItem('tapHoa23RegisteredUsers') || '[]');
+      } catch (e) { }
+
+      if (users.some(u => u.username && u.username.toLowerCase() === username.toLowerCase())) {
+        showToast('⚠️ Tên đăng nhập này đã được sử dụng. Vui lòng chọn tên khác!', 'error');
+        return;
+      }
+
+      const newUser = {
+        username: username,
+        email: email,
+        phone: phone,
+        password: pwd,
+        balance: 0,
+        totalDeposited: 0,
+        avatar: '👤',
+        role: 'customer',
+        createdAt: new Date().toLocaleDateString('vi-VN')
+      };
+
+      updateUserVipTier(newUser);
+      users.push(newUser);
+      localStorage.setItem('tapHoa23RegisteredUsers', JSON.stringify(users));
+
+      setCurrentUser(newUser);
+      showToast(`🎊 Đăng ký thành công! Chào mừng thành viên mới ${newUser.username}!`);
+      setTimeout(() => {
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get('redirect') || 'index.html';
+        window.location.href = redirect;
+      }, 1200);
     }
 
-    // 2. Password length check (min 5 chars)
-    if (pwd.length < 5) {
-      showToast('⚠️ Mật khẩu phải có ít nhất 5 ký tự!', 'error');
-      document.getElementById('register-password').focus();
-      return;
+    function quickLogin(provider) {
+      const user = {
+        username: provider === 'Google' ? 'Google Gamer' : 'Facebook Member',
+        email: provider === 'Google' ? 'gamer.google@gmail.com' : 'gamer.fb@facebook.com',
+        phone: '0912 888 999',
+        balance: 300000,
+        totalDeposited: 300000,
+        avatar: provider === 'Google' ? '🌐' : '📘',
+        role: 'customer',
+        createdAt: new Date().toLocaleDateString('vi-VN')
+      };
+      updateUserVipTier(user);
+      setCurrentUser(user);
+      showToast(`🔵 Đăng nhập ${provider} thành công! Chào mừng ${user.username}!`);
+      setTimeout(() => {
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get('redirect') || 'index.html';
+        window.location.href = redirect;
+      }, 1000);
     }
-
-    // 3. Password uppercase check (at least 1 uppercase)
-    if (!/[A-Z]/.test(pwd)) {
-      showToast('⚠️ Mật khẩu phải chứa ít nhất 1 ký tự viết HOA (A-Z)!', 'error');
-      document.getElementById('register-password').focus();
-      return;
-    }
-
-    // 4. Password special character check (at least 1 special character)
-    if (!/[!@#$%^&*(),.?":{}|<>_\-+=[\]\\\/~`]/.test(pwd)) {
-      showToast('⚠️ Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt (!@#$%^&*...)!', 'error');
-      document.getElementById('register-password').focus();
-      return;
-    }
-
-    // 5. Password confirmation check
-    if (pwd !== pwdConfirm) {
-      showToast('⚠️ Mật khẩu xác nhận không khớp! Vui lòng nhập lại.', 'error');
-      document.getElementById('register-password-confirm').focus();
-      return;
-    }
-
-    let users = [];
-    try {
-      users = JSON.parse(localStorage.getItem('tapHoa23RegisteredUsers') || '[]');
-    } catch (e) {}
-
-    if (users.some(u => u.username && u.username.toLowerCase() === username.toLowerCase())) {
-      showToast('⚠️ Tên đăng nhập này đã được sử dụng. Vui lòng chọn tên khác!', 'error');
-      return;
-    }
-
-    const newUser = {
-      username: username,
-      email: email,
-      phone: phone,
-      password: pwd,
-      balance: 0,
-      totalDeposited: 0,
-      avatar: '👤',
-      role: 'customer',
-      createdAt: new Date().toLocaleDateString('vi-VN')
-    };
-
-    updateUserVipTier(newUser);
-    users.push(newUser);
-    localStorage.setItem('tapHoa23RegisteredUsers', JSON.stringify(users));
-
-    setCurrentUser(newUser);
-    showToast(`🎊 Đăng ký thành công! Chào mừng thành viên mới ${newUser.username}!`);
-    setTimeout(() => {
-      const params = new URLSearchParams(window.location.search);
-      const redirect = params.get('redirect') || 'index.html';
-      window.location.href = redirect;
-    }, 1200);
-  }
-
-  function quickLogin(provider) {
-    const user = {
-      username: provider === 'Google' ? 'Google Gamer' : 'Facebook Member',
-      email: provider === 'Google' ? 'gamer.google@gmail.com' : 'gamer.fb@facebook.com',
-      phone: '0912 888 999',
-      balance: 300000,
-      totalDeposited: 300000,
-      avatar: provider === 'Google' ? '🌐' : '📘',
-      role: 'customer',
-      createdAt: new Date().toLocaleDateString('vi-VN')
-    };
-    updateUserVipTier(user);
-    setCurrentUser(user);
-    showToast(`🔵 Đăng nhập ${provider} thành công! Chào mừng ${user.username}!`);
-    setTimeout(() => {
-      const params = new URLSearchParams(window.location.search);
-      const redirect = params.get('redirect') || 'index.html';
-      window.location.href = redirect;
-    }, 1000);
-  }
-</script>
-<!-- FLOATING SOCIAL WIDGET (Facebook & Discord) -->
-<div class="floating-social-widget">
-  <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer" class="floating-social-btn floating-fb" title="Nhắn tin qua Facebook">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-    </svg>
-    <span class="floating-tooltip">Facebook Hỗ Trợ</span>
-  </a>
-  <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer" class="floating-social-btn floating-discord" title="Tham gia Discord Tạp Hóa 23">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-    </svg>
-    <span class="floating-tooltip">Discord Cộng Đồng</span>
-  </a>
-</div>
+  </script>
+  <!-- FLOATING SOCIAL WIDGET (Facebook & Discord) -->
+  <div class="floating-social-widget">
+    <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer"
+      class="floating-social-btn floating-fb" title="Nhắn tin qua Facebook">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+      </svg>
+      <span class="floating-tooltip">Facebook Hỗ Trợ</span>
+    </a>
+    <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer"
+      class="floating-social-btn floating-discord" title="Tham gia Discord Tạp Hóa 23">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+      </svg>
+      <span class="floating-tooltip">Discord Cộng Đồng</span>
+    </a>
+  </div>
 </body>
+
 </html>

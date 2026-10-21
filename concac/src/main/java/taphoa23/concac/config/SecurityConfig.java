@@ -20,7 +20,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import taphoa23.concac.filter.JwtAuthenticationFilter;
+import taphoa23.concac.Filter.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -89,5 +89,10 @@ public class SecurityConfig {
         // Then set the BCrypt password encoder
         provider.setPasswordEncoder(passwordEncoder);    
         return provider;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
     }
 }

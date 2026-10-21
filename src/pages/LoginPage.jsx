@@ -24,6 +24,7 @@ export default function LoginPage() {
   const [regPhone, setRegPhone] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regConfirmPass, setRegConfirmPass] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   // If already logged in, redirect safely via useEffect
   useEffect(() => {
@@ -34,47 +35,62 @@ export default function LoginPage() {
     }
   }, [currentUser, navigate, location.state]);
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    const res = login(loginUser, loginPass);
-    if (res.success) {
-      showToast(`👋 Chào mừng trở lại, ${res.user.name || res.user.username}!`);
-      const params = new URLSearchParams(window.location.search);
-      const redirectUrl = params.get('redirect') || location.state?.from || (res.user.role === 'admin' ? '/admin' : '/');
-      navigate(redirectUrl.startsWith('/') ? redirectUrl : '/' + redirectUrl);
-    } else {
-      showToast(res.message, 'error');
+    setIsLoading(true);
+    try {
+      const res = await login(loginUser, loginPass);
+      if (res.success) {
+        showToast(`👋 Chào mừng trở lại, ${res.user.name || res.user.username}!`);
+        const params = new URLSearchParams(window.location.search);
+        const redirectUrl = params.get('redirect') || location.state?.from || (res.user.role === 'admin' ? '/admin' : '/');
+        navigate(redirectUrl.startsWith('/') ? redirectUrl : '/' + redirectUrl);
+      } else {
+        showToast(res.message, 'error');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleRegisterSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     if (regPassword !== regConfirmPass) {
       showToast('⚠️ Mật khẩu xác nhận không khớp!', 'error');
       return;
     }
 
-    const res = register({
-      username: regUsername,
-      name: regName,
-      email: regEmail,
-      phone: regPhone,
-      password: regPassword
-    });
+    setIsLoading(true);
+    try {
+      const res = await register({
+        username: regUsername,
+        name: regName,
+        email: regEmail,
+        phone: regPhone,
+        password: regPassword
+      });
 
-    if (res.success) {
-      showToast(`🎉 Đăng ký thành công! Chào mừng bạn gia nhập Tạp Hóa 23.`);
-      navigate('/');
-    } else {
-      showToast(res.message, 'error');
+      if (res.success) {
+        showToast(`🎉 Đăng ký thành công! Chào mừng bạn gia nhập Tạp Hóa 23.`);
+        navigate('/');
+      } else {
+        showToast(res.message, 'error');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleQuickDemoLogin = (username, pass) => {
-    const res = login(username, pass);
-    if (res.success) {
-      showToast(`Đã đăng nhập tài khoản demo: ${username}`);
-      navigate(username === '4siankollective' ? '/admin' : '/profile');
+  const handleQuickDemoLogin = async (username, pass) => {
+    setIsLoading(true);
+    try {
+      const res = await login(username, pass);
+      if (res.success) {
+        showToast(`Đã đăng nhập tài khoản demo: ${username}`);
+        navigate(username === '4siankollective' ? '/admin' : '/profile');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -182,8 +198,13 @@ export default function LoginPage() {
               />
             </div>
 
-            <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '12px', fontSize: '15px' }}>
-              <span>🚀 Đăng Nhập Ngay</span>
+            <button 
+              type="submit" 
+              className="btn-primary" 
+              disabled={isLoading}
+              style={{ width: '100%', justifyContent: 'center', padding: '12px', fontSize: '15px', opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'not-allowed' : 'pointer' }}
+            >
+              <span>{isLoading ? '⏳ Đang xử lý...' : '🚀 Đăng Nhập Ngay'}</span>
             </button>
 
             {/* Demo Quick Logins */}
@@ -282,8 +303,13 @@ export default function LoginPage() {
               />
             </div>
 
-            <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '12px', fontSize: '15px' }}>
-              <span>🎉 Tạo Tài Khoản Mới</span>
+            <button 
+              type="submit" 
+              className="btn-primary" 
+              disabled={isLoading}
+              style={{ width: '100%', justifyContent: 'center', padding: '12px', fontSize: '15px', opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'not-allowed' : 'pointer' }}
+            >
+              <span>{isLoading ? '⏳ Đang đăng ký...' : '🎉 Tạo Tài Khoản Mới'}</span>
             </button>
           </form>
         )}
