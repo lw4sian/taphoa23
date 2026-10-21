@@ -268,25 +268,39 @@ function restartHeroAutoPlay() {
 // Check if logged in user is admin
 function isUserAdmin() {
   try {
-    const user = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
+    let user = null;
+    if (typeof getCurrentUser === 'function') {
+      user = getCurrentUser();
+    } else {
+      user = JSON.parse(localStorage.getItem('tapHoa23User') || 'null');
+    }
     return !!(user && (user.role === 'admin' || user.username?.toLowerCase() === '4siankollective'));
   } catch (e) {
     return false;
   }
 }
 
-// Toggle Admin Edit Button on Index
+// Toggle Admin Edit Button on Index - Chỉ hiện cho tài khoản Admin, tài khoản thường và khách vãng lai ẩn hoàn toàn
 function checkAdminSliderPrivilege() {
   const adminBtn = document.getElementById('admin-slider-edit-btn');
   if (!adminBtn) return;
-  adminBtn.style.setProperty('display', 'inline-flex', 'important');
-  adminBtn.onclick = function(e) {
-    if (e) {
-      if (typeof e.stopPropagation === 'function') e.stopPropagation();
-      if (typeof e.preventDefault === 'function') e.preventDefault();
-    }
-    window.openSliderAdminModal(e);
-  };
+
+  const isAdmin = isUserAdmin();
+  if (isAdmin) {
+    adminBtn.classList.add('visible');
+    adminBtn.style.setProperty('display', 'inline-flex', 'important');
+    adminBtn.onclick = function(e) {
+      if (e) {
+        if (typeof e.stopPropagation === 'function') e.stopPropagation();
+        if (typeof e.preventDefault === 'function') e.preventDefault();
+      }
+      window.openSliderAdminModal(e);
+    };
+  } else {
+    adminBtn.classList.remove('visible');
+    adminBtn.style.setProperty('display', 'none', 'important');
+    adminBtn.onclick = null;
+  }
 }
 
 // Initialize Slider Events
@@ -330,11 +344,17 @@ function handleHeroSwipe() {
 
 let editingSlideId = null;
 
-// Open Modal - ALWAYS opens when clicked, no blocking
+// Open Modal - Chỉ mở khi người dùng là Quản trị viên (Admin)
 window.openSliderAdminModal = function(e) {
   if (e) {
     if (typeof e.stopPropagation === 'function') e.stopPropagation();
     if (typeof e.preventDefault === 'function') e.preventDefault();
+  }
+  if (!isUserAdmin()) {
+    if (typeof showToast === 'function') {
+      showToast('⚠️ Chức năng chỉnh sửa Slide chỉ dành riêng cho tài khoản Quản Trị Viên (Admin)!', 'error');
+    }
+    return;
   }
   const modal = document.getElementById('slider-admin-modal');
   if (modal) {

@@ -168,6 +168,291 @@ function renderProducts(products, containerId = 'products-grid') {
 let searchQuery = '';
 let activeCategory = 'all';
 
+// Helper to escape HTML characters
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Xử lý gửi tìm kiếm từ bong bóng
+function handleBubbleSearchSubmit(event) {
+  if (event) event.preventDefault();
+  const input = document.getElementById('search-bubble-input');
+  const val = input ? input.value.trim() : '';
+  if (val) {
+    window.location.href = `products.html?q=${encodeURIComponent(val)}`;
+  }
+}
+
+// ===== Bubble Search (Bong bóng tìm kiếm) =====
+function initBubbleSearch() {
+  const btn = document.getElementById('nav-search-btn');
+  const bubble = document.getElementById('nav-search-bubble');
+  const input = document.getElementById('search-bubble-input');
+  const clearBtn = document.getElementById('search-bubble-clear');
+  const resultsContainer = document.getElementById('search-bubble-results');
+  const wrapper = document.getElementById('nav-search-wrapper');
+  const arrow = bubble ? bubble.querySelector('.search-bubble-arrow') : null;
+
+  if (!btn || !bubble) return;
+  if (btn.dataset.initialized === 'true') return;
+  btn.dataset.initialized = 'true';
+
+  let debounceTimer = null;
+
+  // Cập nhật vị trí bong bóng và mũi tên chỉ chính xác vào nút kính lúp
+  function updateBubblePosition() {
+    if (!bubble.classList.contains('open')) return;
+
+    if (window.innerWidth <= 760) {
+      const navbar = document.querySelector('.navbar');
+      const navBottom = navbar ? navbar.getBoundingClientRect().bottom : 64;
+      const btnRect = btn.getBoundingClientRect();
+
+      bubble.style.position = 'fixed';
+      bubble.style.top = `${Math.round(navBottom + 8)}px`;
+      bubble.style.left = '12px';
+      bubble.style.right = '12px';
+      bubble.style.width = 'auto';
+      bubble.style.maxWidth = 'none';
+
+      if (arrow) {
+        // Tọa độ tâm icon kính lúp so với cạnh trái màn hình
+        const btnCenter = btnRect.left + btnRect.width / 2;
+        // Mũi nhọn bên trong bubble (cách mép trái bubble là 12px)
+        const arrowLeft = Math.max(12, Math.min(window.innerWidth - 40, btnCenter - 12 - 7));
+        arrow.style.left = `${arrowLeft}px`;
+        arrow.style.right = 'auto';
+        bubble.style.transformOrigin = `${arrowLeft + 7}px -8px`;
+      }
+    } else {
+      bubble.style.position = '';
+      bubble.style.top = '';
+      bubble.style.left = '';
+      bubble.style.right = '';
+      bubble.style.width = '';
+      bubble.style.maxWidth = '';
+      if (arrow) {
+        arrow.style.left = '';
+        arrow.style.right = '';
+      }
+      bubble.style.transformOrigin = '';
+    }
+  }
+
+  // Mở bong bóng
+  function openBubble() {
+    btn.classList.add('active');
+    btn.setAttribute('aria-expanded', 'true');
+    bubble.classList.add('open');
+    updateBubblePosition();
+
+    // Tự động focus vào ô input mượt mà
+    setTimeout(() => {
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }, 60);
+
+    // Nếu đã có sẵn nội dung thì tự động gợi ý ngay
+    if (input && input.value.trim()) {
+      renderBubbleSuggestions(input.value.trim());
+      if (clearBtn) clearBtn.style.display = 'flex';
+    }
+  }
+
+  // Đóng bong bóng
+  function closeBubble(restoreFocus = false) {
+    if (!bubble.classList.contains('open')) return;
+    btn.classList.remove('active');
+    btn.setAttribute('aria-expanded', 'false');
+    bubble.classList.remove('open');
+    if (restoreFocus) {
+      btn.focus();
+    }
+  }
+
+  // Bật/tắt bong bóng
+  function toggleBubble() {
+    if (bubble.classList.contains('open')) {
+      closeBubble(true);
+    } else {
+      openBubble();
+    }
+  }
+
+  // Lọc và gợi ý sản phẩm ngay khi gõ (tối đa 5 kết quả)
+  function renderBubbleSuggestions(query) {
+    if (!resultsContainer) return;
+    const q = (query || '').trim().toLowerCase();
+    if (!q) {
+      resultsContainer.style.display = 'none';
+      resultsContainer.innerHTML = '';
+      return;
+    }
+
+    if (typeof loadProductsAndCategories === 'function') {
+      loadProductsAndCategories();
+    }
+    const prods = (typeof PRODUCTS !== 'undefined' && Array.isArray(PRODUCTS)) ? PRODUCTS : [];
+
+    const matches = prods.filter(p => {
+      const name = (p.name || '').toLowerCase();
+      const cat = (p.categoryLabel || p.category || '').toLowerCase();
+      const desc = (p.description || '').toLowerCase();
+      return name.includes(q) || cat.includes(q) || desc.includes(q);
+    }).slice(0, 5);
+
+    if (matches.length === 0) {
+      resultsContainer.innerHTML = `
+        <div class="search-no-results">
+          <span>😔</span> Không tìm thấy sản phẩm nào khớp với "<strong>${escapeHtml(query)}</strong>"
+          <div style="margin-top:8px">
+            <a href="products.html?q=${encodeURIComponent(query)}" style="color:var(--purple-light);font-size:12px;font-weight:600;text-decoration:none">
+              Duyệt tất cả sản phẩm trong cửa hàng →
+            </a>
+          </div>
+        </div>
+      `;
+      resultsContainer.style.display = 'flex';
+      return;
+    }
+
+    const itemsHtml = matches.map(p => {
+      const priceStr = typeof formatPrice === 'function' 
+        ? formatPrice(p.price) 
+        : `${(p.price || 0).toLocaleString('vi-VN')}đ`;
+      const catLabel = p.categoryLabel || p.category || 'Game';
+      const thumbHtml = p.image
+        ? `<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" class="search-result-thumb" onerror="this.onerror=null;this.replaceWith(document.createElement('div'));this.className='search-result-thumb';this.textContent='🎮'" />`
+        : `<div class="search-result-thumb">🎮</div>`;
+
+      return `
+        <a href="product-detail.html?id=${p.id}" class="search-result-item" title="${escapeHtml(p.name)}">
+          ${thumbHtml}
+          <div class="search-result-info">
+            <div class="search-result-title">${escapeHtml(p.name)}</div>
+            <div class="search-result-meta">
+              <span class="search-result-price">${priceStr}</span>
+              <span class="search-result-category">${escapeHtml(catLabel)}</span>
+            </div>
+          </div>
+        </a>
+      `;
+    }).join('');
+
+    resultsContainer.innerHTML = itemsHtml + `
+      <div class="search-results-footer">
+        <a href="products.html?q=${encodeURIComponent(query)}">
+          Xem tất cả kết quả cho "${escapeHtml(query)}" →
+        </a>
+      </div>
+    `;
+    resultsContainer.style.display = 'flex';
+  }
+
+  // Sự kiện gõ trên input
+  if (input) {
+    input.addEventListener('input', () => {
+      const val = input.value;
+      if (clearBtn) {
+        clearBtn.style.display = val.length > 0 ? 'flex' : 'none';
+      }
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        renderBubbleSuggestions(val);
+      }, 150);
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleBubbleSearchSubmit(e);
+      }
+    });
+  }
+
+  // Nút xóa chữ nhanh
+  if (clearBtn) {
+    clearBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+      clearBtn.style.display = 'none';
+      if (resultsContainer) {
+        resultsContainer.style.display = 'none';
+        resultsContainer.innerHTML = '';
+      }
+    });
+  }
+
+  // Click vào các chip gợi ý "Tìm nhiều:"
+  bubble.querySelectorAll('.search-chip').forEach(chip => {
+    chip.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const val = chip.dataset.query || chip.textContent.trim();
+      if (input) {
+        input.value = val;
+        if (clearBtn) clearBtn.style.display = 'flex';
+        input.focus();
+        renderBubbleSuggestions(val);
+      }
+    });
+  });
+
+  // Click nút kính lúp: Toggle
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleBubble();
+  });
+
+  // Chặn nổi bọt sự kiện khi click vào trong bong bóng
+  bubble.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+
+  // Click ra ngoài thì đóng bong bóng
+  document.addEventListener('click', (e) => {
+    if (bubble.classList.contains('open')) {
+      if (!wrapper || !wrapper.contains(e.target)) {
+        closeBubble(false);
+      }
+    }
+  });
+
+  // Bấm Esc để đóng; Bấm Ctrl+K hoặc Cmd+K để mở nhanh
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && bubble.classList.contains('open')) {
+      e.preventDefault();
+      closeBubble(true);
+    } else if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+      e.preventDefault();
+      toggleBubble();
+    }
+  });
+
+  // Cập nhật vị trí khi resize hoặc cuộn trang (khi navbar sticky)
+  window.addEventListener('resize', () => {
+    if (bubble.classList.contains('open')) {
+      updateBubblePosition();
+    }
+  });
+  window.addEventListener('scroll', () => {
+    if (bubble.classList.contains('open')) {
+      updateBubblePosition();
+    }
+  }, { passive: true });
+}
+
 function initSearch() {
   const searchInputs = document.querySelectorAll('.search-input');
   searchInputs.forEach(input => {
@@ -684,14 +969,22 @@ function setCurrentUser(user) {
     localStorage.removeItem('tapHoa23User');
   }
   renderAuthNavbar();
+  renderAdminHomeBar();
   autofillBuyerInfo();
+  if (typeof checkAdminSliderPrivilege === 'function') {
+    checkAdminSliderPrivilege();
+  }
 }
 
 function handleLogout() {
   localStorage.removeItem('tapHoa23User');
   showToast('👋 Đã đăng xuất thành công!');
   renderAuthNavbar();
+  renderAdminHomeBar();
   autofillBuyerInfo();
+  if (typeof checkAdminSliderPrivilege === 'function') {
+    checkAdminSliderPrivilege();
+  }
   if (window.location.pathname.includes('admin.html')) {
     window.location.href = 'index.html';
   }
@@ -778,6 +1071,13 @@ function renderAuthNavbar() {
   const user = getCurrentUser();
   const loginBtns = document.querySelectorAll('.nav-login-btn');
 
+  // Thêm class logged-in vào body để CSS ẩn triệt để mọi nút đăng nhập
+  if (user) {
+    document.body.classList.add('logged-in');
+  } else {
+    document.body.classList.remove('logged-in');
+  }
+
   loginBtns.forEach(btn => {
     let container = btn.parentElement.querySelector('.nav-user-dropdown-container');
     if (user) {
@@ -786,8 +1086,10 @@ function renderAuthNavbar() {
         container.className = 'nav-user-dropdown-container';
         btn.parentElement.insertBefore(container, btn);
       }
-      btn.style.display = 'none';
-      container.style.display = 'inline-block';
+      // Ẩn triệt để nút đăng nhập, dùng setProperty với priority !important
+      btn.style.setProperty('display', 'none', 'important');
+      btn.classList.add('hidden');
+      container.style.setProperty('display', 'inline-flex', 'important');
 
       const isAdmin = user.role === 'admin';
       const vip = getVipInfo(user.totalDeposited || 0, user.role);
@@ -848,9 +1150,10 @@ function renderAuthNavbar() {
         </div>
       `;
     } else {
-      btn.style.display = 'inline-flex';
+      btn.style.removeProperty('display');
+      btn.classList.remove('hidden');
       if (container) {
-        container.style.display = 'none';
+        container.remove();
       }
     }
   });
@@ -967,6 +1270,7 @@ document.addEventListener('DOMContentLoaded', () => {
   autofillBuyerInfo();
   updateCartBadge();
   initSearch();
+  initBubbleSearch();
   initCategoryFilter();
   initCountdown();
   initMobileMenu();
