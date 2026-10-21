@@ -1,5 +1,6 @@
 // ==================== TẠP HÓA 23 - Main JavaScript ====================
 
+<<<<<<< HEAD
 // Check admin role immediately on script load to prevent layout shift
 try {
   const _savedUser = JSON.parse(localStorage.getItem('tapHoa23User') || 'null');
@@ -10,6 +11,8 @@ try {
   }
 } catch (e) {}
 
+=======
+>>>>>>> 85eaa7881313e4cb7bfee91c2ffa143ab70f91b4
 // ===== Product Navigation =====
 function goToProductDetail(productId) {
   if (!productId) return;
@@ -971,11 +974,14 @@ function getCurrentUser() {
   }
 }
 
+<<<<<<< HEAD
 function isUserAdmin(user = getCurrentUser()) {
   if (!user) return false;
   return !!(user.role === 'admin' || user.username?.toLowerCase() === '4siankollective');
 }
 
+=======
+>>>>>>> 85eaa7881313e4cb7bfee91c2ffa143ab70f91b4
 function setCurrentUser(user) {
   if (user) {
     updateUserVipTier(user);
@@ -1086,13 +1092,18 @@ function renderAuthNavbar() {
   const user = getCurrentUser();
   const loginBtns = document.querySelectorAll('.nav-login-btn');
 
+<<<<<<< HEAD
   // Thêm class logged-in và is-admin vào body để CSS ẩn/hiện theo vai trò
+=======
+  // Thêm class logged-in vào body để CSS ẩn triệt để mọi nút đăng nhập
+>>>>>>> 85eaa7881313e4cb7bfee91c2ffa143ab70f91b4
   if (user) {
     document.body.classList.add('logged-in');
   } else {
     document.body.classList.remove('logged-in');
   }
 
+<<<<<<< HEAD
   const isAdmin = isUserAdmin(user);
   if (isAdmin) {
     document.body.classList.add('is-admin');
@@ -1120,6 +1131,8 @@ function renderAuthNavbar() {
     }
   });
 
+=======
+>>>>>>> 85eaa7881313e4cb7bfee91c2ffa143ab70f91b4
   loginBtns.forEach(btn => {
     let container = btn.parentElement.querySelector('.nav-user-dropdown-container');
     if (user) {
@@ -1133,6 +1146,10 @@ function renderAuthNavbar() {
       btn.classList.add('hidden');
       container.style.setProperty('display', 'inline-flex', 'important');
 
+<<<<<<< HEAD
+=======
+      const isAdmin = user.role === 'admin';
+>>>>>>> 85eaa7881313e4cb7bfee91c2ffa143ab70f91b4
       const vip = getVipInfo(user.totalDeposited || 0, user.role);
 
       const avatarHtml = (user.avatar && (user.avatar.startsWith('http') || user.avatar.startsWith('data:image')))
@@ -1263,6 +1280,7 @@ function renderHomeCategories() {
   }).join('');
 }
 
+<<<<<<< HEAD
 // ==================== GIFTCODE SYSTEM (ADMIN PRIVILEGED) ====================
 const DEFAULT_GIFTCODES = [
   {
@@ -1967,6 +1985,9 @@ function handleApplyCheckoutCoupon() {
 }
 
 // Render Admin Quick Access Topbar on Public Store Pages (Redesigned - Minimalist Dark Spotlight)
+=======
+// Render Admin Quick Access Topbar on Public Store Pages
+>>>>>>> 85eaa7881313e4cb7bfee91c2ffa143ab70f91b4
 function renderAdminHomeBar() {
   // If already on admin.html, don't inject topbar
   if (window.location.pathname.includes('admin.html')) return;
@@ -1974,11 +1995,31 @@ function renderAdminHomeBar() {
   const user = getCurrentUser();
   let existingBar = document.getElementById('admin-quick-topbar');
 
+<<<<<<< HEAD
   if (isUserAdmin(user)) {
+=======
+  if (user && user.role === 'admin') {
+>>>>>>> 85eaa7881313e4cb7bfee91c2ffa143ab70f91b4
     if (!existingBar) {
       existingBar = document.createElement('div');
       existingBar.id = 'admin-quick-topbar';
       existingBar.className = 'admin-quick-topbar';
+<<<<<<< HEAD
+=======
+      existingBar.innerHTML = `
+        <div class="container admin-quick-inner">
+          <div class="admin-quick-left" style="display:flex;align-items:center;gap:10px">
+            <span class="admin-quick-badge">🛡️ ADMIN ĐANG TRỰC TUYẾN</span>
+            <span class="admin-quick-text">Tài khoản: <strong style="color:var(--gold)">${user.username}</strong> — Đang duyệt hệ thống ở quyền Quản Trị</span>
+          </div>
+          <div class="admin-quick-actions">
+            <a href="admin.html" class="btn-admin-bar-primary">📊 Vào Bảng Điều Khiển Quản Trị Viên →</a>
+            <a href="admin.html?tab=add" class="btn-admin-bar-secondary">➕ Thêm Hàng Mới</a>
+            <a href="admin.html?tab=wallet" class="btn-admin-bar-secondary">💰 Quản Lý Ví & Nạp Tiền</a>
+          </div>
+        </div>
+      `;
+>>>>>>> 85eaa7881313e4cb7bfee91c2ffa143ab70f91b4
       const navbar = document.querySelector('.navbar');
       if (navbar && navbar.parentNode) {
         navbar.parentNode.insertBefore(existingBar, navbar.nextSibling);
@@ -1986,6 +2027,7 @@ function renderAdminHomeBar() {
         document.body.prepend(existingBar);
       }
     }
+<<<<<<< HEAD
 
     existingBar.innerHTML = `
       <div class="admin-topbar-beam"></div>
@@ -2024,6 +2066,8 @@ function renderAdminHomeBar() {
         </div>
       </div>
     `;
+=======
+>>>>>>> 85eaa7881313e4cb7bfee91c2ffa143ab70f91b4
   } else if (existingBar) {
     existingBar.remove();
   }
