@@ -331,19 +331,144 @@ function renderCart() {
   if (countEl) countEl.textContent = `${cart.reduce((s, i) => s + i.quantity, 0)} sản phẩm`;
 }
 
-// ===== Mobile Menu =====
-function initMobileMenu() {
-  const hamburger = document.getElementById('hamburger');
-  const navMenu = document.getElementById('nav-menu');
-  if (!hamburger || !navMenu) return;
-  hamburger.addEventListener('click', () => {
-    navMenu.classList.toggle('open');
-    hamburger.classList.toggle('active');
+// ===== Mobile Menu (Drawer / Dropdown < 1024px) - PHẦN B =====
+function initActiveNavLinks() {
+  const fullPath = window.location.pathname;
+  const segments = fullPath.split('/').filter(Boolean);
+  const filename = segments.length > 0 ? segments[segments.length - 1].toLowerCase() : '';
+  const isRoot = fullPath === '/' || fullPath === '' || filename === '' || filename === 'index.html';
+
+  const navLinks = document.querySelectorAll('.nav-links a');
+  navLinks.forEach(link => {
+    const href = link.getAttribute('href') || '';
+    const cleanHref = href.split('#')[0].split('?')[0];
+    const hrefSegments = cleanHref.split('/').filter(Boolean);
+    const hrefFilename = hrefSegments.length > 0 ? hrefSegments[hrefSegments.length - 1].toLowerCase() : '';
+
+    let isMatch = false;
+    if (isRoot) {
+      // Khớp chính xác với root ("/" hoặc "index.html", không tính liên kết anchor #categories)
+      isMatch = (cleanHref === '/' || cleanHref === '' || cleanHref === './' || cleanHref === './index.html' || hrefFilename === 'index.html') && !href.includes('#');
+    } else {
+      // Khớp chính xác theo tên file trang hiện tại, KHÔNG dùng startsWith
+      isMatch = (hrefFilename === filename && hrefFilename !== '');
+    }
+
+    if (isMatch) {
+      link.classList.add('active');
+    } else {
+      link.classList.remove('active');
+    }
   });
-  document.addEventListener('click', (e) => {
-    if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
-      navMenu.classList.remove('open');
+}
+
+function ensureNavLinkStructure() {
+  const iconMap = [
+    { key: 'index.html', icon: '🏠' },
+    { key: 'products.html', icon: '🛍️' },
+    { key: '#categories', icon: '📁' },
+    { key: 'about.html', icon: 'ℹ️' },
+    { key: 'admin.html', icon: '🛡️' }
+  ];
+
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    if (!a.querySelector('.nav-link-text')) {
+      const text = a.textContent.trim();
+      const href = a.getAttribute('href') || '';
+      let icon = '🔗';
+
+      if (href === 'index.html' || href === '/' || href === './') icon = '🏠';
+      else if (href.includes('products.html')) icon = '🛍️';
+      else if (href.includes('#categories')) icon = '📁';
+      else if (href.includes('about.html')) icon = 'ℹ️';
+      else if (href.includes('admin.html')) icon = '🛡️';
+
+      a.innerHTML = `
+        <span class="nav-link-icon">${icon}</span>
+        <span class="nav-link-text">${text}</span>
+        <span class="nav-link-arrow">›</span>
+      `;
+    }
+  });
+}
+
+function initMobileMenu() {
+  const hamburger = document.getElementById('nav-hamburger') || document.querySelector('.nav-hamburger') || document.getElementById('hamburger');
+  const navMenu = document.getElementById('nav-menu') || document.querySelector('.nav-menu');
+  const overlay = document.getElementById('nav-overlay') || document.querySelector('.nav-overlay');
+
+  ensureNavLinkStructure();
+  initActiveNavLinks();
+
+  if (!hamburger || !navMenu) return;
+
+  // Accessibility attributes
+  hamburger.setAttribute('aria-controls', 'nav-menu');
+  if (!hamburger.hasAttribute('aria-label')) {
+    hamburger.setAttribute('aria-label', 'Mở menu điều hướng');
+  }
+  hamburger.setAttribute('aria-expanded', 'false');
+
+  function toggleMenu(forceClose = false) {
+    const isCurrentlyOpen = navMenu.classList.contains('open');
+    const shouldOpen = forceClose ? false : !isCurrentlyOpen;
+
+    if (shouldOpen) {
+      hamburger.classList.add('active');
+      hamburger.setAttribute('aria-expanded', 'true');
+      hamburger.setAttribute('aria-label', 'Đóng menu điều hướng');
+      navMenu.classList.add('open');
+      if (overlay) overlay.classList.add('active');
+
+      // Khóa cuộn trang mượt mà, chống giật layout
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+      document.body.style.overflow = 'hidden';
+    } else {
       hamburger.classList.remove('active');
+      hamburger.setAttribute('aria-expanded', 'false');
+      hamburger.setAttribute('aria-label', 'Mở menu điều hướng');
+      navMenu.classList.remove('open');
+      if (overlay) overlay.classList.remove('active');
+
+      // Mở lại cuộn trang và xóa padding bù trừ
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+  }
+
+  // Hamburger click toggle
+  hamburger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  // Click on background overlay to close
+  if (overlay) {
+    overlay.addEventListener('click', () => toggleMenu(true));
+  }
+
+  // Click any link inside menu to auto-close drawer
+  navMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      toggleMenu(true);
+    });
+  });
+
+  // Press ESC to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navMenu.classList.contains('open')) {
+      toggleMenu(true);
+      hamburger.focus();
+    }
+  });
+
+  // Window resize >= 1024px: auto-close drawer
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1024 && navMenu.classList.contains('open')) {
+      toggleMenu(true);
     }
   });
 }
@@ -729,6 +854,10 @@ function renderAuthNavbar() {
       }
     }
   });
+
+  if (typeof checkAdminSliderPrivilege === 'function') {
+    checkAdminSliderPrivilege();
+  }
 }
 
 // Close dropdown on outside click
