@@ -1,301 +1,293 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Giỏ Hàng - Tạp Hóa 23</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Exo+2:wght@700;800;900&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Exo+2:wght@700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/animations.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
-
 <body>
 
-  <!-- ===== HEADER / NAVBAR ===== -->
-  <header class="navbar">
-    <div class="container nav-inner">
-      <!-- Khối trái: Logo -->
-      <a href="index.html" class="nav-logo">
-        <span class="nav-logo-icon">🛒</span>
-        <span class="nav-logo-text">Tạp Hóa 23</span>
+<!-- ===== HEADER / NAVBAR ===== -->
+<header class="navbar">
+  <div class="container nav-inner">
+    <!-- Khối trái: Logo -->
+    <a href="index.html" class="nav-logo">
+      <span class="nav-logo-icon">🛒</span>
+      <span class="nav-logo-text">Tạp Hóa 23</span>
+    </a>
+
+    <!-- Khối giữa: Menu điều hướng (Desktop >= 1024px & Drawer Dropdown < 1024px: Chỉ 4 link) -->
+    <nav class="nav-menu" id="nav-menu">
+      <ul class="nav-links">
+        <li>
+          <a href="index.html">
+            <span class="nav-link-icon">🏠</span>
+            <span class="nav-link-text">Trang Chủ</span>
+            <span class="nav-link-arrow">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="products.html">
+            <span class="nav-link-icon">🛍️</span>
+            <span class="nav-link-text">Sản Phẩm</span>
+            <span class="nav-link-arrow">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="categories.html">
+            <span class="nav-link-icon">📁</span>
+            <span class="nav-link-text">Danh Mục</span>
+            <span class="nav-link-arrow">›</span>
+          </a>
+        </li>
+        <li>
+          <a href="about.html">
+            <span class="nav-link-icon">ℹ️</span>
+            <span class="nav-link-text">Về Chúng Tôi</span>
+            <span class="nav-link-arrow">›</span>
+          </a>
+        </li>
+        <li class="nav-admin-item">
+          <a href="admin.html" class="nav-admin-btn">
+            <span class="nav-link-icon">🛡️</span>
+            <span class="nav-link-text">Quản Trị</span>
+            <span class="nav-link-arrow">›</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Khối phải: Cụm nút (Facebook, Discord, Giỏ hàng, Đăng nhập, Hamburger) -->
+    <div class="nav-actions">
+      <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer" class="nav-social-btn nav-btn-fb" title="Trang Facebook Tạp Hóa 23">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      </a>
+      <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer" class="nav-social-btn nav-btn-discord" title="Máy chủ Discord Tạp Hóa 23">
+        <svg width="18" height="15" viewBox="0 0 24 19" fill="currentColor"><path d="M20.317 1.492a19.742 19.742 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.182-.32 10.755.099 15.277a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 12.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
       </a>
 
-      <!-- Khối giữa: Menu điều hướng (Desktop >= 1024px & Drawer Dropdown < 1024px: Chỉ 4 link) -->
-      <nav class="nav-menu" id="nav-menu">
-        <ul class="nav-links">
-          <li>
-            <a href="index.html">
-              <span class="nav-link-icon">🏠</span>
-              <span class="nav-link-text">Trang Chủ</span>
-              <span class="nav-link-arrow">›</span>
-            </a>
-          </li>
-          <li>
-            <a href="products.html">
-              <span class="nav-link-icon">🛍️</span>
-              <span class="nav-link-text">Sản Phẩm</span>
-              <span class="nav-link-arrow">›</span>
-            </a>
-          </li>
-          <li>
-            <a href="index.html#categories">
-              <span class="nav-link-icon">📁</span>
-              <span class="nav-link-text">Danh Mục</span>
-              <span class="nav-link-arrow">›</span>
-            </a>
-          </li>
-          <li>
-            <a href="about.html">
-              <span class="nav-link-icon">ℹ️</span>
-              <span class="nav-link-text">Về Chúng Tôi</span>
-              <span class="nav-link-arrow">›</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
-
-      <!-- Khối phải: Cụm nút (Facebook, Discord, Giỏ hàng, Đăng nhập, Hamburger) -->
-      <div class="nav-actions">
-        <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer"
-          class="nav-social-btn nav-btn-fb" title="Trang Facebook Tạp Hóa 23">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path
-              d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+      <!-- Nút Kính Lúp & Bong Bóng Tìm Kiếm -->
+      <div class="nav-search-wrapper" id="nav-search-wrapper">
+        <button type="button" class="nav-search-btn" id="nav-search-btn" aria-label="Tìm kiếm sản phẩm" aria-expanded="false" aria-controls="nav-search-bubble" title="Tìm kiếm (Ctrl+K)">
+          <svg class="search-icon-lens" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-        </a>
-        <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer"
-          class="nav-social-btn nav-btn-discord" title="Máy chủ Discord Tạp Hóa 23">
-          <svg width="18" height="15" viewBox="0 0 24 19" fill="currentColor">
-            <path
-              d="M20.317 1.492a19.742 19.742 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.182-.32 10.755.099 15.277a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 12.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+          <svg class="search-icon-close" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
-        </a>
-
-        <!-- Nút Kính Lúp & Bong Bóng Tìm Kiếm -->
-        <div class="nav-search-wrapper" id="nav-search-wrapper">
-          <button type="button" class="nav-search-btn" id="nav-search-btn" aria-label="Tìm kiếm sản phẩm"
-            aria-expanded="false" aria-controls="nav-search-bubble" title="Tìm kiếm (Ctrl+K)">
-            <svg class="search-icon-lens" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <svg class="search-icon-close" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-
-          <!-- Bong Bóng Tìm Kiếm Popup -->
-          <div class="nav-search-bubble" id="nav-search-bubble" role="dialog" aria-modal="false"
-            aria-label="Tìm kiếm nhanh">
-            <div class="search-bubble-arrow" aria-hidden="true"></div>
-            <div class="search-bubble-body">
-              <form class="search-bubble-form" id="search-bubble-form" onsubmit="handleBubbleSearchSubmit(event)">
-                <div class="search-input-wrap">
-                  <svg class="search-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
-                  <input type="text" class="search-bubble-input" id="search-bubble-input"
-                    placeholder="Tìm key, tài khoản game, giftcode…" autocomplete="off" spellcheck="false" />
-                  <button type="button" class="search-bubble-clear" id="search-bubble-clear" aria-label="Xóa nội dung"
-                    title="Xóa">✕</button>
-                </div>
-                <button type="submit" class="search-bubble-submit-btn">Tìm</button>
-              </form>
-
-              <!-- Gợi ý từ khóa phổ biến -->
-              <div class="search-bubble-suggestions">
-                <span class="search-suggestions-label">Tìm nhiều:</span>
-                <div class="search-chips-list">
-                  <button type="button" class="search-chip" data-query="Steam Key">Steam Key</button>
-                  <button type="button" class="search-chip" data-query="Tài khoản Valorant">Tài khoản Valorant</button>
-                  <button type="button" class="search-chip" data-query="Giftcode">Giftcode</button>
-                  <button type="button" class="search-chip" data-query="Netflix">Netflix</button>
-                </div>
-              </div>
-
-              <!-- Kết quả gợi ý trực tiếp -->
-              <div class="search-bubble-results" id="search-bubble-results" style="display:none"></div>
-            </div>
-          </div>
-        </div>
-
-        <a href="cart.html" class="nav-cart-btn" title="Xem giỏ hàng">
-          🛒
-          <span class="cart-badge">0</span>
-        </a>
-        <a href="login.html" class="nav-login-btn" title="Đăng Nhập">
-          <span class="nav-login-icon">👤</span>
-          <span class="nav-login-text">Đăng Nhập</span>
-        </a>
-        <button class="nav-hamburger" id="nav-hamburger" aria-label="Mở menu điều hướng" aria-expanded="false"
-          aria-controls="nav-menu">
-          <span></span>
-          <span></span>
-          <span></span>
         </button>
+
+        <!-- Bong Bóng Tìm Kiếm Popup -->
+        <div class="nav-search-bubble" id="nav-search-bubble" role="dialog" aria-modal="false" aria-label="Tìm kiếm nhanh">
+          <div class="search-bubble-arrow" aria-hidden="true"></div>
+          <div class="search-bubble-body">
+            <form class="search-bubble-form" id="search-bubble-form" onsubmit="handleBubbleSearchSubmit(event)">
+              <div class="search-input-wrap">
+                <svg class="search-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input 
+                  type="text" 
+                  class="search-bubble-input" 
+                  id="search-bubble-input" 
+                  placeholder="Tìm key, tài khoản game, giftcode…" 
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+                <button type="button" class="search-bubble-clear" id="search-bubble-clear" aria-label="Xóa nội dung" title="Xóa">✕</button>
+              </div>
+              <button type="submit" class="search-bubble-submit-btn">Tìm</button>
+            </form>
+
+            <!-- Gợi ý từ khóa phổ biến -->
+            <div class="search-bubble-suggestions">
+              <span class="search-suggestions-label">Tìm nhiều:</span>
+              <div class="search-chips-list">
+                <button type="button" class="search-chip" data-query="Steam Key">Steam Key</button>
+                <button type="button" class="search-chip" data-query="Tài khoản Valorant">Tài khoản Valorant</button>
+                <button type="button" class="search-chip" data-query="Giftcode">Giftcode</button>
+                <button type="button" class="search-chip" data-query="Netflix">Netflix</button>
+              </div>
+            </div>
+
+            <!-- Kết quả gợi ý trực tiếp -->
+            <div class="search-bubble-results" id="search-bubble-results" style="display:none"></div>
+          </div>
+        </div>
       </div>
+
+      <a href="cart.html" class="nav-cart-btn" title="Xem giỏ hàng">
+        🛒
+        <span class="cart-badge">0</span>
+      </a>
+      <a href="login.html" class="nav-login-btn" title="Đăng Nhập">
+        <span class="nav-login-icon">👤</span>
+        <span class="nav-login-text">Đăng Nhập</span>
+      </a>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Mở menu điều hướng" aria-expanded="false" aria-controls="nav-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
-  </header>
-  <div class="nav-overlay" id="nav-overlay"></div>
+</div>
+</header>
+<div class="nav-overlay" id="nav-overlay"></div>
 
-  <!-- ===== CART CONTENT ===== -->
-  <div class="container">
-    <div class="cart-page-layout">
-      <!-- Cart Items -->
-      <div>
-        <div
-          style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
-          <h1 class="cart-title">🛒 Giỏ Hàng <span style="font-size:18px;color:var(--text-muted);font-weight:400">(<span
-                id="cart-count">0 sản phẩm</span>)</span></h1>
-          <a href="products.html" style="font-size:14px;color:var(--purple-light);">← Tiếp tục mua hàng</a>
+<!-- ===== CART CONTENT ===== -->
+<div class="container">
+  <div class="cart-page-layout">
+    <!-- Cart Items -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+        <h1 class="cart-title">🛒 Giỏ Hàng <span style="font-size:18px;color:var(--text-muted);font-weight:400">(<span id="cart-count">0 sản phẩm</span>)</span></h1>
+        <a href="products.html" style="font-size:14px;color:var(--purple-light);">← Tiếp tục mua hàng</a>
+      </div>
+      <div id="cart-items"></div>
+    </div>
+
+    <!-- Summary -->
+    <div>
+      <div class="cart-summary">
+        <h3>📋 Tóm Tắt Đơn Hàng</h3>
+        <div class="cart-summary-row">
+          <span>Tạm tính:</span>
+          <span id="cart-total">0đ</span>
         </div>
-        <div id="cart-items"></div>
+        <div class="cart-summary-row">
+          <span>Phí giao hàng:</span>
+          <span style="color:var(--green);font-weight:700">Miễn phí ⚡</span>
+        </div>
+        <div class="cart-summary-row">
+          <span>Giảm giá:</span>
+          <span style="color:var(--red)" id="cart-discount-val">-0đ</span>
+        </div>
+        <div class="cart-summary-row" style="border-top:1px solid var(--border-color);padding-top:16px;margin-top:4px">
+          <span style="font-weight:700;font-size:16px">Tổng cộng:</span>
+          <span class="cart-summary-total" id="cart-total-final">0đ</span>
+        </div>
+
+        <!-- Coupon -->
+        <div style="margin-top:20px">
+          <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:10px">🎟️ Mã Giảm Giá / Giftcode</div>
+          <div style="display:flex;gap:8px">
+            <input type="text" id="cart-coupon-input" placeholder="Nhập mã coupon hoặc giftcode..." style="flex:1;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-sm);color:var(--text-primary);font-size:13px;font-family:inherit" onkeydown="if(event.key==='Enter') handleApplyCartCoupon()" />
+            <button onclick="handleApplyCartCoupon()" class="btn-primary" style="padding:10px 18px;font-size:13px;border-radius:var(--radius-sm)">Áp Dụng</button>
+          </div>
+        </div>
+
+        <a href="checkout.html" class="btn-checkout">🚀 Thanh Toán Ngay</a>
+
+        <!-- Payment icons -->
+        <div style="margin-top:20px;text-align:center">
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Thanh toán an toàn qua:</p>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+            <span style="padding:6px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:6px;font-size:12px;font-weight:600">📱 MoMo</span>
+            <span style="padding:6px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:6px;font-size:12px;font-weight:600">🏦 Banking</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Summary -->
-      <div>
-        <div class="cart-summary">
-          <h3>📋 Tóm Tắt Đơn Hàng</h3>
-          <div class="cart-summary-row">
-            <span>Tạm tính:</span>
-            <span id="cart-total">0đ</span>
-          </div>
-          <div class="cart-summary-row">
-            <span>Phí giao hàng:</span>
-            <span style="color:var(--green);font-weight:700">Miễn phí ⚡</span>
-          </div>
-          <div class="cart-summary-row">
-            <span>Giảm giá:</span>
-            <span style="color:var(--red)">-0đ</span>
-          </div>
-          <div class="cart-summary-row"
-            style="border-top:1px solid var(--border-color);padding-top:16px;margin-top:4px">
-            <span style="font-weight:700;font-size:16px">Tổng cộng:</span>
-            <span class="cart-summary-total" id="cart-total-final">0đ</span>
-          </div>
-
-          <!-- Coupon -->
-          <div style="margin-top:20px">
-            <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:10px">🎟️ Mã Giảm Giá
-            </div>
-            <div style="display:flex;gap:8px">
-              <input type="text" placeholder="Nhập mã coupon..."
-                style="flex:1;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-sm);color:var(--text-primary);font-size:13px;font-family:inherit" />
-              <button onclick="showToast('🎉 Mã giảm giá áp dụng thành công!')"
-                style="padding:10px 16px;background:var(--gradient-primary);color:white;border-radius:var(--radius-sm);font-size:13px;font-weight:700;transition:var(--transition)">Áp
-                Dụng</button>
-            </div>
-          </div>
-
-          <a href="checkout.html" class="btn-checkout">🚀 Thanh Toán Ngay</a>
-
-          <!-- Payment icons -->
-          <div style="margin-top:20px;text-align:center">
-            <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Thanh toán an toàn qua:</p>
-            <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-              <span
-                style="padding:6px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:6px;font-size:12px;font-weight:600">📱
-                MoMo</span>
-              <span
-                style="padding:6px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border-color);border-radius:6px;font-size:12px;font-weight:600">🏦
-                Banking</span>
-            </div>
-          </div>
+      <!-- Trust box -->
+      <div style="margin-top:16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--text-secondary)">
+          <span style="font-size:20px">🔒</span><span>Thanh toán 100% an toàn & bảo mật</span>
         </div>
-
-        <!-- Trust box -->
-        <div
-          style="margin-top:16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:12px">
-          <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--text-secondary)">
-            <span style="font-size:20px">🔒</span><span>Thanh toán 100% an toàn & bảo mật</span>
-          </div>
-          <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--text-secondary)">
-            <span style="font-size:20px">⚡</span><span>Giao hàng tức thì sau khi thanh toán</span>
-          </div>
-          <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--text-secondary)">
-            <span style="font-size:20px">💬</span><span>Hỗ trợ 24/7 qua Facebook & Discord</span>
-          </div>
+        <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--text-secondary)">
+          <span style="font-size:20px">⚡</span><span>Giao hàng tức thì sau khi thanh toán</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--text-secondary)">
+          <span style="font-size:20px">💬</span><span>Hỗ trợ 24/7 qua Facebook & Discord</span>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- ===== FOOTER ===== -->
-  <footer class="footer" style="margin-top:60px">
-    <div class="container">
-      <div class="footer-contact-bar">
-        <div class="footer-contact-item">
-          <span class="contact-icon">📞</span>
-          <span>Hotline / Zalo: <a href="tel:0987654321">0987 654 321</a></span>
-        </div>
-        <div class="footer-contact-divider">•</div>
-        <div class="footer-contact-item">
-          <span class="contact-icon">✉️</span>
-          <span>Email: <a href="mailto:taphoa23@gmail.com">taphoa23@gmail.com</a></span>
-        </div>
-        <div class="footer-contact-divider">•</div>
-        <div class="footer-contact-item">
-          <span class="contact-icon">⏰</span>
-          <span>Hỗ trợ: <strong style="color:var(--green)">24/7</strong></span>
-        </div>
+<!-- ===== FOOTER ===== -->
+<footer class="footer" style="margin-top:60px">
+  <div class="container">
+    <div class="footer-contact-bar">
+      <div class="footer-contact-item">
+        <span class="contact-icon">📞</span>
+        <span>Hotline / Zalo: <a href="tel:0987654321">0987 654 321</a></span>
       </div>
-      <div class="footer-bottom">
-        <p>© 2024 Tạp Hóa 23. All rights reserved. Liên hệ: <a href="tel:0987654321" style="color:var(--gold)">0987 654
-            321</a> | <a href="mailto:taphoa23@gmail.com" style="color:var(--purple-light)">taphoa23@gmail.com</a></p>
-        <div class="footer-bottom-links">
-          <a href="about.html">Về Chúng Tôi</a>
-          <a href="#">Bảo Mật</a>
-          <a href="#">Điều Khoản</a>
-        </div>
+      <div class="footer-contact-divider">•</div>
+      <div class="footer-contact-item">
+        <span class="contact-icon">✉️</span>
+        <span>Email: <a href="mailto:taphoa23@gmail.com">taphoa23@gmail.com</a></span>
+      </div>
+      <div class="footer-contact-divider">•</div>
+      <div class="footer-contact-item">
+        <span class="contact-icon">⏰</span>
+        <span>Hỗ trợ: <strong style="color:var(--green)">24/7</strong></span>
       </div>
     </div>
-  </footer>
+    <div class="footer-bottom">
+      <p>© 2024 Tạp Hóa 23. All rights reserved. Liên hệ: <a href="tel:0987654321" style="color:var(--gold)">0987 654 321</a> | <a href="mailto:taphoa23@gmail.com" style="color:var(--purple-light)">taphoa23@gmail.com</a></p>
+      <div class="footer-bottom-links">
+        <a href="about.html">Về Chúng Tôi</a>
+        <a href="#">Bảo Mật</a>
+        <a href="#">Điều Khoản</a>
+      </div>
+    </div>
+  </div>
+</footer>
 
   <!-- FLOATING SOCIAL WIDGET (Facebook & Discord) -->
   <div class="floating-social-widget">
-    <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer"
-      class="floating-social-btn floating-fb" title="Trang Facebook Tạp Hóa 23">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-        <path
-          d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-      </svg>
+    <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer" class="floating-social-btn floating-fb" title="Trang Facebook Tạp Hóa 23">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
       <span class="floating-tooltip">Facebook Fanpage</span>
     </a>
-    <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer"
-      class="floating-social-btn floating-discord" title="Máy chủ Discord Tạp Hóa 23">
-      <svg width="22" height="18" viewBox="0 0 24 19" fill="currentColor">
-        <path
-          d="M20.317 1.492a19.742 19.742 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.182-.32 10.755.099 15.277a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 12.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
-      </svg>
+    <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer" class="floating-social-btn floating-discord" title="Máy chủ Discord Tạp Hóa 23">
+      <svg width="22" height="18" viewBox="0 0 24 19" fill="currentColor"><path d="M20.317 1.492a19.742 19.742 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.182-.32 10.755.099 15.277a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 12.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
       <span class="floating-tooltip">Kênh Discord</span>
     </a>
   </div>
 
   <button id="back-to-top">↑</button>
 
-  <script src="js/products-data.js"></script>
-  <script src="js/main.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Sync total to final total display
-      const orig = window.renderCart;
-      const interval = setInterval(() => {
-        const total = document.getElementById('cart-total');
-        const final = document.getElementById('cart-total-final');
-        if (total && final) final.textContent = total.textContent;
-      }, 100);
-    });
-  </script>
-</body>
+<script src="js/products-data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function updateCartSummaryWithCoupon() {
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const totalEl = document.getElementById('cart-total');
+    const finalEl = document.getElementById('cart-total-final');
+    const discValEl = document.getElementById('cart-discount-val');
+    if (totalEl) totalEl.textContent = formatPrice(subtotal);
 
+    let discount = 0;
+    const appliedRaw = sessionStorage.getItem('tapHoa23ActiveCoupon');
+    if (appliedRaw) {
+      try {
+        const coupon = JSON.parse(appliedRaw);
+        if (coupon.type === 'percent') {
+          discount = Math.round(subtotal * (coupon.value / 100));
+          if (coupon.maxDiscount > 0 && discount > coupon.maxDiscount) discount = coupon.maxDiscount;
+        } else if (coupon.type === 'fixed') {
+          discount = Math.min(coupon.value, subtotal);
+        }
+      } catch(e) {}
+    }
+
+    const finalTotal = Math.max(0, subtotal - discount);
+    if (discValEl) discValEl.textContent = discount > 0 ? `-${formatPrice(discount)}` : '-0đ';
+    if (finalEl) finalEl.textContent = formatPrice(finalTotal);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updateCartSummaryWithCoupon();
+  });
+</script>
+</body>
 </html>
