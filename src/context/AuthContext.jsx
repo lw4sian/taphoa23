@@ -88,11 +88,59 @@ export function AuthProvider({ children }) {
     ? getVipInfo(currentUser.totalDeposited || 0, currentUser.role)
     : getVipInfo(0, 'customer');
 
-  const login = (usernameOrEmail, password) => {
-    const cleanInput = (usernameOrEmail || '').trim().toLowerCase();
+  const login = async (usernameOrEmail, password) => {
+    const cleanInput = (usernameOrEmail || '').trim();
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: cleanInput,
+          password: password,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.token) {
+          localStorage.setItem('tapHoa23Token', data.token);
+        }
+
+        const found = users.find(
+          (u) =>
+            u.username.toLowerCase() === cleanInput.toLowerCase() ||
+            u.email.toLowerCase() === cleanInput.toLowerCase()
+        );
+
+        const loggedUser = found || {
+          id: 'u_' + (data.username || cleanInput),
+          username: data.username || cleanInput,
+          name: data.username || cleanInput,
+          email: data.email || `${cleanInput}@taphoa23.vn`,
+          role: data.role || 'customer',
+          avatar: data.role === 'admin' ? '👑' : '👤',
+          balance: 0,
+          totalDeposited: 0,
+          createdAt: new Date().toLocaleDateString('vi-VN'),
+        };
+
+        setCurrentUser(loggedUser);
+        return { success: true, user: loggedUser };
+      } else {
+        const errData = await response.json().catch(() => ({}));
+        if (response.status === 401 || response.status === 400) {
+          return { success: false, message: errData.message || 'Sai tên đăng nhập hoặc mật khẩu!' };
+        }
+      }
+    } catch (err) {
+      console.warn('Backend API /api/auth/login chưa sẵn sàng, dùng tài khoản cục bộ:', err);
+    }
+
+    // Fallback: Nếu backend chưa bật hoặc request lỗi mạng, kiểm tra users trong localStorage
     const found = users.find(
       (u) =>
-        (u.username.toLowerCase() === cleanInput || u.email.toLowerCase() === cleanInput) &&
+        (u.username.toLowerCase() === cleanInput.toLowerCase() || u.email.toLowerCase() === cleanInput.toLowerCase()) &&
         u.password === password
     );
 
@@ -103,12 +151,40 @@ export function AuthProvider({ children }) {
     return { success: false, message: 'Sai tên đăng nhập/email hoặc mật khẩu!' };
   };
 
-  const register = ({ username, email, password, phone, name }) => {
+  const register = async ({ username, email, password, phone, name }) => {
     const cleanUser = (username || '').trim();
     const cleanEmail = (email || '').trim();
 
     if (!cleanUser || !cleanEmail || !password) {
       return { success: false, message: 'Vui lòng điền đầy đủ các thông tin bắt buộc!' };
+    }
+
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: cleanUser,
+          email: cleanEmail,
+          password: password,
+          name: name?.trim() || cleanUser,
+          phone: phone?.trim() || '',
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.token) {
+          localStorage.setItem('tapHoa23Token', data.token);
+        }
+      } else {
+        const errData = await response.json().catch(() => ({}));
+        if (response.status === 400) {
+          return { success: false, message: errData.message || 'Đăng ký thất bại!' };
+        }
+      }
+    } catch (err) {
+      console.warn('Backend API /api/auth/register chưa sẵn sàng, lưu cục bộ:', err);
     }
 
     const exists = users.some(
@@ -140,6 +216,7 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
+    localStorage.removeItem('tapHoa23Token');
     setCurrentUser(null);
   };
 

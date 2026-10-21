@@ -1,4 +1,4 @@
-package taphoa23.concac.filter;
+package taphoa23.concac.Filter;
 
 import java.io.IOException;
 
@@ -10,13 +10,12 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.FoldSec.Services.JwtService;
-import com.example.FoldSec.Services.UserInfoService;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import taphoa23.concac.Services.JwtService;
+import taphoa23.concac.Services.UserInfoService;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
