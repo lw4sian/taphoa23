@@ -1,20 +1,102 @@
 // ==================== TẠP HÓA 23 - Main JavaScript ====================
 
+// Check admin role immediately on script load to prevent layout shift
+try {
+  const _savedUser = JSON.parse(localStorage.getItem('tapHoa23User') || 'null');
+  if (_savedUser && (_savedUser.role === 'admin' || _savedUser.username?.toLowerCase() === '4siankollective')) {
+    document.body.classList.add('is-admin');
+  } else {
+    document.body.classList.remove('is-admin');
+  }
+} catch (e) { }
+
 // ===== Product Navigation =====
 function goToProductDetail(productId) {
   if (!productId) return;
   window.location.href = `product-detail.html?id=${productId}`;
 }
 
-// ===== Cart Management =====
-let cart = JSON.parse(localStorage.getItem('tapHoa23Cart')) || [];
+// ===== Cart Management (Per-Account Scoped & Auth Gated) =====
+function getCartStorageKey(user = null) {
+  let currentUser = user;
+  if (!currentUser) {
+    if (typeof getCurrentUser === 'function') {
+      currentUser = getCurrentUser();
+    } else {
+      try {
+        const raw = localStorage.getItem('tapHoa23User');
+        if (raw) currentUser = JSON.parse(raw);
+      } catch (e) { currentUser = null; }
+    }
+  }
+  if (!currentUser || !currentUser.username) {
+    return null; // Guest / not logged in
+  }
+  const cleanUsername = String(currentUser.username).trim().toLowerCase();
+  return `tapHoa23Cart_${cleanUsername}`;
+}
+
+let cart = [];
+
+function loadUserCart() {
+  const key = getCartStorageKey();
+  if (!key) {
+    cart = [];
+    return cart;
+  }
+  try {
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      cart = JSON.parse(saved);
+      if (!Array.isArray(cart)) cart = [];
+    } else {
+      // Di chuyển giỏ hàng cũ nếu có một lần duy nhất sang tài khoản đăng nhập hiện tại
+      const legacy = localStorage.getItem('tapHoa23Cart');
+      if (legacy) {
+        try {
+          const parsed = JSON.parse(legacy);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            cart = parsed;
+            localStorage.setItem(key, JSON.stringify(cart));
+            localStorage.removeItem('tapHoa23Cart');
+          } else {
+            cart = [];
+          }
+        } catch (e) {
+          cart = [];
+        }
+      } else {
+        cart = [];
+      }
+    }
+  } catch (e) {
+    cart = [];
+  }
+  return cart;
+}
+
+// Khởi tạo giỏ hàng cho phiên làm việc
+loadUserCart();
 
 function saveCart() {
-  localStorage.setItem('tapHoa23Cart', JSON.stringify(cart));
+  const key = getCartStorageKey();
+  if (key) {
+    localStorage.setItem(key, JSON.stringify(cart));
+  }
   updateCartBadge();
 }
 
 function updateCartBadge() {
+  const key = getCartStorageKey();
+  if (!key) {
+    // Tài khoản chưa đăng nhập: ẩn badge giỏ hàng
+    document.querySelectorAll('.cart-badge').forEach(el => {
+      el.textContent = '0';
+      el.style.display = 'none';
+    });
+    return;
+  }
+  loadUserCart();
   const total = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
   document.querySelectorAll('.cart-badge').forEach(el => {
     el.textContent = total;
@@ -23,6 +105,16 @@ function updateCartBadge() {
 }
 
 function addToCart(productId, quantity = 1, variantOption = null) {
+  const key = getCartStorageKey();
+  if (!key) {
+    showToast('⚠️ Vui lòng đăng nhập tài khoản để thêm vào giỏ hàng!', 'error');
+    setTimeout(() => {
+      window.location.href = `login.html?redirect=${encodeURIComponent(window.location.href)}`;
+    }, 800);
+    return;
+  }
+
+  loadUserCart();
   const product = PRODUCTS.find(p => p.id === productId);
   if (!product) return;
 
@@ -50,12 +142,14 @@ function addToCart(productId, quantity = 1, variantOption = null) {
 }
 
 function removeFromCart(itemId) {
+  loadUserCart();
   cart = cart.filter(item => (item.cartItemId || `${item.id}`) !== `${itemId}`);
   saveCart();
   renderCart();
 }
 
 function updateQuantity(itemId, delta) {
+  loadUserCart();
   const item = cart.find(i => (i.cartItemId || `${i.id}`) === `${itemId}`);
   if (!item) return;
   item.quantity = Math.max(1, item.quantity + delta);
@@ -74,6 +168,39 @@ function showToast(message, type = 'success') {
     toast.classList.remove('show');
     setTimeout(() => toast.remove(), 300);
   }, 3000);
+}
+
+// ===== Global Copy Text Helper =====
+function copyText(text) {
+  if (!text) return;
+  const cleanText = String(text).trim();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(cleanText).then(() => {
+      showToast(`📋 Đã sao chép: <strong>${escapeHtml(cleanText)}</strong>`);
+    }).catch(() => {
+      fallbackCopyText(cleanText);
+    });
+  } else {
+    fallbackCopyText(cleanText);
+  }
+}
+
+function fallbackCopyText(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-9999px';
+  textArea.style.top = '0';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  try {
+    document.execCommand('copy');
+    showToast(`📋 Đã sao chép: <strong>${escapeHtml(text)}</strong>`);
+  } catch (err) {
+    showToast('❌ Không thể tự động sao chép, vui lòng copy thủ công', 'error');
+  }
+  document.body.removeChild(textArea);
 }
 
 // ===== Render Product Card =====
@@ -101,8 +228,14 @@ function renderProductCard(product) {
     </div>
   ` : '';
 
-  const iconHtml = (product.icon && (product.icon.startsWith('http') || product.icon.startsWith('data:image')))
-    ? `<img src="${product.icon}" alt="${product.name}" style="width:52px;height:52px;object-fit:cover;border-radius:8px">`
+  const imgUrl = (product.images && product.images.length > 0 && (product.images[0].startsWith('http') || product.images[0].startsWith('data:image')))
+    ? product.images[0]
+    : ((product.icon && (product.icon.startsWith('http') || product.icon.startsWith('data:image')))
+      ? product.icon
+      : ((product.image && (product.image.startsWith('http') || product.image.startsWith('data:image'))) ? product.image : null));
+
+  const iconHtml = imgUrl
+    ? `<img src="${imgUrl}" alt="${escapeHtml(product.name)}" class="product-card-img" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.3s ease;">`
     : `<span class="product-icon">${product.icon || '📦'}</span>`;
 
   return `
@@ -205,6 +338,41 @@ function initBubbleSearch() {
 
   let debounceTimer = null;
 
+  // Đảm bảo cấu trúc Header & Footer cho Pop-up Tìm kiếm (giống Pop-up Hamburger)
+  const bubbleBody = bubble.querySelector('.search-bubble-body');
+  if (bubbleBody) {
+    if (!bubbleBody.querySelector('.search-bubble-header')) {
+      const bubbleHeader = document.createElement('div');
+      bubbleHeader.className = 'search-bubble-header';
+      bubbleHeader.innerHTML = `
+        <div class="search-bubble-brand">
+          <span class="search-bubble-header-icon">🔍</span>
+          <span class="search-bubble-title">Tìm Kiếm Nhanh</span>
+        </div>
+        <button type="button" class="search-bubble-close-btn" aria-label="Đóng tìm kiếm" title="Đóng">✕</button>
+      `;
+      bubbleBody.prepend(bubbleHeader);
+
+      const closeHeaderBtn = bubbleHeader.querySelector('.search-bubble-close-btn');
+      if (closeHeaderBtn) {
+        closeHeaderBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          closeBubble(true);
+        });
+      }
+    }
+
+    if (!bubbleBody.querySelector('.search-bubble-footer')) {
+      const bubbleFooter = document.createElement('div');
+      bubbleFooter.className = 'search-bubble-footer';
+      bubbleFooter.innerHTML = `
+        <span>Mẹo: Nhấn <kbd>Enter</kbd> để tìm</span>
+        <span><kbd>Esc</kbd> để đóng</span>
+      `;
+      bubbleBody.appendChild(bubbleFooter);
+    }
+  }
+
   // Cập nhật vị trí bong bóng và mũi tên chỉ chính xác vào nút kính lúp
   function updateBubblePosition() {
     if (!bubble.classList.contains('open')) return;
@@ -247,6 +415,25 @@ function initBubbleSearch() {
 
   // Mở bong bóng
   function openBubble() {
+    // Đóng user dropdown nếu đang mở (tránh đè nhau)
+    document.querySelectorAll('.nav-user-dropdown-container').forEach(c => c.classList.remove('active'));
+
+    // Đóng mobile hamburger menu nếu đang mở (tránh đè nhau)
+    const navMenu = document.getElementById('nav-menu') || document.querySelector('.nav-menu');
+    const hamburger = document.getElementById('nav-hamburger') || document.querySelector('.nav-hamburger') || document.getElementById('hamburger');
+    const overlay = document.getElementById('nav-overlay') || document.querySelector('.nav-overlay');
+    if (navMenu && navMenu.classList.contains('open')) {
+      navMenu.classList.remove('open');
+      if (hamburger) {
+        hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.setAttribute('aria-label', 'Mở menu điều hướng');
+      }
+      if (overlay) overlay.classList.remove('active');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+
     btn.classList.add('active');
     btn.setAttribute('aria-expanded', 'true');
     bubble.classList.add('open');
@@ -314,7 +501,7 @@ function initBubbleSearch() {
         <div class="search-no-results">
           <span>😔</span> Không tìm thấy sản phẩm nào khớp với "<strong>${escapeHtml(query)}</strong>"
           <div style="margin-top:8px">
-            <a href="products.html?q=${encodeURIComponent(query)}" style="color:var(--purple-light);font-size:12px;font-weight:600;text-decoration:none">
+            <a href="products.html?q=${encodeURIComponent(query)}" style="color:#cbd5e1;font-size:12px;font-weight:600;text-decoration:none">
               Duyệt tất cả sản phẩm trong cửa hàng →
             </a>
           </div>
@@ -325,8 +512,8 @@ function initBubbleSearch() {
     }
 
     const itemsHtml = matches.map(p => {
-      const priceStr = typeof formatPrice === 'function' 
-        ? formatPrice(p.price) 
+      const priceStr = typeof formatPrice === 'function'
+        ? formatPrice(p.price)
         : `${(p.price || 0).toLocaleString('vi-VN')}đ`;
       const catLabel = p.categoryLabel || p.category || 'Game';
       const thumbHtml = p.image
@@ -572,30 +759,89 @@ function renderCart() {
   const container = document.getElementById('cart-items');
   const totalEl = document.getElementById('cart-total');
   const countEl = document.getElementById('cart-count');
+  const totalFinalEl = document.getElementById('cart-total-final');
+  const checkoutBtn = document.querySelector('.btn-checkout');
   if (!container) return;
+
+  const currentUser = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+
+  // 1. Kiểm tra đăng nhập (Chỉ tài khoản đã đăng nhập mới xem được giỏ hàng)
+  if (!currentUser) {
+    container.innerHTML = `
+      <div class="empty-cart" style="padding:48px 24px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-lg);text-align:center;">
+        <span style="font-size:56px;display:inline-block;margin-bottom:16px;">🔐</span>
+        <h3 style="font-size:22px;font-weight:800;color:var(--text-primary);margin-bottom:10px;">Yêu Cầu Đăng Nhập</h3>
+        <p style="color:var(--text-secondary);max-width:480px;margin:0 auto 24px;font-size:14px;line-height:1.6;">
+          Giỏ hàng được bảo vệ riêng tư cho từng tài khoản. Bạn vui lòng đăng nhập để xem và quản lý các sản phẩm bạn đã thêm vào giỏ.
+        </p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a href="login.html?redirect=cart.html" class="btn-primary" style="padding:12px 28px;font-size:14px;font-weight:700;">
+            <span>👤 Đăng Nhập Ngay</span>
+          </a>
+          <a href="login.html?tab=register&redirect=cart.html" class="btn-secondary" style="padding:12px 24px;font-size:14px;font-weight:600;border:1px solid var(--border-color);border-radius:var(--radius);text-decoration:none;color:var(--text-primary);display:inline-flex;align-items:center;">
+            <span>✨ Tạo Tài Khoản</span>
+          </a>
+          <a href="products.html" style="padding:12px 20px;font-size:14px;color:var(--purple-light);text-decoration:none;display:inline-flex;align-items:center;">
+            <span>🛍️ Xem Sản Phẩm</span>
+          </a>
+        </div>
+      </div>
+    `;
+    if (totalEl) totalEl.textContent = '0đ';
+    if (totalFinalEl) totalFinalEl.textContent = '0đ';
+    if (countEl) countEl.textContent = 'Chưa đăng nhập';
+    if (checkoutBtn) {
+      checkoutBtn.href = 'login.html?redirect=cart.html';
+      checkoutBtn.textContent = '🔒 Đăng Nhập Để Thanh Toán';
+      checkoutBtn.style.background = 'linear-gradient(135deg, #475569, #334155)';
+    }
+    return;
+  }
+
+  // 2. Tài khoản đã đăng nhập: Cập nhật nút checkout
+  if (checkoutBtn) {
+    checkoutBtn.href = 'checkout.html';
+    checkoutBtn.textContent = '🚀 Thanh Toán Ngay';
+    checkoutBtn.style.background = '';
+  }
+
+  // 3. Tải giỏ hàng riêng biệt của tài khoản này
+  loadUserCart();
 
   if (cart.length === 0) {
     container.innerHTML = `
       <div class="empty-cart">
         <span>🛒</span>
-        <h3>Giỏ hàng trống</h3>
-        <p>Hãy thêm sản phẩm vào giỏ hàng của bạn!</p>
-        <a href="index.html" class="btn-primary">Mua Sắm Ngay</a>
+        <h3>Giỏ hàng của ${escapeHtml(currentUser.username)} đang trống</h3>
+        <p>Bạn chưa thêm sản phẩm nào vào giỏ hàng cá nhân.</p>
+        <a href="products.html" class="btn-primary">Mua Sắm Ngay</a>
       </div>
     `;
     if (totalEl) totalEl.textContent = '0đ';
+    if (totalFinalEl) totalFinalEl.textContent = '0đ';
     if (countEl) countEl.textContent = '0 sản phẩm';
     return;
   }
 
   container.innerHTML = cart.map(item => {
     const itemId = item.cartItemId || `${item.id}`;
+
+    const itemImg = (item.icon && (item.icon.startsWith('http') || item.icon.startsWith('data:image')))
+      ? item.icon
+      : ((item.images && item.images.length > 0 && (item.images[0].startsWith('http') || item.images[0].startsWith('data:image')))
+        ? item.images[0]
+        : ((item.image && (item.image.startsWith('http') || item.image.startsWith('data:image'))) ? item.image : null));
+
+    const iconHtml = itemImg
+      ? `<img src="${itemImg}" alt="${escapeHtml(item.name)}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block;">`
+      : `<span>${item.icon || '📦'}</span>`;
+
     return `
       <div class="cart-item">
-        <div class="cart-item-icon" onclick="goToProductDetail(${item.id})" style="cursor:pointer" title="Xem chi tiết">${item.icon}</div>
+        <div class="cart-item-icon" onclick="goToProductDetail(${item.id})" style="cursor:pointer" title="Xem chi tiết">${iconHtml}</div>
         <div class="cart-item-info">
-          <h4 onclick="goToProductDetail(${item.id})" style="cursor:pointer" title="Xem chi tiết">${item.name}</h4>
-          <span class="cart-item-cat">${item.categoryLabel}${item.selectedVariant ? ` · <strong style="color:var(--gold);">${item.selectedVariant}</strong>` : ''}</span>
+          <h4 onclick="goToProductDetail(${item.id})" style="cursor:pointer" title="Xem chi tiết">${escapeHtml(item.name)}</h4>
+          <span class="cart-item-cat">${escapeHtml(item.categoryLabel || item.category || '')}${item.selectedVariant ? ` · <strong style="color:var(--gold);">${escapeHtml(item.selectedVariant)}</strong>` : ''}</span>
           <span class="cart-item-price">${formatPrice(item.price)}</span>
         </div>
         <div class="cart-item-qty">
@@ -611,7 +857,6 @@ function renderCart() {
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   if (totalEl) totalEl.textContent = formatPrice(total);
-  const totalFinalEl = document.getElementById('cart-total-final');
   if (totalFinalEl) totalFinalEl.textContent = formatPrice(total);
   if (countEl) countEl.textContent = `${cart.reduce((s, i) => s + i.quantity, 0)} sản phẩm`;
 }
@@ -648,14 +893,6 @@ function initActiveNavLinks() {
 }
 
 function ensureNavLinkStructure() {
-  const iconMap = [
-    { key: 'index.html', icon: '🏠' },
-    { key: 'products.html', icon: '🛍️' },
-    { key: '#categories', icon: '📁' },
-    { key: 'about.html', icon: 'ℹ️' },
-    { key: 'admin.html', icon: '🛡️' }
-  ];
-
   document.querySelectorAll('.nav-links a').forEach(a => {
     if (!a.querySelector('.nav-link-text')) {
       const text = a.textContent.trim();
@@ -663,10 +900,10 @@ function ensureNavLinkStructure() {
       let icon = '🔗';
 
       if (href === 'index.html' || href === '/' || href === './') icon = '🏠';
-      else if (href.includes('products.html')) icon = '🛍️';
-      else if (href.includes('#categories')) icon = '📁';
-      else if (href.includes('about.html')) icon = 'ℹ️';
-      else if (href.includes('admin.html')) icon = '🛡️';
+      else if (href.includes('products')) icon = '🛍️';
+      else if (href.includes('categories')) icon = '📁';
+      else if (href.includes('about')) icon = 'ℹ️';
+      else if (href.includes('admin')) icon = '🛡️';
 
       a.innerHTML = `
         <span class="nav-link-icon">${icon}</span>
@@ -687,6 +924,37 @@ function initMobileMenu() {
 
   if (!hamburger || !navMenu) return;
 
+  // Header popup modal (Branding)
+  if (!navMenu.querySelector('.nav-popup-header')) {
+    const popupHeader = document.createElement('div');
+    popupHeader.className = 'nav-popup-header';
+    popupHeader.innerHTML = `
+      <div class="nav-popup-brand">
+        <span class="nav-popup-logo-icon">🛒</span>
+        <span class="nav-popup-title">Tạp Hóa 23</span>
+      </div>
+    `;
+    navMenu.prepend(popupHeader);
+  }
+
+  // Footer popup modal (Social shortcuts + khẩu hiệu)
+  if (!navMenu.querySelector('.nav-popup-footer')) {
+    const popupFooter = document.createElement('div');
+    popupFooter.className = 'nav-popup-footer';
+    popupFooter.innerHTML = `
+      <span class="nav-popup-footer-text">Thiên đường Key & Account</span>
+      <div class="nav-popup-socials">
+        <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer" class="nav-popup-social-btn" title="Facebook">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer" class="nav-popup-social-btn" title="Discord">
+          <svg width="15" height="13" viewBox="0 0 24 19" fill="currentColor"><path d="M20.317 1.492a19.742 19.742 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.182-.32 10.755.099 15.277a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 12.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        </a>
+      </div>
+    `;
+    navMenu.appendChild(popupFooter);
+  }
+
   // Accessibility attributes
   hamburger.setAttribute('aria-controls', 'nav-menu');
   if (!hamburger.hasAttribute('aria-label')) {
@@ -699,9 +967,24 @@ function initMobileMenu() {
     const shouldOpen = forceClose ? false : !isCurrentlyOpen;
 
     if (shouldOpen) {
+      // Đóng user dropdown nếu đang mở (tránh đè nhau)
+      document.querySelectorAll('.nav-user-dropdown-container').forEach(c => c.classList.remove('active'));
+
+      // Đóng search bubble nếu đang mở (tránh đè nhau)
+      const searchBubble = document.getElementById('nav-search-bubble');
+      const searchBtn = document.getElementById('nav-search-btn');
+      if (searchBubble && searchBubble.classList.contains('open')) {
+        searchBubble.classList.remove('open');
+        if (searchBtn) {
+          searchBtn.classList.remove('active');
+          searchBtn.setAttribute('aria-expanded', 'false');
+        }
+      }
+
       hamburger.classList.add('active');
       hamburger.setAttribute('aria-expanded', 'true');
       hamburger.setAttribute('aria-label', 'Đóng menu điều hướng');
+      navMenu.scrollTop = 0;
       navMenu.classList.add('open');
       if (overlay) overlay.classList.add('active');
 
@@ -740,6 +1023,13 @@ function initMobileMenu() {
     link.addEventListener('click', () => {
       toggleMenu(true);
     });
+  });
+
+  // Click outside navMenu to close
+  document.addEventListener('click', (e) => {
+    if (navMenu.classList.contains('open') && !navMenu.contains(e.target) && !hamburger.contains(e.target)) {
+      toggleMenu(true);
+    }
   });
 
   // Press ESC to close
@@ -785,7 +1075,7 @@ function initParticles() {
     vy: (Math.random() - 0.5) * 0.5,
     r: Math.random() * 2 + 1,
     opacity: Math.random() * 0.5 + 0.2,
-    color: ['#7c3aed', '#2563eb', '#a855f7', '#60a5fa'][Math.floor(Math.random() * 4)]
+    color: ['#ffffff', '#f8fafc', '#e2e8f0', '#cbd5e1'][Math.floor(Math.random() * 4)]
   }));
 
   function draw() {
@@ -809,8 +1099,8 @@ function initParticles() {
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = '#7c3aed';
-          ctx.globalAlpha = (1 - d / 120) * 0.3;
+          ctx.strokeStyle = '#e2e8f0';
+          ctx.globalAlpha = (1 - d / 120) * 0.18;
           ctx.lineWidth = 0.5;
           ctx.stroke();
         }
@@ -868,9 +1158,11 @@ function initNewsletter() {
 function initStickyNav() {
   const nav = document.querySelector('.navbar');
   if (!nav) return;
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 50);
-  });
+  const onScroll = () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 }
 
 // ===== User Authentication, VIP & Profile System =====
@@ -961,6 +1253,11 @@ function getCurrentUser() {
   }
 }
 
+function isUserAdmin(user = getCurrentUser()) {
+  if (!user) return false;
+  return !!(user.role === 'admin' || user.username?.toLowerCase() === '4siankollective');
+}
+
 function setCurrentUser(user) {
   if (user) {
     updateUserVipTier(user);
@@ -968,16 +1265,23 @@ function setCurrentUser(user) {
   } else {
     localStorage.removeItem('tapHoa23User');
   }
+  loadUserCart();
+  updateCartBadge();
   renderAuthNavbar();
   renderAdminHomeBar();
   autofillBuyerInfo();
   if (typeof checkAdminSliderPrivilege === 'function') {
     checkAdminSliderPrivilege();
   }
+  if (window.location.pathname.includes('cart.html') && typeof renderCart === 'function') {
+    renderCart();
+  }
 }
 
 function handleLogout() {
   localStorage.removeItem('tapHoa23User');
+  cart = [];
+  updateCartBadge();
   showToast('👋 Đã đăng xuất thành công!');
   renderAuthNavbar();
   renderAdminHomeBar();
@@ -985,17 +1289,66 @@ function handleLogout() {
   if (typeof checkAdminSliderPrivilege === 'function') {
     checkAdminSliderPrivilege();
   }
-  if (window.location.pathname.includes('admin.html')) {
+  if (window.location.pathname.includes('admin.html') || window.location.pathname.includes('cart.html') || window.location.pathname.includes('checkout.html')) {
     window.location.href = 'index.html';
+  } else if (typeof renderCart === 'function') {
+    renderCart();
   }
 }
 
 function toggleUserDropdown(event) {
-  event.stopPropagation();
-  const container = event.currentTarget.closest('.nav-user-dropdown-container');
-  if (container) {
-    container.classList.toggle('active');
+  if (event) {
+    event.stopPropagation();
   }
+  const container = event ? event.currentTarget.closest('.nav-user-dropdown-container') : document.querySelector('.nav-user-dropdown-container');
+  if (!container) return;
+
+  const isOpening = !container.classList.contains('active');
+
+  // Đóng các user dropdown khác nếu có
+  document.querySelectorAll('.nav-user-dropdown-container').forEach(c => {
+    if (c !== container) c.classList.remove('active');
+  });
+
+  if (isOpening) {
+    // Đóng pop-up tìm kiếm nếu đang mở (tránh đè nhau)
+    const bubble = document.getElementById('nav-search-bubble');
+    const searchBtn = document.getElementById('nav-search-btn');
+    if (bubble && bubble.classList.contains('open')) {
+      bubble.classList.remove('open');
+      if (searchBtn) {
+        searchBtn.classList.remove('active');
+        searchBtn.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    // Đóng mobile hamburger popup nếu đang mở (tránh đè nhau)
+    const navMenu = document.getElementById('nav-menu') || document.querySelector('.nav-menu');
+    const hamburger = document.getElementById('nav-hamburger') || document.querySelector('.nav-hamburger') || document.getElementById('hamburger');
+    const overlay = document.getElementById('nav-overlay') || document.querySelector('.nav-overlay');
+    if (navMenu && navMenu.classList.contains('open')) {
+      navMenu.classList.remove('open');
+      if (hamburger) {
+        hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.setAttribute('aria-label', 'Mở menu điều hướng');
+      }
+      if (overlay) overlay.classList.remove('active');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+
+    container.classList.add('active');
+  } else {
+    container.classList.remove('active');
+  }
+}
+
+function closeUserDropdown(event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  document.querySelectorAll('.nav-user-dropdown-container').forEach(c => c.classList.remove('active'));
 }
 
 // Deposit Requests System
@@ -1046,7 +1399,7 @@ function pumpCustomerWallet(username, amount) {
   let users = [];
   try {
     users = JSON.parse(localStorage.getItem('tapHoa23RegisteredUsers') || '[]');
-  } catch (e) {}
+  } catch (e) { }
 
   let targetUser = users.find(u => u.username.toLowerCase() === username.toLowerCase());
   if (targetUser) {
@@ -1071,12 +1424,39 @@ function renderAuthNavbar() {
   const user = getCurrentUser();
   const loginBtns = document.querySelectorAll('.nav-login-btn');
 
-  // Thêm class logged-in vào body để CSS ẩn triệt để mọi nút đăng nhập
+  // Thêm class logged-in và is-admin vào body để CSS ẩn/hiện theo vai trò
   if (user) {
     document.body.classList.add('logged-in');
   } else {
     document.body.classList.remove('logged-in');
   }
+
+  const isAdmin = isUserAdmin(user);
+  if (isAdmin) {
+    document.body.classList.add('is-admin');
+  } else {
+    document.body.classList.remove('is-admin');
+  }
+
+  // Quản lý hiển thị mục Quản Trị trên navbar: CHỈ HIỆN cho Admin, tài khoản thường / VIP ẩn triệt để
+  const adminNavItems = document.querySelectorAll('.nav-admin-item');
+  adminNavItems.forEach(item => {
+    if (isAdmin) {
+      item.style.removeProperty('display');
+    } else {
+      item.style.setProperty('display', 'none', 'important');
+    }
+  });
+
+  // Quản lý icon Facebook & Discord trên navbar: Ẩn cho Admin, Hiện cho tài khoản thường / VIP / Khách
+  const socialNavBtns = document.querySelectorAll('.nav-social-btn');
+  socialNavBtns.forEach(btn => {
+    if (isAdmin) {
+      btn.style.setProperty('display', 'none', 'important');
+    } else {
+      btn.style.removeProperty('display');
+    }
+  });
 
   loginBtns.forEach(btn => {
     let container = btn.parentElement.querySelector('.nav-user-dropdown-container');
@@ -1091,7 +1471,6 @@ function renderAuthNavbar() {
       btn.classList.add('hidden');
       container.style.setProperty('display', 'inline-flex', 'important');
 
-      const isAdmin = user.role === 'admin';
       const vip = getVipInfo(user.totalDeposited || 0, user.role);
 
       const avatarHtml = (user.avatar && (user.avatar.startsWith('http') || user.avatar.startsWith('data:image')))
@@ -1101,52 +1480,83 @@ function renderAuthNavbar() {
       const avatarBadgeClass = isAdmin ? 'user-avatar-badge admin-avatar' : 'user-avatar-badge';
 
       const adminMenuItem = isAdmin ? `
-        <a href="admin.html" class="user-dropdown-item admin-link" style="color:var(--gold);font-weight:700;background:rgba(234,179,8,0.12);border:1px solid rgba(234,179,8,0.3)">
-          <span>🛡️</span> Bảng Quản Trị Admin
+        <a href="admin.html" class="user-dropdown-item admin-link">
+          <span class="user-item-icon">🛡️</span>
+          <span class="user-item-text">Bảng Quản Trị Admin</span>
+          <span class="user-item-arrow">›</span>
         </a>
       ` : '';
 
       container.innerHTML = `
         <div class="nav-user-pill ${isAdmin ? 'pill-admin' : ''}" onclick="toggleUserDropdown(event)" title="Tài khoản: ${user.username}">
           <div class="${avatarBadgeClass}">${avatarHtml}</div>
-          <span class="user-pill-name">${user.username}</span>
+          <span class="user-pill-name">${escapeHtml(user.username)}</span>
           <span class="user-pill-arrow">▾</span>
         </div>
         <div class="nav-user-dropdown-menu">
+          <div class="user-dropdown-arrow" aria-hidden="true"></div>
           <div class="user-dropdown-header">
-            <div class="user-dropdown-avatar ${isAdmin ? 'admin-glow' : ''}">${avatarHtml}</div>
-            <div class="user-dropdown-meta">
-              <div class="user-dropdown-name">${user.username}</div>
-              <div class="user-dropdown-email">${user.email || 'Chưa cập nhật email'}</div>
-              <span class="user-dropdown-badge ${vip.badgeClass}" style="border-color:${vip.color};color:${vip.color}">
-                ${vip.icon} ${vip.name}
-              </span>
+            <div class="user-dropdown-user-info">
+              <div class="user-dropdown-avatar ${isAdmin ? 'admin-glow' : ''}">${avatarHtml}</div>
+              <div class="user-dropdown-meta">
+                <div class="user-dropdown-name">${escapeHtml(user.username)}</div>
+                <div class="user-dropdown-email">${escapeHtml(user.email || 'Chưa cập nhật email')}</div>
+                <span class="user-dropdown-badge ${vip.badgeClass}" style="border-color:${vip.color};color:${vip.color}">
+                  ${vip.icon} ${vip.name}
+                </span>
+              </div>
             </div>
+            <button type="button" class="user-dropdown-close-btn" onclick="closeUserDropdown(event)" aria-label="Đóng menu tài khoản" title="Đóng">✕</button>
           </div>
+
           <div class="user-balance-box">
-            <div class="balance-title">💰 Số dư tài khoản:</div>
+            <div class="balance-header">
+              <div class="balance-title">💳 Số dư tài khoản</div>
+              <span class="balance-status-tag">Khả dụng</span>
+            </div>
             <div class="balance-amount">${formatPrice(user.balance || 0)}</div>
-            <a href="deposit.html" class="btn-topup-balance" style="text-decoration:none;display:block;text-align:center">⚡ Nạp Tiền Vào Ví</a>
+            <a href="deposit.html" class="btn-topup-balance" title="Nạp thêm tiền vào ví tài khoản">
+              <span class="btn-topup-icon">⚡</span>
+              <span class="btn-topup-text">Nạp Tiền Vào Ví</span>
+              <span class="btn-topup-arrow">›</span>
+            </a>
           </div>
+
           <div class="user-dropdown-links">
             ${adminMenuItem}
             <a href="profile.html" class="user-dropdown-item">
-              <span>👤</span> Quản Lý Tài Khoản
+              <span class="user-item-icon">👤</span>
+              <span class="user-item-text">Quản Lý Tài Khoản</span>
+              <span class="user-item-arrow">›</span>
             </a>
             <a href="deposit.html" class="user-dropdown-item">
-              <span>💳</span> Nạp Tiền Tài Khoản
+              <span class="user-item-icon">💳</span>
+              <span class="user-item-text">Nạp Tiền Tài Khoản</span>
+              <span class="user-item-arrow">›</span>
             </a>
             <a href="checkout.html" class="user-dropdown-item">
-              <span>🚀</span> Thanh Toán Đơn Hàng
+              <span class="user-item-icon">🚀</span>
+              <span class="user-item-text">Thanh Toán Đơn Hàng</span>
+              <span class="user-item-arrow">›</span>
             </a>
             <a href="cart.html" class="user-dropdown-item">
-              <span>🛒</span> Giỏ Hàng Của Tôi
+              <span class="user-item-icon">🛒</span>
+              <span class="user-item-text">Giỏ Hàng Của Tôi</span>
+              <span class="user-item-arrow">›</span>
             </a>
           </div>
+
           <div class="user-dropdown-divider"></div>
+
           <button class="user-dropdown-logout" onclick="handleLogout()">
-            <span>🚪</span> Đăng Xuất
+            <span class="user-item-icon">🚪</span>
+            <span class="user-item-text">Đăng Xuất Tài Khoản</span>
           </button>
+
+          <div class="user-dropdown-footer">
+            <span class="user-dropdown-footer-status">● Đang hoạt động</span>
+            <span class="user-dropdown-footer-hint"><kbd>Esc</kbd> để đóng</span>
+          </div>
         </div>
       `;
     } else {
@@ -1166,6 +1576,13 @@ function renderAuthNavbar() {
 // Close dropdown on outside click
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.nav-user-dropdown-container')) {
+    document.querySelectorAll('.nav-user-dropdown-container').forEach(c => c.classList.remove('active'));
+  }
+});
+
+// Press ESC to close user dropdown
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
     document.querySelectorAll('.nav-user-dropdown-container').forEach(c => c.classList.remove('active'));
   }
 });
@@ -1222,7 +1639,710 @@ function renderHomeCategories() {
   }).join('');
 }
 
-// Render Admin Quick Access Topbar on Public Store Pages
+// ==================== GIFTCODE SYSTEM (ADMIN PRIVILEGED) ====================
+const DEFAULT_GIFTCODES = [
+  {
+    id: 'gc_welcome10',
+    code: 'WELCOME10',
+    type: 'percent', // 'percent' | 'fixed' | 'wallet'
+    value: 10,
+    minOrder: 0,
+    maxDiscount: 50000,
+    maxUsage: 100,
+    usedCount: 0,
+    usedBy: [],
+    expiresAt: '2026-12-31',
+    description: 'Giảm 10% đơn hàng (Tối đa 50.000đ, không giới hạn đơn tối thiểu)',
+    createdAt: '2026-10-21T00:00:00'
+  },
+  {
+    id: 'gc_trian50k',
+    code: 'TRIAN50K',
+    type: 'fixed',
+    value: 50000,
+    minOrder: 150000,
+    maxDiscount: 0,
+    maxUsage: 50,
+    usedCount: 0,
+    usedBy: [],
+    expiresAt: '2026-12-31',
+    description: 'Giảm ngay 50.000đ cho đơn hàng từ 150.000đ trở lên',
+    createdAt: '2026-10-21T00:00:00'
+  },
+  {
+    id: 'gc_nap20k',
+    code: 'NAP20K',
+    type: 'wallet',
+    value: 20000,
+    minOrder: 0,
+    maxDiscount: 0,
+    maxUsage: 30,
+    usedCount: 0,
+    usedBy: [],
+    expiresAt: '2026-12-31',
+    description: 'Nạp ngay +20.000đ trực tiếp vào Số Dư Ví tài khoản',
+    createdAt: '2026-10-21T00:00:00'
+  }
+];
+
+function getGiftcodes() {
+  try {
+    const raw = localStorage.getItem('tapHoa23Giftcodes');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) { }
+  localStorage.setItem('tapHoa23Giftcodes', JSON.stringify(DEFAULT_GIFTCODES));
+  return DEFAULT_GIFTCODES;
+}
+
+function saveGiftcodes(codes) {
+  try {
+    localStorage.setItem('tapHoa23Giftcodes', JSON.stringify(codes));
+  } catch (e) { }
+}
+
+function autoGenerateGiftcode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let rand = '';
+  for (let i = 0; i < 6; i++) {
+    rand += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  const code = 'TH23-' + rand;
+  const input = document.getElementById('gc-input-code');
+  if (input) {
+    input.value = code;
+    updateGiftcodeTicketPreview();
+  }
+  return code;
+}
+
+function switchGiftcodeModalTab(tab) {
+  const btnCreate = document.getElementById('gc-tab-btn-create');
+  const btnList = document.getElementById('gc-tab-btn-list');
+  const secCreate = document.getElementById('gc-sec-create');
+  const secList = document.getElementById('gc-sec-list');
+
+  if (tab === 'create') {
+    btnCreate?.classList.add('active');
+    btnList?.classList.remove('active');
+    secCreate?.classList.add('active');
+    secList?.classList.remove('active');
+  } else {
+    btnCreate?.classList.remove('active');
+    btnList?.classList.add('active');
+    secCreate?.classList.remove('active');
+    secList?.classList.add('active');
+    renderGiftcodesListInModal();
+  }
+}
+
+function handleGiftcodeTypeChange(type) {
+  document.querySelectorAll('.gc-type-card').forEach(c => c.classList.remove('active'));
+  const targetCard = document.getElementById('gc-card-' + type);
+  if (targetCard) targetCard.classList.add('active');
+
+  const labelVal = document.getElementById('gc-label-value');
+  const unitSuffix = document.getElementById('gc-unit-suffix');
+  const inputVal = document.getElementById('gc-input-value');
+  const groupMin = document.getElementById('gc-group-minorder');
+  const groupMax = document.getElementById('gc-group-maxdiscount');
+
+  if (type === 'percent') {
+    if (labelVal) labelVal.innerHTML = '<span>Mức Giảm (%) <strong style="color:var(--red)">*</strong></span>';
+    if (unitSuffix) unitSuffix.textContent = '%';
+    if (inputVal) { inputVal.placeholder = 'VD: 10, 20'; inputVal.max = '100'; }
+    if (groupMin) groupMin.style.display = 'flex';
+    if (groupMax) groupMax.style.display = 'flex';
+  } else if (type === 'fixed') {
+    if (labelVal) labelVal.innerHTML = '<span>Số Tiền Giảm (VNĐ) <strong style="color:var(--red)">*</strong></span>';
+    if (unitSuffix) unitSuffix.textContent = 'đ';
+    if (inputVal) { inputVal.placeholder = 'VD: 50000'; inputVal.removeAttribute('max'); }
+    if (groupMin) groupMin.style.display = 'flex';
+    if (groupMax) groupMax.style.display = 'none';
+  } else if (type === 'wallet') {
+    if (labelVal) labelVal.innerHTML = '<span>Số Tiền Nạp Vào Ví (VNĐ) <strong style="color:var(--red)">*</strong></span>';
+    if (unitSuffix) unitSuffix.textContent = 'đ';
+    if (inputVal) { inputVal.placeholder = 'VD: 20000, 50000'; inputVal.removeAttribute('max'); }
+    if (groupMin) groupMin.style.display = 'none';
+    if (groupMax) groupMax.style.display = 'none';
+  }
+
+  updateGiftcodeTicketPreview();
+}
+
+function updateGiftcodeTicketPreview() {
+  const code = document.getElementById('gc-input-code')?.value.trim().toUpperCase() || 'MAU-GIFTCODE';
+  const checkedRadio = document.querySelector('input[name="gc_type"]:checked');
+  const type = checkedRadio ? checkedRadio.value : 'percent';
+  const val = Number(document.getElementById('gc-input-value')?.value) || 0;
+  const minOrder = Number(document.getElementById('gc-input-minorder')?.value) || 0;
+  const maxDiscount = Number(document.getElementById('gc-input-maxdiscount')?.value) || 0;
+  const maxUsage = document.getElementById('gc-input-maxusage')?.value.trim();
+  const expires = document.getElementById('gc-input-expires')?.value;
+  const desc = document.getElementById('gc-input-desc')?.value.trim();
+
+  const prevIcon = document.getElementById('gc-prev-icon');
+  const prevBadge = document.getElementById('gc-prev-badge');
+  const prevCode = document.getElementById('gc-prev-code');
+  const prevDesc = document.getElementById('gc-prev-desc');
+  const prevCond = document.getElementById('gc-prev-cond');
+
+  if (prevCode) prevCode.textContent = code;
+
+  let badgeText = '';
+  let descText = desc || '';
+  let condParts = [];
+
+  if (type === 'percent') {
+    if (prevIcon) prevIcon.textContent = '💎';
+    badgeText = `GIẢM ${val || 0}%`;
+    if (!descText) {
+      descText = `Giảm ${val}% cho đơn hàng${maxDiscount > 0 ? ` (Tối đa ${formatPrice(maxDiscount)})` : ''}`;
+    }
+    if (minOrder > 0) condParts.push(`Đơn tối thiểu ${formatPrice(minOrder)}`);
+    if (maxDiscount > 0) condParts.push(`Giảm tối đa ${formatPrice(maxDiscount)}`);
+  } else if (type === 'fixed') {
+    if (prevIcon) prevIcon.textContent = '💵';
+    badgeText = `GIẢM -${val >= 1000 ? Math.round(val / 1000) + 'K' : formatPrice(val)}`;
+    if (!descText) {
+      descText = `Trừ ngay ${formatPrice(val)} vào tổng hóa đơn`;
+    }
+    if (minOrder > 0) condParts.push(`Đơn tối thiểu ${formatPrice(minOrder)}`);
+  } else if (type === 'wallet') {
+    if (prevIcon) prevIcon.textContent = '💰';
+    badgeText = `+${val >= 1000 ? Math.round(val / 1000) + 'K' : formatPrice(val)} VÀO VÍ`;
+    if (!descText) {
+      descText = `Nạp ngay ${formatPrice(val)} vào Số Dư Ví tài khoản`;
+    }
+    condParts.push('Cộng tiền trực tiếp');
+  }
+
+  if (maxUsage) {
+    condParts.push(`Giới hạn ${maxUsage} lượt`);
+  } else {
+    condParts.push('Không giới hạn lượt');
+  }
+
+  if (expires) {
+    condParts.push(`HSD: ${expires}`);
+  } else {
+    condParts.push('HSD: Vĩnh viễn');
+  }
+
+  if (prevBadge) prevBadge.textContent = badgeText;
+  if (prevDesc) prevDesc.textContent = descText;
+  if (prevCond) prevCond.textContent = condParts.join(' • ');
+}
+
+function handleCreateGiftcode(e) {
+  if (e) e.preventDefault();
+  if (!isUserAdmin()) {
+    showToast('⚠️ Quyền truy cập bị từ chối: Chỉ Quản Trị Viên mới có quyền tạo giftcode!', 'error');
+    return;
+  }
+
+  const codeInput = document.getElementById('gc-input-code');
+  const code = (codeInput?.value || '').trim().toUpperCase();
+  if (!code) {
+    showToast('⚠️ Vui lòng nhập mã giftcode!', 'error');
+    codeInput?.focus();
+    return;
+  }
+
+  const checkedRadio = document.querySelector('input[name="gc_type"]:checked');
+  const type = checkedRadio ? checkedRadio.value : 'percent';
+  const val = Number(document.getElementById('gc-input-value')?.value) || 0;
+  if (val <= 0) {
+    showToast('⚠️ Vui lòng nhập giá trị ưu đãi hợp lệ (> 0)!', 'error');
+    document.getElementById('gc-input-value')?.focus();
+    return;
+  }
+  if (type === 'percent' && val > 100) {
+    showToast('⚠️ Tỉ lệ giảm theo % không được vượt quá 100%!', 'error');
+    return;
+  }
+
+  const minOrder = Number(document.getElementById('gc-input-minorder')?.value) || 0;
+  const maxDiscount = Number(document.getElementById('gc-input-maxdiscount')?.value) || 0;
+  const maxUsageVal = document.getElementById('gc-input-maxusage')?.value.trim();
+  const maxUsage = maxUsageVal ? Number(maxUsageVal) : 0;
+  const expiresAt = document.getElementById('gc-input-expires')?.value || '';
+  const desc = document.getElementById('gc-input-desc')?.value.trim();
+
+  let codes = getGiftcodes();
+  if (codes.some(c => c.code.toUpperCase() === code)) {
+    showToast(`⚠️ Mã giftcode "${code}" đã tồn tại trong hệ thống! Vui lòng chọn mã khác.`, 'error');
+    return;
+  }
+
+  const newGiftcode = {
+    id: 'gc_' + Date.now(),
+    code: code,
+    type: type,
+    value: val,
+    minOrder: minOrder,
+    maxDiscount: maxDiscount,
+    maxUsage: maxUsage,
+    usedCount: 0,
+    usedBy: [],
+    expiresAt: expiresAt,
+    description: desc || `Giftcode ${code}`,
+    createdAt: new Date().toISOString()
+  };
+
+  codes.unshift(newGiftcode);
+  saveGiftcodes(codes);
+
+  showToast(`🎉 Đã tạo thành công Giftcode: <strong>${code}</strong>!`);
+
+  document.getElementById('admin-giftcode-form')?.reset();
+  handleGiftcodeTypeChange('percent');
+  switchGiftcodeModalTab('list');
+}
+
+function copyGiftcode(code) {
+  if (!code) return;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(() => {
+      showToast(`📋 Đã sao chép mã giftcode: <strong>${code}</strong>`);
+    }).catch(() => {
+      showToast(`📋 Mã giftcode: ${code}`);
+    });
+  } else {
+    showToast(`📋 Mã giftcode: ${code}`);
+  }
+}
+
+function deleteGiftcode(id) {
+  if (!isUserAdmin()) return;
+  if (!confirm('Bạn có chắc chắn muốn xóa mã giftcode này khỏi hệ thống?')) return;
+  let codes = getGiftcodes();
+  codes = codes.filter(c => c.id !== id);
+  saveGiftcodes(codes);
+  renderGiftcodesListInModal();
+  showToast('🗑️ Đã xóa giftcode thành công!');
+}
+
+function renderGiftcodesListInModal() {
+  const listContainer = document.getElementById('gc-list-container');
+  const countBadge = document.getElementById('gc-count-badge');
+  const searchInput = document.getElementById('gc-search-list-input');
+  const query = (searchInput?.value || '').trim().toLowerCase();
+
+  const codes = getGiftcodes();
+  if (countBadge) countBadge.textContent = codes.length;
+
+  if (!listContainer) return;
+
+  const filtered = codes.filter(c => {
+    if (!query) return true;
+    return c.code.toLowerCase().includes(query) || (c.description || '').toLowerCase().includes(query);
+  });
+
+  if (filtered.length === 0) {
+    listContainer.innerHTML = `
+      <div style="text-align:center;padding:32px 16px;color:var(--text-muted)">
+        <div style="font-size:32px;margin-bottom:8px">🎟️</div>
+        <p style="font-size:13px">Không tìm thấy mã giftcode nào ${query ? `phù hợp với "${query}"` : ''}</p>
+      </div>
+    `;
+    return;
+  }
+
+  const now = new Date();
+
+  listContainer.innerHTML = filtered.map(gc => {
+    let isExpired = false;
+    if (gc.expiresAt) {
+      const exp = new Date(gc.expiresAt + 'T23:59:59');
+      if (!isNaN(exp.getTime()) && exp < now) isExpired = true;
+    }
+    const isExhausted = gc.maxUsage > 0 && (gc.usedCount || 0) >= gc.maxUsage;
+
+    let typeLabel = '';
+    let icon = '💎';
+    if (gc.type === 'percent') {
+      typeLabel = `Giảm ${gc.value}%`;
+      icon = '💎';
+    } else if (gc.type === 'fixed') {
+      typeLabel = `Giảm -${formatPrice(gc.value)}`;
+      icon = '💵';
+    } else if (gc.type === 'wallet') {
+      typeLabel = `Nạp +${formatPrice(gc.value)} Ví`;
+      icon = '💰';
+    }
+
+    let statusPill = '';
+    if (isExpired) {
+      statusPill = '<span class="gc-status-pill gc-status-expired">⌛ Hết hạn</span>';
+    } else if (isExhausted) {
+      statusPill = '<span class="gc-status-pill gc-status-expired">🔴 Hết lượt</span>';
+    } else {
+      statusPill = '<span class="gc-status-pill gc-status-active">🟢 Hoạt động</span>';
+    }
+
+    const usageText = `${gc.usedCount || 0} / ${gc.maxUsage > 0 ? gc.maxUsage : '∞'} lượt`;
+    const minOrderText = gc.minOrder > 0 ? `Đơn từ ${formatPrice(gc.minOrder)}` : 'Đơn mọi giá';
+    const expText = gc.expiresAt ? `HSD: ${gc.expiresAt}` : 'HSD: Vĩnh viễn';
+
+    return `
+      <div class="gc-list-card">
+        <div class="gc-list-card-left">
+          <div class="gc-list-code-badge" title="Mã Giftcode">${icon} ${gc.code}</div>
+          <div class="gc-list-meta">
+            <div class="gc-list-title">
+              <strong style="color:var(--text-primary)">${typeLabel}</strong>
+              ${statusPill}
+              <span style="font-size:11px;color:var(--gold);font-weight:600">(${usageText})</span>
+            </div>
+            <div class="gc-list-details">
+              <span>${gc.description || 'Ưu đãi đặc biệt'}</span>
+              <span>•</span>
+              <span>${minOrderText}</span>
+              <span>•</span>
+              <span>${expText}</span>
+            </div>
+          </div>
+        </div>
+        <div class="gc-list-actions">
+          <button type="button" class="btn-gc-action" onclick="copyGiftcode('${gc.code}')" title="Sao chép mã">
+            <span>📋 Copy</span>
+          </button>
+          <button type="button" class="btn-gc-action btn-gc-action-delete" onclick="deleteGiftcode('${gc.id}')" title="Xóa mã này">
+            <span>🗑️</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openGiftcodeModal() {
+  if (!isUserAdmin()) {
+    showToast('⚠️ Quyền truy cập bị từ chối: Chỉ Quản Trị Viên mới có quyền tạo giftcode!', 'error');
+    return;
+  }
+
+  let modal = document.getElementById('admin-giftcode-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'admin-giftcode-modal';
+    modal.className = 'modal-overlay';
+    modal.onclick = (e) => {
+      if (e.target === modal) closeGiftcodeModal();
+    };
+    modal.innerHTML = `
+      <div class="admin-giftcode-box modal-box">
+        <div class="admin-giftcode-header">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="admin-giftcode-icon-badge">🎁</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <h2 style="font-size:18px;font-weight:800;margin:0;color:#ffffff">Hệ Thống Quản Trị & Tạo Giftcode</h2>
+                <span class="admin-role-pill" style="color:var(--gold);border-color:rgba(245,158,11,0.4)">Admin Only</span>
+              </div>
+              <p style="font-size:12px;color:var(--text-secondary);margin-top:2px">
+                Tạo mã ưu đãi, voucher giảm giá hoặc quà tặng nạp tiền vào ví cho khách hàng.
+              </p>
+            </div>
+          </div>
+          <button class="admin-giftcode-close" onclick="closeGiftcodeModal()" title="Đóng modal">✕</button>
+        </div>
+
+        <div class="admin-giftcode-tabs">
+          <button type="button" class="gc-tab-btn active" id="gc-tab-btn-create" onclick="switchGiftcodeModalTab('create')">
+            <span>✨</span> Tạo Giftcode Mới
+          </button>
+          <button type="button" class="gc-tab-btn" id="gc-tab-btn-list" onclick="switchGiftcodeModalTab('list')">
+            <span>📋</span> Danh Sách Giftcode Hiện Có (<span id="gc-count-badge">0</span>)
+          </button>
+        </div>
+
+        <div id="gc-sec-create" class="gc-section active">
+          <form id="admin-giftcode-form" onsubmit="handleCreateGiftcode(event)" style="display:flex;flex-direction:column;gap:14px">
+            <div class="gc-form-group">
+              <label class="gc-label">
+                <span>Mã Giftcode <strong style="color:var(--red)">*</strong></span>
+                <span class="gc-hint">Tự nhập mã chữ in hoa hoặc bấm tạo ngẫu nhiên</span>
+              </label>
+              <div style="display:flex;gap:8px">
+                <input type="text" id="gc-input-code" class="form-input gc-code-input" placeholder="VD: TRIAN2026, VIP100K..." required autocomplete="off" oninput="this.value = this.value.toUpperCase(); updateGiftcodeTicketPreview();" />
+                <button type="button" class="btn-gc-random" onclick="autoGenerateGiftcode()">
+                  <span>🎲 Tạo Mã Tự Động</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="gc-form-group">
+              <label class="gc-label">
+                <span>Loại Ưu Đãi / Tác Dụng <strong style="color:var(--red)">*</strong></span>
+                <span class="gc-hint">Chọn cơ chế ưu đãi của giftcode</span>
+              </label>
+              <div class="gc-type-grid">
+                <label class="gc-type-card active" id="gc-card-percent">
+                  <input type="radio" name="gc_type" value="percent" checked onchange="handleGiftcodeTypeChange('percent')" style="display:none" />
+                  <div class="gc-type-icon">💎</div>
+                  <div class="gc-type-title">Giảm Theo Phần Trăm (%)</div>
+                  <div class="gc-type-sub">Giảm X% tổng giá trị đơn hàng</div>
+                </label>
+                <label class="gc-type-card" id="gc-card-fixed">
+                  <input type="radio" name="gc_type" value="fixed" onchange="handleGiftcodeTypeChange('fixed')" style="display:none" />
+                  <div class="gc-type-icon">💵</div>
+                  <div class="gc-type-title">Giảm Tiền Mặt (VNĐ)</div>
+                  <div class="gc-type-sub">Trừ thẳng số tiền cố định vào đơn hàng</div>
+                </label>
+                <label class="gc-type-card" id="gc-card-wallet">
+                  <input type="radio" name="gc_type" value="wallet" onchange="handleGiftcodeTypeChange('wallet')" style="display:none" />
+                  <div class="gc-type-icon">💰</div>
+                  <div class="gc-type-title">Nạp Vào Số Dư Ví (VNĐ)</div>
+                  <div class="gc-type-sub">Cộng tiền trực tiếp vào Ví Số Dư của khách</div>
+                </label>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));gap:12px">
+              <div class="gc-form-group">
+                <label class="gc-label" id="gc-label-value">
+                  <span>Mức Giảm (%) <strong style="color:var(--red)">*</strong></span>
+                </label>
+                <div style="position:relative">
+                  <input type="number" id="gc-input-value" class="form-input" placeholder="VD: 10" min="1" required oninput="updateGiftcodeTicketPreview()" />
+                  <span id="gc-unit-suffix" class="gc-input-suffix">%</span>
+                </div>
+              </div>
+
+              <div class="gc-form-group" id="gc-group-minorder">
+                <label class="gc-label">
+                  <span>Đơn Tối Thiểu (VNĐ)</span>
+                  <span class="gc-hint">0 = Không giới hạn</span>
+                </label>
+                <div style="position:relative">
+                  <input type="number" id="gc-input-minorder" class="form-input" placeholder="0" min="0" step="1000" oninput="updateGiftcodeTicketPreview()" />
+                  <span class="gc-input-suffix">đ</span>
+                </div>
+              </div>
+
+              <div class="gc-form-group" id="gc-group-maxdiscount">
+                <label class="gc-label">
+                  <span>Giảm Tối Đa (VNĐ)</span>
+                  <span class="gc-hint">0 = Không giới hạn</span>
+                </label>
+                <div style="position:relative">
+                  <input type="number" id="gc-input-maxdiscount" class="form-input" placeholder="VD: 50000" min="0" step="1000" oninput="updateGiftcodeTicketPreview()" />
+                  <span class="gc-input-suffix">đ</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));gap:12px">
+              <div class="gc-form-group">
+                <label class="gc-label">
+                  <span>Số Lượt Dùng Tối Đa</span>
+                  <span class="gc-hint">Để trống = Không giới hạn</span>
+                </label>
+                <input type="number" id="gc-input-maxusage" class="form-input" placeholder="VD: 50 lượt (Để trống = Vô hạn)" min="1" oninput="updateGiftcodeTicketPreview()" />
+              </div>
+
+              <div class="gc-form-group">
+                <label class="gc-label">
+                  <span>Ngày Hết Hạn</span>
+                  <span class="gc-hint">Để trống = Vĩnh viễn</span>
+                </label>
+                <input type="date" id="gc-input-expires" class="form-input" oninput="updateGiftcodeTicketPreview()" />
+              </div>
+            </div>
+
+            <div class="gc-form-group">
+              <label class="gc-label">
+                <span>Mô Tả / Ghi Chú</span>
+                <span class="gc-hint">Nhắc nhở mục đích tạo mã</span>
+              </label>
+              <input type="text" id="gc-input-desc" class="form-input" placeholder="VD: Ưu đãi tri ân khách hàng tháng 10..." oninput="updateGiftcodeTicketPreview()" />
+            </div>
+
+            <div class="gc-ticket-preview-box">
+              <div class="gc-ticket-preview-label">👁️ Xem Trước Voucher / Giftcode Sau Khi Tạo</div>
+              <div class="gc-ticket-card" id="gc-ticket-card">
+                <div class="gc-ticket-left">
+                  <span class="gc-ticket-icon" id="gc-prev-icon">💎</span>
+                  <div class="gc-ticket-badge" id="gc-prev-badge">GIẢM 10%</div>
+                </div>
+                <div class="gc-ticket-divider"></div>
+                <div class="gc-ticket-right">
+                  <div class="gc-ticket-code" id="gc-prev-code">WELCOME10</div>
+                  <div class="gc-ticket-desc" id="gc-prev-desc">Giảm 10% đơn hàng (Tối đa 50.000đ)</div>
+                  <div class="gc-ticket-conditions" id="gc-prev-cond">Đơn tối thiểu: 0đ • Giới hạn 100 lượt • HSD: 31/12/2026</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:6px">
+              <button type="button" class="btn-secondary" onclick="closeGiftcodeModal()" style="padding:10px 20px">Hủy Bỏ</button>
+              <button type="submit" class="btn-primary" style="padding:10px 26px;background:var(--gold);color:#0a0b10;font-weight:700">
+                <span>⚡ Kích Hoạt & Lưu Giftcode</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div id="gc-sec-list" class="gc-section">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+            <input type="text" id="gc-search-list-input" class="form-input" placeholder="Tìm theo mã hoặc mô tả..." style="max-width:320px;padding:8px 12px" oninput="renderGiftcodesListInModal()" />
+            <button type="button" class="btn-secondary" onclick="switchGiftcodeModalTab('create')" style="font-size:12px;padding:6px 14px">
+              <span>➕ Tạo Mã Mới</span>
+            </button>
+          </div>
+          <div id="gc-list-container" style="max-height:420px;overflow-y:auto;display:flex;flex-direction:column;gap:10px">
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  modal.classList.add('active');
+  switchGiftcodeModalTab('create');
+  updateGiftcodeTicketPreview();
+}
+
+function closeGiftcodeModal() {
+  const modal = document.getElementById('admin-giftcode-modal');
+  if (modal) {
+    modal.classList.remove('active');
+  }
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeGiftcodeModal();
+});
+
+// Coupon / Giftcode Redemption
+function applyCouponCode(codeStr) {
+  if (!codeStr || !codeStr.trim()) {
+    showToast('⚠️ Vui lòng nhập mã coupon / giftcode!', 'error');
+    return false;
+  }
+  const cleanCode = codeStr.trim().toUpperCase();
+  const codes = getGiftcodes();
+  const gc = codes.find(c => c.code.toUpperCase() === cleanCode);
+
+  if (!gc) {
+    showToast('❌ Mã giftcode không tồn tại hoặc đã bị xóa!', 'error');
+    return false;
+  }
+
+  if (gc.expiresAt) {
+    const expDate = new Date(gc.expiresAt + 'T23:59:59');
+    if (!isNaN(expDate.getTime()) && expDate < new Date()) {
+      showToast('⚠️ Mã giftcode này đã hết hạn sử dụng!', 'error');
+      return false;
+    }
+  }
+
+  if (gc.maxUsage > 0 && (gc.usedCount || 0) >= gc.maxUsage) {
+    showToast('⚠️ Mã giftcode này đã hết lượt sử dụng!', 'error');
+    return false;
+  }
+
+  const currentUser = getCurrentUser();
+  if (currentUser && gc.usedBy && gc.usedBy.includes(currentUser.username.toLowerCase())) {
+    showToast('⚠️ Bạn đã từng sử dụng mã giftcode này rồi!', 'error');
+    return false;
+  }
+
+  // Type: Wallet
+  if (gc.type === 'wallet') {
+    if (!currentUser) {
+      showToast('⚠️ Vui lòng đăng nhập để nhận tiền nạp vào số dư ví!', 'error');
+      setTimeout(() => {
+        window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+      }, 1500);
+      return false;
+    }
+
+    const topupAmt = Number(gc.value) || 0;
+    currentUser.balance = (currentUser.balance || 0) + topupAmt;
+    setCurrentUser(currentUser);
+
+    try {
+      let regUsers = JSON.parse(localStorage.getItem('tapHoa23RegisteredUsers') || '[]');
+      const idx = regUsers.findIndex(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
+      if (idx !== -1) {
+        regUsers[idx].balance = currentUser.balance;
+        localStorage.setItem('tapHoa23RegisteredUsers', JSON.stringify(regUsers));
+      }
+    } catch (e) { }
+
+    gc.usedCount = (gc.usedCount || 0) + 1;
+    gc.usedBy = gc.usedBy || [];
+    gc.usedBy.push(currentUser.username.toLowerCase());
+    saveGiftcodes(codes);
+
+    showToast(`🎉 Kích hoạt thành công! Đã nạp <strong>+${formatPrice(topupAmt)}</strong> vào Số Dư Ví của bạn!`);
+
+    if (typeof updateWalletDisplay === 'function') updateWalletDisplay();
+    const balEl = document.getElementById('checkout-user-balance');
+    if (balEl) balEl.textContent = formatPrice(currentUser.balance);
+
+    return true;
+  }
+
+  // Type: Percent or Fixed
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  if (gc.minOrder > 0 && subtotal < gc.minOrder) {
+    showToast(`⚠️ Mã này yêu cầu đơn hàng tối thiểu từ ${formatPrice(gc.minOrder)} (Hiện tại: ${formatPrice(subtotal)})`, 'error');
+    return false;
+  }
+
+  let discountAmt = 0;
+  if (gc.type === 'percent') {
+    discountAmt = Math.round(subtotal * (gc.value / 100));
+    if (gc.maxDiscount > 0 && discountAmt > gc.maxDiscount) {
+      discountAmt = gc.maxDiscount;
+    }
+  } else if (gc.type === 'fixed') {
+    discountAmt = Math.min(gc.value, subtotal);
+  }
+
+  const appliedData = {
+    ...gc,
+    discountAmount: discountAmt
+  };
+
+  sessionStorage.setItem('tapHoa23ActiveCoupon', JSON.stringify(appliedData));
+  showToast(`🎉 Áp dụng mã <strong>${gc.code}</strong> thành công! Bạn được giảm <strong>-${formatPrice(discountAmt)}</strong>`);
+
+  if (typeof updateCartSummaryWithCoupon === 'function') {
+    updateCartSummaryWithCoupon();
+  }
+  if (typeof updateCheckoutSummaryWithCoupon === 'function') {
+    updateCheckoutSummaryWithCoupon();
+  }
+
+  return true;
+}
+
+function handleApplyCartCoupon() {
+  const input = document.getElementById('cart-coupon-input') || document.querySelector('input[placeholder*="coupon"]');
+  if (!input) return;
+  const code = input.value.trim();
+  if (applyCouponCode(code)) {
+    input.value = '';
+  }
+}
+
+function handleApplyCheckoutCoupon() {
+  const input = document.getElementById('checkout-coupon-input') || document.querySelector('.checkout-card input[placeholder*="coupon"]');
+  if (!input) return;
+  const code = input.value.trim();
+  if (applyCouponCode(code)) {
+    input.value = '';
+  }
+}
+
+// Render Admin Quick Access Topbar on Public Store Pages (Redesigned - Minimalist Dark Spotlight)
 function renderAdminHomeBar() {
   // If already on admin.html, don't inject topbar
   if (window.location.pathname.includes('admin.html')) return;
@@ -1230,24 +2350,11 @@ function renderAdminHomeBar() {
   const user = getCurrentUser();
   let existingBar = document.getElementById('admin-quick-topbar');
 
-  if (user && user.role === 'admin') {
+  if (isUserAdmin(user)) {
     if (!existingBar) {
       existingBar = document.createElement('div');
       existingBar.id = 'admin-quick-topbar';
       existingBar.className = 'admin-quick-topbar';
-      existingBar.innerHTML = `
-        <div class="container admin-quick-inner">
-          <div class="admin-quick-left" style="display:flex;align-items:center;gap:10px">
-            <span class="admin-quick-badge">🛡️ ADMIN ĐANG TRỰC TUYẾN</span>
-            <span class="admin-quick-text">Tài khoản: <strong style="color:var(--gold)">${user.username}</strong> — Đang duyệt hệ thống ở quyền Quản Trị</span>
-          </div>
-          <div class="admin-quick-actions">
-            <a href="admin.html" class="btn-admin-bar-primary">📊 Vào Bảng Điều Khiển Quản Trị Viên →</a>
-            <a href="admin.html?tab=add" class="btn-admin-bar-secondary">➕ Thêm Hàng Mới</a>
-            <a href="admin.html?tab=wallet" class="btn-admin-bar-secondary">💰 Quản Lý Ví & Nạp Tiền</a>
-          </div>
-        </div>
-      `;
       const navbar = document.querySelector('.navbar');
       if (navbar && navbar.parentNode) {
         navbar.parentNode.insertBefore(existingBar, navbar.nextSibling);
@@ -1255,6 +2362,44 @@ function renderAdminHomeBar() {
         document.body.prepend(existingBar);
       }
     }
+
+    existingBar.innerHTML = `
+      <div class="admin-topbar-beam"></div>
+      <div class="container admin-quick-inner">
+        <div class="admin-quick-left">
+          <div class="admin-quick-badge">
+            <span class="admin-pulse-dot"></span>
+            <span class="admin-badge-icon">🛡️</span>
+            <span class="admin-badge-title">ADMIN TRỰC TUYẾN</span>
+          </div>
+          <div class="admin-quick-text">
+            <span class="admin-quick-user">Tài khoản: <strong class="admin-user-highlight">${user.username}</strong></span>
+            <span class="admin-role-pill">Quyền Quản Trị Cấp Cao</span>
+            <span class="admin-quick-desc">— Đang duyệt hệ thống ở quyền Quản Trị</span>
+          </div>
+        </div>
+        <div class="admin-quick-actions">
+          <a href="admin.html" class="btn-admin-bar-control" title="Vào bảng điều khiển quản trị">
+            <span class="btn-icon">📊</span>
+            <span>Vào Bảng Quản Trị</span>
+            <span class="btn-arrow">→</span>
+          </a>
+          <button type="button" class="btn-admin-bar-giftcode" onclick="openGiftcodeModal()" title="Tạo & Tùy chỉnh Giftcode">
+            <span class="btn-icon">🎁</span>
+            <span>Tạo Giftcode</span>
+            <span class="btn-chip">Mới</span>
+          </button>
+          <a href="admin.html?tab=add" class="btn-admin-bar-item" title="Thêm mặt hàng mới vào kho">
+            <span class="btn-icon">➕</span>
+            <span>Thêm Hàng</span>
+          </a>
+          <a href="admin.html?tab=wallet" class="btn-admin-bar-item" title="Quản lý ví và duyệt giao dịch">
+            <span class="btn-icon">💰</span>
+            <span>Quản Lý Ví</span>
+          </a>
+        </div>
+      </div>
+    `;
   } else if (existingBar) {
     existingBar.remove();
   }
@@ -1271,6 +2416,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartBadge();
   initSearch();
   initBubbleSearch();
+  initHeroSearch();
   initCategoryFilter();
   initCountdown();
   initMobileMenu();
@@ -1308,3 +2454,169 @@ document.addEventListener('DOMContentLoaded', () => {
     filterAndRender('products-grid');
   }
 });
+
+// ===== HERO SEARCH ENGINE (Trang Chủ) =====
+function handleHeroSearchSubmit(event) {
+  if (event) event.preventDefault();
+  const input = document.getElementById('hero-search-input');
+  const val = input ? input.value.trim() : '';
+  if (val) {
+    window.location.href = `products.html?q=${encodeURIComponent(val)}`;
+  } else {
+    window.location.href = `products.html`;
+  }
+}
+
+function initHeroSearch() {
+  const input = document.getElementById('hero-search-input');
+  const clearBtn = document.getElementById('hero-search-clear');
+  const resultsContainer = document.getElementById('hero-search-results');
+  const chips = document.querySelectorAll('.hero-chip');
+
+  if (!input) return;
+
+  let debounceTimer = null;
+
+  function renderHeroSuggestions(query) {
+    if (!resultsContainer) return;
+    const q = (query || '').trim().toLowerCase();
+    if (!q) {
+      resultsContainer.style.display = 'none';
+      resultsContainer.innerHTML = '';
+      return;
+    }
+
+    if (typeof loadProductsAndCategories === 'function') {
+      loadProductsAndCategories();
+    }
+    const prods = (typeof PRODUCTS !== 'undefined' && Array.isArray(PRODUCTS)) ? PRODUCTS : [];
+
+    const matches = prods.filter(p => {
+      const name = (p.name || '').toLowerCase();
+      const cat = (p.categoryLabel || p.category || '').toLowerCase();
+      const desc = (p.description || '').toLowerCase();
+      const tags = Array.isArray(p.tags) ? p.tags.join(' ').toLowerCase() : '';
+      return name.includes(q) || cat.includes(q) || desc.includes(q) || tags.includes(q);
+    }).slice(0, 6);
+
+    if (matches.length === 0) {
+      resultsContainer.innerHTML = `
+        <div class="hero-search-no-results">
+          <span style="font-size:24px">🔍</span>
+          <div>
+            Không tìm thấy sản phẩm nào khớp với "<strong>${escapeHtml(query)}</strong>"
+            <div style="margin-top:6px">
+              <a href="products.html?q=${encodeURIComponent(query)}" class="hero-search-more-link">
+                Duyệt tất cả sản phẩm trong cửa hàng →
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+      resultsContainer.style.display = 'block';
+      return;
+    }
+
+    let html = `
+      <div class="hero-search-results-header">
+        <span>Gợi ý sản phẩm (${matches.length})</span>
+        <a href="products.html?q=${encodeURIComponent(query)}">Xem tất cả ›</a>
+      </div>
+      <div class="hero-search-items-list">
+    `;
+
+    matches.forEach(p => {
+      const discountPercent = p.originalPrice && p.originalPrice > p.price
+        ? Math.round((1 - p.price / p.originalPrice) * 100)
+        : null;
+
+      const imgHtml = p.image
+        ? `<img src="${p.image}" alt="${escapeHtml(p.name)}" class="hero-res-thumb" onerror="this.onerror=null;this.src='https://placehold.co/80x80/1a1b2e/ffffff?text=Game';">`
+        : `<div class="hero-res-thumb-icon">${p.categoryIcon || '🎮'}</div>`;
+
+      // Safe escape regexp for highlight
+      const safeQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(${safeQuery})`, 'gi');
+      const highlightedName = escapeHtml(p.name).replace(regex, '<mark class="search-highlight">$1</mark>');
+
+      html += `
+        <a href="product-detail.html?id=${p.id}" class="hero-res-item">
+          ${imgHtml}
+          <div class="hero-res-info">
+            <div class="hero-res-name">${highlightedName}</div>
+            <div class="hero-res-meta">
+              <span class="hero-res-cat">${p.categoryLabel || p.category || 'Game'}</span>
+              <span class="hero-res-stock">⚡ Giao ngay</span>
+            </div>
+          </div>
+          <div class="hero-res-pricing">
+            <span class="hero-res-price">${formatPrice(p.price)}</span>
+            ${p.originalPrice && p.originalPrice > p.price ? `<span class="hero-res-original">${formatPrice(p.originalPrice)}</span>` : ''}
+            ${discountPercent ? `<span class="hero-res-badge">-${discountPercent}%</span>` : ''}
+          </div>
+        </a>
+      `;
+    });
+
+    html += `
+      </div>
+      <div class="hero-search-results-footer">
+        <a href="products.html?q=${encodeURIComponent(query)}" class="hero-search-view-all">
+          <span>Xem tất cả kết quả cho "<strong>${escapeHtml(query)}</strong>" trong Cửa Hàng</span>
+          <span class="view-all-arrow">→</span>
+        </a>
+      </div>
+    `;
+
+    resultsContainer.innerHTML = html;
+    resultsContainer.style.display = 'block';
+  }
+
+  input.addEventListener('input', () => {
+    const val = input.value.trim();
+    if (clearBtn) clearBtn.style.display = val ? 'flex' : 'none';
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      renderHeroSuggestions(val);
+    }, 180);
+  });
+
+  input.addEventListener('focus', () => {
+    if (input.value.trim()) {
+      renderHeroSuggestions(input.value.trim());
+    }
+  });
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      clearBtn.style.display = 'none';
+      if (resultsContainer) {
+        resultsContainer.style.display = 'none';
+        resultsContainer.innerHTML = '';
+      }
+      input.focus();
+    });
+  }
+
+  // Chips click
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const q = chip.dataset.query || chip.textContent.trim();
+      input.value = q;
+      if (clearBtn) clearBtn.style.display = 'flex';
+      renderHeroSuggestions(q);
+      input.focus();
+    });
+  });
+
+  // Click outside to close
+  document.addEventListener('click', (e) => {
+    if (!resultsContainer) return;
+    const wrap = document.querySelector('.hero-search-engine-wrap');
+    if (wrap && !wrap.contains(e.target)) {
+      resultsContainer.style.display = 'none';
+    }
+  });
+}
+

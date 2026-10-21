@@ -154,8 +154,8 @@
       <div id="cart-items"></div>
     </div>
 
-    <!-- Summary -->
-    <div>
+    <!-- Summary & Trust Perks (Unified sticky wrapper to prevent overlap) -->
+    <div style="position:sticky;top:90px;display:flex;flex-direction:column;gap:16px">
       <div class="cart-summary">
         <h3>📋 Tóm Tắt Đơn Hàng</h3>
         <div class="cart-summary-row">
@@ -197,7 +197,7 @@
       </div>
 
       <!-- Trust box -->
-      <div style="margin-top:16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:12px">
+      <div style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:12px">
         <div style="display:flex;gap:10px;align-items:center;font-size:13px;color:var(--text-secondary)">
           <span style="font-size:20px">🔒</span><span>Thanh toán 100% an toàn & bảo mật</span>
         </div>
@@ -260,10 +260,19 @@
 <script src="js/main.js"></script>
 <script>
   function updateCartSummaryWithCoupon() {
-    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
     const totalEl = document.getElementById('cart-total');
     const finalEl = document.getElementById('cart-total-final');
     const discValEl = document.getElementById('cart-discount-val');
+    if (!user) {
+      if (totalEl) totalEl.textContent = '0đ';
+      if (discValEl) discValEl.textContent = '-0đ';
+      if (finalEl) finalEl.textContent = '0đ';
+      return;
+    }
+
+    loadUserCart();
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     if (totalEl) totalEl.textContent = formatPrice(subtotal);
 
     let discount = 0;
@@ -286,6 +295,8 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    loadUserCart();
+    renderCart();
     updateCartSummaryWithCoupon();
   });
 </script>

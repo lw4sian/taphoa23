@@ -798,6 +798,309 @@ const DEFAULT_CATEGORIES = [
 let PRODUCTS = [];
 let CATEGORIES = [];
 
+// ============================================================================
+// REVIEW SERVICE (DATABASE READY ARCHITECTURE)
+// ============================================================================
+/**
+ * Mô hình dữ liệu chuẩn hoá cho Đánh Giá Sản Phẩm (Reviews)
+ * Sẵn sàng kết nối trực tiếp với Database Backend (PostgreSQL / MySQL / Supabase / Firebase / Node.js API).
+ *
+ * Entity Database Schema:
+ * ----------------------------------------------------------------------------
+ * Table: `product_reviews`
+ * Column              Type            Constraint
+ * id                  VARCHAR(64)     PRIMARY KEY (UUID / REV-xxx)
+ * product_id          INTEGER         NOT NULL (FK -> products.id)
+ * user_id             VARCHAR(64)     NULLABLE (FK -> users.username / id)
+ * author_name         VARCHAR(128)    NOT NULL
+ * author_avatar       VARCHAR(255)    NULLABLE
+ * rating              SMALLINT        NOT NULL CHECK (rating BETWEEN 1 AND 5)
+ * comment             TEXT            NOT NULL
+ * is_verified         BOOLEAN         DEFAULT TRUE
+ * status              VARCHAR(24)     DEFAULT 'approved' ('approved', 'pending', 'hidden')
+ * created_at          TIMESTAMPTZ     DEFAULT CURRENT_TIMESTAMP
+ * updated_at          TIMESTAMPTZ     DEFAULT CURRENT_TIMESTAMP
+ * ----------------------------------------------------------------------------
+ */
+
+const DEFAULT_SEED_REVIEWS = [
+  {
+    id: "REV-1001",
+    productId: 1,
+    userId: "namnh",
+    authorName: "Nguyễn Hoàng Nam",
+    authorAvatar: "N",
+    rating: 5,
+    comment: "Giao hàng cực kỳ nhanh, vừa chuyển khoản MoMo xong là web hiện mã thẻ ngay lập tức. Nạp vào game nhận đúng số lượng, chiết khấu rẻ hơn hẳn mua trực tiếp!",
+    isVerifiedPurchase: true,
+    status: "approved",
+    createdAt: "2026-10-21T20:15:00.000Z"
+  },
+  {
+    id: "REV-1002",
+    productId: 1,
+    userId: "minhtd",
+    authorName: "Trần Đức Minh",
+    authorAvatar: "T",
+    rating: 5,
+    comment: "Uy tín 100%, lúc đầu còn hơi lo nhưng nạp thử thẻ 100k vào ngon lành cành đào. Sẽ ủng hộ shop dài dài!",
+    isVerifiedPurchase: true,
+    status: "approved",
+    createdAt: "2026-10-21T17:30:00.000Z"
+  },
+  {
+    id: "REV-1003",
+    productId: 1,
+    userId: "linhlt",
+    authorName: "Lê Thùy Linh",
+    authorAvatar: "L",
+    rating: 5,
+    comment: "Chăm sóc khách hàng siêu nhiệt tình, mình nhập nhầm ký tự được admin hỗ trợ hướng dẫn tận tình trong 2 phút.",
+    isVerifiedPurchase: true,
+    status: "approved",
+    createdAt: "2026-10-20T11:45:00.000Z"
+  },
+  {
+    id: "REV-1004",
+    productId: 2,
+    userId: "quanghuy",
+    authorName: "Hà Quang Huy",
+    authorAvatar: "H",
+    rating: 5,
+    comment: "Acc PUBG chuẩn mô tả, level cao và nhiều skin hiếm. Đổi pass và mail thành công trong 5 phút. Rất hài lòng!",
+    isVerifiedPurchase: true,
+    status: "approved",
+    createdAt: "2026-10-21T14:10:00.000Z"
+  },
+  {
+    id: "REV-1005",
+    productId: 2,
+    userId: "tuananh",
+    authorName: "Phạm Tuấn Anh",
+    authorAvatar: "P",
+    rating: 4,
+    comment: "Tài khoản chơi mượt, rank Bạch Kim đúng như shop cam kết. Giá hợp lý so với thị trường.",
+    isVerifiedPurchase: true,
+    status: "approved",
+    createdAt: "2026-10-20T09:40:00.000Z"
+  },
+  {
+    id: "REV-1006",
+    productId: 3,
+    userId: "duongvu",
+    authorName: "Vũ Hải Dương",
+    authorAvatar: "V",
+    rating: 5,
+    comment: "Random trúng ngay Cyberpunk 2077 quá đã anh em ơi! Key kích hoạt phát ăn luôn không cần VPN gì cả.",
+    isVerifiedPurchase: true,
+    status: "approved",
+    createdAt: "2026-10-21T16:00:00.000Z"
+  },
+  {
+    id: "REV-1007",
+    productId: 3,
+    userId: "khanhng",
+    authorName: "Nguyễn Duy Khánh",
+    authorAvatar: "K",
+    rating: 5,
+    comment: "Mua lần 2 rồi, nhận key trong 3 giây. Giá 25k mà trúng game AAA quá hời. 10/10 uy tín!",
+    isVerifiedPurchase: true,
+    status: "approved",
+    createdAt: "2026-10-20T20:10:00.000Z"
+  },
+  {
+    id: "REV-1008",
+    productId: 4,
+    userId: "minhquan",
+    authorName: "Võ Minh Quân",
+    authorAvatar: "Q",
+    rating: 5,
+    comment: "Nick Free Fire ngon, đúng thông tin đăng bán, có trang phục quỷ kiếm dạ xoa xịn xò.",
+    isVerifiedPurchase: true,
+    status: "approved",
+    createdAt: "2026-10-21T18:20:00.000Z"
+  },
+  {
+    id: "REV-1009",
+    productId: 5,
+    userId: "hoangit",
+    authorName: "Đỗ Minh Hoàng",
+    authorAvatar: "Đ",
+    rating: 5,
+    comment: "Key Win 11 Pro kích hoạt online thành công ngay lập tức. Bản quyền vĩnh viễn chuẩn Microsoft, cảm ơn shop nhiều!",
+    isVerifiedPurchase: true,
+    status: "approved",
+    createdAt: "2026-10-21T12:00:00.000Z"
+  },
+  {
+    id: "REV-1010",
+    productId: 6,
+    userId: "lananh",
+    authorName: "Bùi Lan Anh",
+    authorAvatar: "B",
+    rating: 5,
+    comment: "Tài khoản Netflix 4K xem cực nét, profile riêng tư không bị văng. Đã dùng thử 2 tuần rất ổn định.",
+    isVerifiedPurchase: true,
+    status: "approved",
+    createdAt: "2026-10-21T10:30:00.000Z"
+  }
+];
+
+const ReviewService = {
+  STORAGE_KEY: 'tapHoa23ProductReviews',
+
+  // Cấu hình Database Backend tương lai (khi có DB thực tế, chỉ cần bật USE_REMOTE_API = true)
+  API_CONFIG: {
+    USE_REMOTE_API: false,
+    BASE_URL: 'https://api.taphoa23.vn/api/v1/reviews'
+  },
+
+  getAllReviews() {
+    try {
+      const raw = localStorage.getItem(this.STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+      // Khởi tạo seed data nếu chưa có
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(DEFAULT_SEED_REVIEWS));
+      return [...DEFAULT_SEED_REVIEWS];
+    } catch (e) {
+      return [...DEFAULT_SEED_REVIEWS];
+    }
+  },
+
+  saveAllReviews(reviews) {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(reviews));
+    } catch (e) {
+      console.error('Error saving reviews to storage:', e);
+    }
+  },
+
+  getProductReviews(productId, includePending = false) {
+    const numId = parseInt(productId, 10);
+    const all = this.getAllReviews();
+    return all
+      .filter(r => r.productId === numId && (includePending ? true : (r.status === 'approved' || !r.status)))
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  },
+
+  getProductReviewStats(productId) {
+    const reviews = this.getProductReviews(productId);
+    const count = reviews.length;
+    if (count === 0) {
+      return {
+        count: 0,
+        averageRating: 5.0,
+        distribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+      };
+    }
+    const sum = reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0);
+    const avg = Math.round((sum / count) * 10) / 10;
+    const dist = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    reviews.forEach(r => {
+      const star = Math.min(5, Math.max(1, Math.round(Number(r.rating) || 5)));
+      dist[star] = (dist[star] || 0) + 1;
+    });
+    return {
+      count,
+      averageRating: avg,
+      distribution: dist
+    };
+  },
+
+  addReview(reviewData) {
+    const all = this.getAllReviews();
+    const numProductId = parseInt(reviewData.productId, 10);
+    const rating = Math.min(5, Math.max(1, parseInt(reviewData.rating, 10) || 5));
+    const authorName = String(reviewData.authorName || 'Khách hàng').trim();
+    const comment = String(reviewData.comment || '').trim();
+    const avatar = reviewData.authorAvatar || authorName.charAt(0).toUpperCase() || '👤';
+
+    const newReview = {
+      id: 'REV-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+      productId: numProductId,
+      userId: reviewData.userId || null,
+      authorName: authorName,
+      authorAvatar: avatar,
+      rating: rating,
+      comment: comment,
+      isVerifiedPurchase: reviewData.isVerifiedPurchase !== false,
+      status: reviewData.status || 'approved',
+      createdAt: new Date().toISOString()
+    };
+
+    all.unshift(newReview);
+    this.saveAllReviews(all);
+
+    // Đồng bộ tức thì chỉ số đánh giá của sản phẩm trong PRODUCTS
+    this.syncProductStats(numProductId);
+
+    return newReview;
+  },
+
+  syncProductStats(productId) {
+    const numId = parseInt(productId, 10);
+    if (typeof PRODUCTS !== 'undefined' && Array.isArray(PRODUCTS)) {
+      const prod = PRODUCTS.find(p => p.id === numId);
+      if (prod) {
+        const stats = this.getProductReviewStats(numId);
+        prod.reviews = stats.count;
+        if (stats.count > 0) {
+          prod.rating = stats.averageRating;
+        }
+        if (typeof saveProducts === 'function') {
+          saveProducts();
+        }
+      }
+    }
+  },
+
+  syncAllProducts() {
+    if (typeof PRODUCTS === 'undefined' || !Array.isArray(PRODUCTS)) return;
+    let changed = false;
+    PRODUCTS.forEach(p => {
+      const stats = this.getProductReviewStats(p.id);
+      if (p.reviews !== stats.count || (stats.count > 0 && Math.abs(p.rating - stats.averageRating) > 0.05)) {
+        p.reviews = stats.count;
+        if (stats.count > 0) {
+          p.rating = stats.averageRating;
+        }
+        changed = true;
+      }
+    });
+    if (changed && typeof saveProducts === 'function') {
+      saveProducts();
+    }
+  },
+
+  // Phương thức async sẵn sàng cho việc gọi API backend sau này
+  async fetchReviewsFromApi(productId) {
+    if (!this.API_CONFIG.USE_REMOTE_API) {
+      return this.getProductReviews(productId);
+    }
+    const response = await fetch(`${this.API_CONFIG.BASE_URL}?productId=${productId}`);
+    return await response.json();
+  },
+
+  async postReviewToApi(reviewData) {
+    if (!this.API_CONFIG.USE_REMOTE_API) {
+      return this.addReview(reviewData);
+    }
+    const response = await fetch(this.API_CONFIG.BASE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reviewData)
+    });
+    return await response.json();
+  }
+};
+
+if (typeof window !== 'undefined') {
+  window.ReviewService = ReviewService;
+}
+
 function loadProductsAndCategories() {
   try {
     const savedP = localStorage.getItem('tapHoa23Products');
@@ -811,6 +1114,11 @@ function loadProductsAndCategories() {
     CATEGORIES = savedC ? JSON.parse(savedC) : [...DEFAULT_CATEGORIES];
   } catch (e) {
     CATEGORIES = [...DEFAULT_CATEGORIES];
+  }
+
+  // Tự động đồng bộ số lượng đánh giá thực tế từ ReviewService cho tất cả sản phẩm
+  if (typeof ReviewService !== 'undefined' && typeof ReviewService.syncAllProducts === 'function') {
+    ReviewService.syncAllProducts();
   }
 
   // Automatically discover and sync any new categories from custom products
@@ -849,7 +1157,7 @@ function loadProductsAndCategories() {
   if (hasNewCat) {
     try {
       localStorage.setItem('tapHoa23Categories', JSON.stringify(CATEGORIES));
-    } catch(e) {}
+    } catch (e) { }
   }
 }
 loadProductsAndCategories();
@@ -875,7 +1183,7 @@ function getBadgeColor(badge) {
     'Sale': '#f97316',
     'New': '#22c55e',
     'Best': '#eab308',
-    'Rare': '#a855f7',
+    'Rare': '#cbd5e1',
     'Hết Hàng': '#ef4444'
   };
   return colors[badge] || '#6b7280';
@@ -908,7 +1216,7 @@ function addProduct(newProduct) {
   if (newProduct.isOutOfStock === undefined) {
     newProduct.isOutOfStock = Number(newProduct.stock) <= 0;
   }
-  
+
   // Normalize images array
   if (!Array.isArray(newProduct.images)) {
     newProduct.images = newProduct.images ? [newProduct.images] : [];

@@ -329,14 +329,14 @@
           <span style="font-size:28px">🏦</span>
           <div>
             <div style="font-weight:700;font-size:14px">Chuyển Khoản Ngân Hàng</div>
-            <div style="font-size:12px;color:var(--text-muted)">MB Bank (Quân Đội) - Quét VietQR</div>
+            <div style="font-size:12px;color:var(--text-muted)">Vietcombank - Quét VietQR</div>
           </div>
         </div>
         <div class="method-card" id="method-momo" onclick="selectMethod('momo')">
           <span style="font-size:28px">📱</span>
           <div>
             <div style="font-weight:700;font-size:14px">Ví Điện Tử MoMo</div>
-            <div style="font-size:12px;color:var(--text-muted)">Quét mã MoMo nhanh chóng</div>
+            <div style="font-size:12px;color:var(--text-muted)">SĐT: 0348 989 461</div>
           </div>
         </div>
       </div>
@@ -355,20 +355,20 @@
 
       <div class="qr-flex">
         <div class="qr-frame">
-          <img id="qr-code-img" src="https://api.vietqr.io/image/970422-0987654321-compact.jpg" alt="QR Code" />
-          <div style="font-size:12px;font-weight:700;color:#0d0d1a;margin-top:8px" id="qr-brand-text">MB Bank VietQR</div>
+          <img id="qr-code-img" src="https://api.vietqr.io/image/970436-1019213943-compact.jpg" alt="Vietcombank VietQR" />
+          <div style="font-size:12px;font-weight:700;color:#0d0d1a;margin-top:8px" id="qr-brand-text">Vietcombank VietQR</div>
         </div>
 
         <div class="transfer-info-table">
           <div class="transfer-row">
             <span class="label">Ngân hàng / Ví:</span>
-            <span class="value" id="qr-bank-name">MB Bank (Quân Đội)</span>
+            <span class="value" id="qr-bank-name">Vietcombank (Ngoại Thương Việt Nam)</span>
           </div>
           <div class="transfer-row">
             <span class="label">Số tài khoản / SĐT:</span>
             <span class="value">
-              <span id="qr-account-number">0987 654 321</span>
-              <button class="copy-btn" onclick="copyText('0987654321')">Copy</button>
+              <span id="qr-account-number">1019 213 943</span>
+              <button class="copy-btn" id="btn-copy-account" onclick="copyText('1019213943')">Copy</button>
             </span>
           </div>
           <div class="transfer-row">
@@ -530,16 +530,25 @@
     qrAmt.textContent = formatPrice(selectedAmount);
     qrSyntax.textContent = syntax;
 
+    const copyAccountBtn = document.getElementById('btn-copy-account');
+
     if (selectedMethod === 'banking') {
-      qrBrand.textContent = 'MB Bank VietQR';
-      qrBank.textContent = 'MB Bank (Quân Đội)';
-      qrAcc.textContent = '0987 654 321';
-      qrImg.src = `https://api.vietqr.io/image/970422-0987654321-compact.jpg?amount=${selectedAmount}&addInfo=${encodeURIComponent(syntax)}&accountName=TAP%20HOA%2023`;
+      qrBrand.textContent = 'Vietcombank VietQR';
+      qrBank.textContent = 'Vietcombank (Ngoại Thương Việt Nam)';
+      qrAcc.textContent = '1019 213 943';
+      if (copyAccountBtn) copyAccountBtn.setAttribute('onclick', "copyText('1019213943')");
+      qrImg.onerror = null;
+      qrImg.src = `https://api.vietqr.io/image/970436-1019213943-compact.jpg?amount=${selectedAmount}&addInfo=${encodeURIComponent(syntax)}&accountName=TAP%20HOA%2023`;
     } else {
       qrBrand.textContent = 'Ví Điện Tử MoMo';
       qrBank.textContent = 'Ví MoMo';
-      qrAcc.textContent = '0987 654 321';
-      qrImg.src = `https://api.vietqr.io/image/970422-0987654321-compact.jpg?amount=${selectedAmount}&addInfo=${encodeURIComponent(syntax)}&accountName=TAP%20HOA%2023`;
+      qrAcc.textContent = '0348 989 461';
+      if (copyAccountBtn) copyAccountBtn.setAttribute('onclick', "copyText('0348989461')");
+      qrImg.onerror = function() {
+        this.onerror = null;
+        this.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=2|99|0348989461|||0|0|${selectedAmount}|${encodeURIComponent(syntax)}|transfer_myqr`;
+      };
+      qrImg.src = `https://api.vietqr.io/image/971005-0348989461-compact.jpg?amount=${selectedAmount}&addInfo=${encodeURIComponent(syntax)}&accountName=TAP%20HOA%2023`;
     }
 
     // Create deposit request in system

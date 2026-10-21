@@ -27,17 +27,20 @@
       position: relative;
       overflow: hidden;
     }
+
     .cat-detail-card:hover {
       border-color: var(--border-hover);
       transform: translateY(-3px);
       box-shadow: var(--shadow-hover);
       background: var(--bg-card-hover);
     }
+
     .cat-detail-header {
       display: flex;
       align-items: center;
       gap: 16px;
     }
+
     .cat-detail-icon {
       font-size: 32px;
       width: 56px;
@@ -51,15 +54,18 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
       transition: var(--transition);
     }
+
     .cat-detail-card:hover .cat-detail-icon {
       transform: scale(1.1);
     }
+
     .cat-detail-title {
       font-size: 18px;
       font-weight: 800;
       color: #ffffff;
       margin-bottom: 2px;
     }
+
     .cat-detail-count {
       display: inline-block;
       font-size: 13px;
@@ -70,18 +76,21 @@
       background-clip: text;
       filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.85));
     }
+
     .cat-detail-desc {
       font-size: 13.5px;
       color: var(--text-secondary);
       line-height: 1.6;
       flex: 1;
     }
+
     .cat-detail-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
       margin-top: 4px;
     }
+
     .cat-tag {
       font-size: 11.5px;
       padding: 3px 9px;
@@ -90,6 +99,7 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
       color: var(--text-muted);
     }
+
     .cat-detail-action {
       display: inline-flex;
       align-items: center;
@@ -106,14 +116,17 @@
       transition: var(--transition);
       margin-top: 8px;
     }
+
     .cat-detail-card:hover .cat-detail-action {
       background: #ffffff;
       color: #0a0b0e;
       border-color: #ffffff;
     }
+
     .cat-detail-action span:last-child {
       transition: transform 0.2s ease;
     }
+
     .cat-detail-card:hover .cat-detail-action span:last-child {
       transform: translateX(4px);
     }
@@ -174,45 +187,53 @@
       <!-- Khối phải: Cụm nút (Facebook, Discord, Giỏ hàng, Đăng nhập, Hamburger) -->
       <div class="nav-actions">
         <!-- Nút Facebook & Discord được giữ nguyên ở các trang category/phụ -->
-        <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer" class="nav-social-btn nav-btn-fb" title="Trang Facebook Tạp Hóa 23">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer"
+          class="nav-social-btn nav-btn-fb" title="Trang Facebook Tạp Hóa 23">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+          </svg>
         </a>
-        <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer" class="nav-social-btn nav-btn-discord" title="Máy chủ Discord Tạp Hóa 23">
-          <svg width="18" height="15" viewBox="0 0 24 19" fill="currentColor"><path d="M20.317 1.492a19.742 19.742 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.182-.32 10.755.099 15.277a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 12.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer"
+          class="nav-social-btn nav-btn-discord" title="Máy chủ Discord Tạp Hóa 23">
+          <svg width="18" height="15" viewBox="0 0 24 19" fill="currentColor">
+            <path
+              d="M20.317 1.492a19.742 19.742 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.182-.32 10.755.099 15.277a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 12.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+          </svg>
         </a>
 
         <!-- Nút Kính Lúp & Bong Bóng Tìm Kiếm -->
         <div class="nav-search-wrapper" id="nav-search-wrapper">
-          <button type="button" class="nav-search-btn" id="nav-search-btn" aria-label="Tìm kiếm sản phẩm" aria-expanded="false" aria-controls="nav-search-bubble" title="Tìm kiếm (Ctrl+K)">
-            <svg class="search-icon-lens" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button type="button" class="nav-search-btn" id="nav-search-btn" aria-label="Tìm kiếm sản phẩm"
+            aria-expanded="false" aria-controls="nav-search-bubble" title="Tìm kiếm (Ctrl+K)">
+            <svg class="search-icon-lens" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <svg class="search-icon-close" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="search-icon-close" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
 
           <!-- Bong Bóng Tìm Kiếm Popup -->
-          <div class="nav-search-bubble" id="nav-search-bubble" role="dialog" aria-modal="false" aria-label="Tìm kiếm nhanh">
+          <div class="nav-search-bubble" id="nav-search-bubble" role="dialog" aria-modal="false"
+            aria-label="Tìm kiếm nhanh">
             <div class="search-bubble-arrow" aria-hidden="true"></div>
             <div class="search-bubble-body">
               <form class="search-bubble-form" id="search-bubble-form" onsubmit="handleBubbleSearchSubmit(event)">
                 <div class="search-input-wrap">
-                  <svg class="search-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg class="search-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                   </svg>
-                  <input 
-                    type="text" 
-                    class="search-bubble-input" 
-                    id="search-bubble-input" 
-                    placeholder="Tìm key, tài khoản game, giftcode…" 
-                    autocomplete="off"
-                    spellcheck="false"
-                  />
-                  <button type="button" class="search-bubble-clear" id="search-bubble-clear" aria-label="Xóa nội dung" title="Xóa">✕</button>
+                  <input type="text" class="search-bubble-input" id="search-bubble-input"
+                    placeholder="Tìm key, tài khoản game, giftcode…" autocomplete="off" spellcheck="false" />
+                  <button type="button" class="search-bubble-clear" id="search-bubble-clear" aria-label="Xóa nội dung"
+                    title="Xóa">✕</button>
                 </div>
                 <button type="submit" class="search-bubble-submit-btn">Tìm</button>
               </form>
@@ -242,7 +263,8 @@
           <span class="nav-login-icon">👤</span>
           <span class="nav-login-text">Đăng Nhập</span>
         </a>
-        <button class="nav-hamburger" id="nav-hamburger" aria-label="Mở menu điều hướng" aria-expanded="false" aria-controls="nav-menu">
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Mở menu điều hướng" aria-expanded="false"
+          aria-controls="nav-menu">
           <span></span>
           <span></span>
           <span></span>
@@ -255,7 +277,7 @@
   <!-- ===== PAGE HEADER ===== -->
   <div class="page-header">
     <div class="container">
-      <h1>📂 Khám Phá <span class="gradient-text">Danh Mục</span> Sản Phẩm</h1>
+      <h1>Khám Phá <span class="gradient-text">Danh Mục</span> Sản Phẩm</h1>
       <p>Kho danh mục đa dạng: Key Steam, Tài khoản Game, Giftcode, Thẻ nạp & Phần mềm bản quyền</p>
       <div class="breadcrumb">
         <a href="index.html">Trang Chủ</a> › <span>Danh Mục</span>
@@ -264,27 +286,29 @@
   </div>
 
   <!-- ===== CATEGORIES SECTION ===== -->
-  <section style="padding: 60px 0 90px;">
+  <section style="padding: 30px 0 60px;">
     <div class="container">
       <div class="section-header animate-on-scroll">
-        <span class="section-tag">✨ Bộ Sưu Tập</span>
-        <h2 class="section-title">Chọn <span class="gradient-text">Danh Mục</span> Bạn Cần</h2>
-        <p class="section-sub">Bấm vào bất kỳ danh mục nào để xem ngay danh sách sản phẩm cùng mức giá ưu đãi</p>
+        <!-- <span class="section-tag">Bộ Sưu Tập</span> -->
+
+        <!-- <p class="section-sub">Bấm vào bất kỳ danh mục nào để xem ngay danh sách sản phẩm cùng mức giá ưu đãi</p> -->
       </div>
 
       <!-- Lưới các thẻ danh mục chuẩn Minimalist Dark Spotlight -->
-      <div class="categories-grid stagger-children animate-on-scroll" style="margin-bottom: 60px;">
+      <!-- <div class="categories-grid stagger-children animate-on-scroll" style="margin-bottom: 60px;">
         <div class="category-card" data-category="the-garena" onclick="location.href='products.html?cat=the-garena'">
           <div class="category-icon">🎟️</div>
           <div class="category-label">Thẻ Garena</div>
           <div class="category-count">6 mệnh giá hot</div>
         </div>
-        <div class="category-card" data-category="steam-wallet" onclick="location.href='products.html?cat=steam-wallet'">
+        <div class="category-card" data-category="steam-wallet"
+          onclick="location.href='products.html?cat=steam-wallet'">
           <div class="category-icon">🎮</div>
           <div class="category-label">Key Steam Wallet</div>
           <div class="category-count">7 mệnh giá nạp ví</div>
         </div>
-        <div class="category-card" data-category="game-account" onclick="location.href='products.html?cat=game-account'">
+        <div class="category-card" data-category="game-account"
+          onclick="location.href='products.html?cat=game-account'">
           <div class="category-icon">🎯</div>
           <div class="category-label">Tài Khoản Game</div>
           <div class="category-count">12 sản phẩm</div>
@@ -314,26 +338,29 @@
           <div class="category-label">Vật Phẩm Game</div>
           <div class="category-count">5 sản phẩm</div>
         </div>
-      </div>
+      </div> -->
 
       <!-- Khối chi tiết từng danh mục -->
-      <div class="section-header animate-on-scroll">
+      <!-- <div class="section-header animate-on-scroll">
         <span class="section-tag">🔍 Tổng Quan Chi Tiết</span>
         <h2 class="section-title">Thông Tin Các <span class="gradient-text">Ngành Hàng</span></h2>
         <p class="section-sub">Cam kết chất lượng dịch vụ, bàn giao tự động và bảo hành minh bạch</p>
-      </div>
+      </div> -->
 
-      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));gap:20px;" class="stagger-children animate-on-scroll">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));gap:20px;"
+        class="stagger-children animate-on-scroll">
         <!-- 1. Thẻ Garena -->
         <div class="cat-detail-card">
           <div class="cat-detail-header">
-            <div class="cat-detail-icon" style="background:rgba(239,68,68,0.16);border-color:rgba(239,68,68,0.35);">🎟️</div>
+            <div class="cat-detail-icon" style="background:rgba(239,68,68,0.16);border-color:rgba(239,68,68,0.35);">🎟️
+            </div>
             <div>
               <div class="cat-detail-title">Thẻ Garena</div>
               <div class="cat-detail-count">6 mệnh giá có sẵn</div>
             </div>
           </div>
-          <p class="cat-detail-desc">Nạp Sò, Quân Huy Liên Quân, Kim Cương Free Fire, FC Online giá tốt nhất thị trường. Nhận mã thẻ ngay sau khi thanh toán.</p>
+          <p class="cat-detail-desc">Nạp Sò, Quân Huy Liên Quân, Kim Cương Free Fire, FC Online giá tốt nhất thị trường.
+            Nhận mã thẻ ngay sau khi thanh toán.</p>
           <div class="cat-detail-tags">
             <span class="cat-tag">Liên Quân</span>
             <span class="cat-tag">FC Online</span>
@@ -349,13 +376,16 @@
         <!-- 2. Steam Wallet -->
         <div class="cat-detail-card">
           <div class="cat-detail-header">
-            <div class="cat-detail-icon" style="background:linear-gradient(135deg,rgba(255,255,255,0.18),rgba(203,213,225,0.08));border-color:rgba(226,232,240,0.35);box-shadow:0 0 12px rgba(255,255,255,0.08);">🎮</div>
+            <div class="cat-detail-icon"
+              style="background:linear-gradient(135deg,rgba(255,255,255,0.18),rgba(203,213,225,0.08));border-color:rgba(226,232,240,0.35);box-shadow:0 0 12px rgba(255,255,255,0.08);">
+              🎮</div>
             <div>
               <div class="cat-detail-title">Key Steam Wallet</div>
               <div class="cat-detail-count">7 mệnh giá nạp ví</div>
             </div>
           </div>
-          <p class="cat-detail-desc">Mã nạp tiền Steam Wallet Code chính hãng khu vực Việt Nam và Toàn Cầu. Tự động quy đổi VND, bảo hành vĩnh viễn.</p>
+          <p class="cat-detail-desc">Mã nạp tiền Steam Wallet Code chính hãng khu vực Việt Nam và Toàn Cầu. Tự động quy
+            đổi VND, bảo hành vĩnh viễn.</p>
           <div class="cat-detail-tags">
             <span class="cat-tag">Steam Wallet VND</span>
             <span class="cat-tag">Global</span>
@@ -370,13 +400,15 @@
         <!-- 3. Tài Khoản Game -->
         <div class="cat-detail-card">
           <div class="cat-detail-header">
-            <div class="cat-detail-icon" style="background:rgba(244,63,94,0.16);border-color:rgba(244,63,94,0.35);">🎯</div>
+            <div class="cat-detail-icon" style="background:rgba(244,63,94,0.16);border-color:rgba(244,63,94,0.35);">🎯
+            </div>
             <div>
               <div class="cat-detail-title">Tài Khoản Game (Valorant...)</div>
               <div class="cat-detail-count">12 tài khoản tuyển chọn</div>
             </div>
           </div>
-          <p class="cat-detail-desc">Acc Valorant nhiều skin VIP, Acc LMHT full tướng, Acc CS2 Prime, Genshin Impact... Đổi thông tin 100%, bảo hành uy tín.</p>
+          <p class="cat-detail-desc">Acc Valorant nhiều skin VIP, Acc LMHT full tướng, Acc CS2 Prime, Genshin Impact...
+            Đổi thông tin 100%, bảo hành uy tín.</p>
           <div class="cat-detail-tags">
             <span class="cat-tag">Valorant</span>
             <span class="cat-tag">LMHT</span>
@@ -392,13 +424,16 @@
         <!-- 4. Key Game -->
         <div class="cat-detail-card">
           <div class="cat-detail-header">
-            <div class="cat-detail-icon" style="background:linear-gradient(135deg,rgba(255,255,255,0.18),rgba(203,213,225,0.08));border-color:rgba(226,232,240,0.35);box-shadow:0 0 12px rgba(255,255,255,0.08);">🔑</div>
+            <div class="cat-detail-icon"
+              style="background:linear-gradient(135deg,rgba(255,255,255,0.18),rgba(203,213,225,0.08));border-color:rgba(226,232,240,0.35);box-shadow:0 0 12px rgba(255,255,255,0.08);">
+              🔑</div>
             <div>
               <div class="cat-detail-title">Key Game Bản Quyền</div>
               <div class="cat-detail-count">8 tựa game hot</div>
             </div>
           </div>
-          <p class="cat-detail-desc">Key kích hoạt Steam, Epic Games, EA Play bản quyền vĩnh viễn. Đầy đủ các bom tấn AAA, Random Key tỉ lệ trúng game khủng.</p>
+          <p class="cat-detail-desc">Key kích hoạt Steam, Epic Games, EA Play bản quyền vĩnh viễn. Đầy đủ các bom tấn
+            AAA, Random Key tỉ lệ trúng game khủng.</p>
           <div class="cat-detail-tags">
             <span class="cat-tag">Steam Key</span>
             <span class="cat-tag">Game AAA</span>
@@ -413,13 +448,15 @@
         <!-- 5. Gift Code -->
         <div class="cat-detail-card">
           <div class="cat-detail-header">
-            <div class="cat-detail-icon" style="background:rgba(251,191,36,0.16);border-color:rgba(251,191,36,0.35);">🎁</div>
+            <div class="cat-detail-icon" style="background:rgba(251,191,36,0.16);border-color:rgba(251,191,36,0.35);">🎁
+            </div>
             <div>
               <div class="cat-detail-title">Gift Code & Thẻ Quà Tặng</div>
               <div class="cat-detail-count">15 gói ưu đãi</div>
             </div>
           </div>
-          <p class="cat-detail-desc">Discord Nitro, Robux Roblox, Xbox Game Pass, Google Play Gift Card... Mua sắm an toàn, nạp nhanh trong 1 phút.</p>
+          <p class="cat-detail-desc">Discord Nitro, Robux Roblox, Xbox Game Pass, Google Play Gift Card... Mua sắm an
+            toàn, nạp nhanh trong 1 phút.</p>
           <div class="cat-detail-tags">
             <span class="cat-tag">Discord Nitro</span>
             <span class="cat-tag">Robux</span>
@@ -434,13 +471,15 @@
         <!-- 6. Netflix & Phần Mềm -->
         <div class="cat-detail-card">
           <div class="cat-detail-header">
-            <div class="cat-detail-icon" style="background:rgba(129,140,248,0.16);border-color:rgba(129,140,248,0.35);">🎬</div>
+            <div class="cat-detail-icon" style="background:rgba(129,140,248,0.16);border-color:rgba(129,140,248,0.35);">
+              🎬</div>
             <div>
               <div class="cat-detail-title">Netflix & Phần Mềm</div>
               <div class="cat-detail-count">10 gói giải trí</div>
             </div>
           </div>
-          <p class="cat-detail-desc">Tài khoản Netflix Premium Ultra HD 4K, Spotify Premium, YouTube Premium, Canva Pro, Windows 11 bản quyền giá siêu tiết kiệm.</p>
+          <p class="cat-detail-desc">Tài khoản Netflix Premium Ultra HD 4K, Spotify Premium, YouTube Premium, Canva Pro,
+            Windows 11 bản quyền giá siêu tiết kiệm.</p>
           <div class="cat-detail-tags">
             <span class="cat-tag">Netflix 4K</span>
             <span class="cat-tag">Spotify</span>
@@ -455,13 +494,15 @@
         <!-- 7. Game Mobile -->
         <div class="cat-detail-card">
           <div class="cat-detail-header">
-            <div class="cat-detail-icon" style="background:rgba(59,130,246,0.16);border-color:rgba(59,130,246,0.35);">📱</div>
+            <div class="cat-detail-icon" style="background:rgba(59,130,246,0.16);border-color:rgba(59,130,246,0.35);">📱
+            </div>
             <div>
               <div class="cat-detail-title">Game Mobile</div>
               <div class="cat-detail-count">6 tựa game</div>
             </div>
           </div>
-          <p class="cat-detail-desc">Tài khoản và nạp gói cho các game mobile thịnh hành: Genshin Impact, Honkai Star Rail, Tốc Chiến, Free Fire...</p>
+          <p class="cat-detail-desc">Tài khoản và nạp gói cho các game mobile thịnh hành: Genshin Impact, Honkai Star
+            Rail, Tốc Chiến, Free Fire...</p>
           <div class="cat-detail-tags">
             <span class="cat-tag">Genshin</span>
             <span class="cat-tag">Honkai</span>
@@ -476,13 +517,15 @@
         <!-- 8. Vật Phẩm Game -->
         <div class="cat-detail-card">
           <div class="cat-detail-header">
-            <div class="cat-detail-icon" style="background:rgba(16,185,129,0.16);border-color:rgba(16,185,129,0.35);">🛡️</div>
+            <div class="cat-detail-icon" style="background:rgba(16,185,129,0.16);border-color:rgba(16,185,129,0.35);">
+              🛡️</div>
             <div>
               <div class="cat-detail-title">Vật Phẩm & Skin Game</div>
               <div class="cat-detail-count">5 gói vật phẩm</div>
             </div>
           </div>
-          <p class="cat-detail-desc">Giao dịch vật phẩm ingame, skin súng, trang phục sự kiện giới hạn với mức giá cạnh tranh và hỗ trợ tận tình.</p>
+          <p class="cat-detail-desc">Giao dịch vật phẩm ingame, skin súng, trang phục sự kiện giới hạn với mức giá cạnh
+            tranh và hỗ trợ tận tình.</p>
           <div class="cat-detail-tags">
             <span class="cat-tag">Skin Game</span>
             <span class="cat-tag">Vật Phẩm</span>
@@ -497,7 +540,7 @@
 
       <div style="text-align:center;margin-top:48px;">
         <a href="products.html" class="btn-primary" style="padding:14px 36px;font-size:16px;">
-          <span>🛍️ Xem Toàn Bộ Sản Phẩm</span>
+          <span>Xem Toàn Bộ Sản Phẩm</span>
         </a>
       </div>
     </div>
@@ -518,7 +561,7 @@
           <span class="trust-icon">🔒</span>
           <div class="trust-text">
             <h4>Thanh Toán An Toàn</h4>
-            <p>Hỗ trợ MoMo, VNPay, Ngân hàng</p>
+            <p>Hỗ trợ MoMo, VNPay, Banking</p>
           </div>
         </div>
         <div class="trust-item animate-on-scroll">
@@ -548,10 +591,13 @@
             <span class="footer-logo-icon">🛒</span>
             <span class="footer-logo-text">Tạp Hóa 23</span>
           </div>
-          <p class="footer-desc">Nền tảng mua bán Thẻ Garena, Key Steam Wallet, tài khoản game, giftcode uy tín hàng đầu Việt Nam.</p>
+          <p class="footer-desc">Nền tảng mua bán Thẻ Garena, Key Steam Wallet, tài khoản game, giftcode uy tín hàng đầu
+            Việt Nam.</p>
           <div class="footer-socials">
-            <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer" class="footer-social" title="Facebook">📘</a>
-            <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer" class="footer-social" title="Discord">🎮</a>
+            <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer" class="footer-social"
+              title="Facebook">📘</a>
+            <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer" class="footer-social"
+              title="Discord">🎮</a>
             <a href="mailto:taphoa23@gmail.com" class="footer-social" title="Email">✉️</a>
           </div>
         </div>
@@ -607,7 +653,8 @@
       </div>
 
       <div class="footer-bottom">
-        <p>© 2024 Tạp Hóa 23. All rights reserved. Liên hệ: <a href="tel:0987654321" style="color:var(--gold)">0987 654 321</a> | <a href="mailto:taphoa23@gmail.com" style="color:var(--purple-light)">taphoa23@gmail.com</a></p>
+        <p>© 2024 Tạp Hóa 23. All rights reserved. Liên hệ: <a href="tel:0987654321" style="color:var(--gold)">0987 654
+            321</a> | <a href="mailto:taphoa23@gmail.com" style="color:var(--purple-light)">taphoa23@gmail.com</a></p>
         <div class="footer-bottom-links">
           <a href="#">Bảo Mật</a>
           <a href="#">Điều Khoản</a>
@@ -619,12 +666,20 @@
 
   <!-- FLOATING SOCIAL WIDGET (Facebook & Discord) -->
   <div class="floating-social-widget">
-    <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer" class="floating-social-btn floating-fb" title="Trang Facebook Tạp Hóa 23">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    <a href="https://facebook.com/taphoa23" target="_blank" rel="noopener noreferrer"
+      class="floating-social-btn floating-fb" title="Trang Facebook Tạp Hóa 23">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+      </svg>
       <span class="floating-tooltip">Facebook Fanpage</span>
     </a>
-    <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer" class="floating-social-btn floating-discord" title="Máy chủ Discord Tạp Hóa 23">
-      <svg width="22" height="18" viewBox="0 0 24 19" fill="currentColor"><path d="M20.317 1.492a19.742 19.742 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.182-.32 10.755.099 15.277a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 12.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+    <a href="https://discord.gg/taphoa23" target="_blank" rel="noopener noreferrer"
+      class="floating-social-btn floating-discord" title="Máy chủ Discord Tạp Hóa 23">
+      <svg width="22" height="18" viewBox="0 0 24 19" fill="currentColor">
+        <path
+          d="M20.317 1.492a19.742 19.742 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 1.492a.07.07 0 0 0-.032.027C.533 6.182-.32 10.755.099 15.277a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 12.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+      </svg>
       <span class="floating-tooltip">Kênh Discord</span>
     </a>
   </div>
