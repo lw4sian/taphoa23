@@ -679,12 +679,12 @@ function initSearch() {
 function filterAndRender(containerId = 'products-grid') {
   let filtered = PRODUCTS;
   if (activeCategory !== 'all') {
-    filtered = filtered.filter(p => p.category === activeCategory);
+    filtered = filtered.filter(p => p.category === activeCategory || (p.categoryLabel && p.categoryLabel.toLowerCase() === activeCategory.toLowerCase()));
   }
   if (searchQuery) {
     filtered = filtered.filter(p =>
       p.name.toLowerCase().includes(searchQuery) ||
-      p.categoryLabel.toLowerCase().includes(searchQuery) ||
+      (p.categoryLabel && p.categoryLabel.toLowerCase().includes(searchQuery)) ||
       (p.description && p.description.toLowerCase().includes(searchQuery))
     );
   }
@@ -1636,7 +1636,7 @@ function renderHomeCategories() {
   if (displayCats.length === 0) return;
 
   catGrid.innerHTML = displayCats.map(c => {
-    const count = PRODUCTS.filter(p => p.category === c.id).length;
+    const count = PRODUCTS.filter(p => p.category === c.id || (p.categoryLabel && p.categoryLabel.toLowerCase() === (c.label || '').toLowerCase())).length;
     let icon = c.icon || '🏷️';
     if (typeof icon === 'string' && (icon.includes('http') || icon.includes('data:') || icon.length > 8)) {
       icon = '🏷️';
@@ -1648,6 +1648,56 @@ function renderHomeCategories() {
         <div class="category-icon">${icon}</div>
         <div class="category-label">${label}</div>
         <div class="category-count">${count > 0 ? `${count} sản phẩm` : 'Sản phẩm mới'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Render Dynamic Detailed Categories on Categories Page (categories.html)
+function renderCategoriesPage() {
+  const container = document.getElementById('categories-detail-grid');
+  if (!container || typeof CATEGORIES === 'undefined') return;
+
+  loadProductsAndCategories();
+  const displayCats = CATEGORIES.filter(c => c.id !== 'all');
+  if (displayCats.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-muted)">
+        <div style="font-size: 48px; margin-bottom: 12px">📁</div>
+        <p style="font-size: 16px">Hiện chưa có loại hàng nào trên sàn.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = displayCats.map(c => {
+    const prods = PRODUCTS.filter(p => p.category === c.id || (p.categoryLabel && p.categoryLabel.toLowerCase() === (c.label || '').toLowerCase()));
+    const count = prods.length;
+    let icon = c.icon || '🏷️';
+    if (typeof icon === 'string' && (icon.includes('http') || icon.includes('data:') || icon.length > 8)) {
+      icon = '🏷️';
+    }
+    const label = (c.label || '').replace(/https?:\/\/[^\s]+/g, '').trim() || c.id;
+    const desc = c.description || `Tổng hợp các mặt hàng ${label} uy tín, chất lượng nhất tại Tạp Hóa 23.`;
+    const tags = Array.isArray(c.tags) && c.tags.length > 0 ? c.tags : [label, 'Chính Hãng', 'Bảo Hành Uy Tín'];
+
+    return `
+      <div class="cat-detail-card" data-category="${c.id}">
+        <div class="cat-detail-header">
+          <div class="cat-detail-icon">${icon}</div>
+          <div>
+            <div class="cat-detail-title">${label}</div>
+            <div class="cat-detail-count">${count > 0 ? `${count} sản phẩm có sẵn` : 'Sản phẩm mới'}</div>
+          </div>
+        </div>
+        <p class="cat-detail-desc">${desc}</p>
+        <div class="cat-detail-tags">
+          ${tags.map(t => `<span class="cat-tag">${t}</span>`).join('')}
+        </div>
+        <a href="products.html?cat=${c.id}" class="cat-detail-action">
+          <span>Xem Các Mặt Hàng</span>
+          <span>→</span>
+        </a>
       </div>
     `;
   }).join('');
@@ -2425,6 +2475,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAuthNavbar();
   renderAdminHomeBar();
   renderHomeCategories();
+  renderCategoriesPage();
   renderFooterCategories();
   autofillBuyerInfo();
   updateCartBadge();

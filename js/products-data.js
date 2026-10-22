@@ -784,15 +784,69 @@ const DEFAULT_PRODUCTS = [
 ];
 
 const DEFAULT_CATEGORIES = [
-  { id: "all", label: "Tất Cả", icon: "🏪" },
-  { id: "the-garena", label: "Thẻ Garena", icon: "🎟️" },
-  { id: "steam-wallet", label: "Key Steam Wallet", icon: "🎮" },
-  { id: "game-account", label: "Tài Khoản Game", icon: "⚔️" },
-  { id: "key-game", label: "Key Game", icon: "🔑" },
-  { id: "giftcode", label: "Gift Code", icon: "🎁" },
-  { id: "software", label: "Phần Mềm", icon: "💻" },
-  { id: "game-mobile", label: "Game Mobile", icon: "📱" },
-  { id: "item-game", label: "Vật Phẩm Game", icon: "🛡️" }
+  {
+    id: "all",
+    label: "Tất Cả",
+    icon: "🏪",
+    description: "Toàn bộ các mặt hàng đang có mặt tại Tạp Hóa 23.",
+    tags: ["Tất Cả", "Toàn Sàn"]
+  },
+  {
+    id: "the-garena",
+    label: "Thẻ Garena",
+    icon: "🎟️",
+    description: "Nạp Sò, Quân Huy Liên Quân, Kim Cương Free Fire, FC Online giá tốt nhất thị trường. Nhận mã thẻ ngay sau khi thanh toán.",
+    tags: ["Liên Quân", "FC Online", "Free Fire", "Chiết khấu cao"]
+  },
+  {
+    id: "steam-wallet",
+    label: "Key Steam Wallet",
+    icon: "🎮",
+    description: "Mã nạp tiền Steam Wallet Code chính hãng khu vực Việt Nam và Toàn Cầu. Tự động quy đổi VND, bảo hành vĩnh viễn.",
+    tags: ["Steam Wallet VND", "Global", "Nạp tự động"]
+  },
+  {
+    id: "game-account",
+    label: "Tài Khoản Game",
+    icon: "🎯",
+    description: "Acc Valorant nhiều skin VIP, Acc LMHT full tướng, Acc CS2 Prime, Genshin Impact... Đổi thông tin 100%, bảo hành uy tín.",
+    tags: ["Valorant", "LMHT", "CS2 Prime", "Full Thông Tin"]
+  },
+  {
+    id: "key-game",
+    label: "Key Game",
+    icon: "🔑",
+    description: "Key kích hoạt Steam, Epic Games, EA Play bản quyền vĩnh viễn. Đầy đủ các bom tấn AAA, Random Key tỉ lệ trúng game khủng.",
+    tags: ["Steam Key", "Game AAA", "Bản quyền 100%"]
+  },
+  {
+    id: "giftcode",
+    label: "Gift Code",
+    icon: "🎁",
+    description: "Discord Nitro, Robux Roblox, Xbox Game Pass, Google Play Gift Card... Mua sắm an toàn, nạp nhanh trong 1 phút.",
+    tags: ["Discord Nitro", "Robux", "Xbox Pass"]
+  },
+  {
+    id: "software",
+    label: "Phần Mềm",
+    icon: "🎬",
+    description: "Tài khoản Netflix Premium Ultra HD 4K, Spotify Premium, YouTube Premium, Canva Pro, Windows 11 bản quyền giá siêu tiết kiệm.",
+    tags: ["Netflix 4K", "Spotify", "YouTube Premium", "Windows 11"]
+  },
+  {
+    id: "game-mobile",
+    label: "Game Mobile",
+    icon: "📱",
+    description: "Tài khoản và nạp gói cho các game mobile thịnh hành: Genshin Impact, Honkai Star Rail, Tốc Chiến, Free Fire...",
+    tags: ["Genshin", "Honkai", "Tốc Chiến"]
+  },
+  {
+    id: "item-game",
+    label: "Vật Phẩm Game",
+    icon: "🛡️",
+    description: "Giao dịch vật phẩm ingame, skin súng, trang phục sự kiện giới hạn với mức giá cạnh tranh và hỗ trợ tận tình.",
+    tags: ["Skin Game", "Vật Phẩm", "Tiền Ingame"]
+  }
 ];
 
 let PRODUCTS = [];
@@ -1125,24 +1179,27 @@ function loadProductsAndCategories() {
   let hasNewCat = false;
   PRODUCTS.forEach(p => {
     if (p.category && p.category !== 'all') {
-      const exists = CATEGORIES.some(c => c.id === p.category);
+      const exists = CATEGORIES.some(c => c.id === p.category || c.label.toLowerCase() === (p.categoryLabel || p.category).toLowerCase());
       if (!exists) {
         let cleanIcon = '🏷️';
         if (p.icon && typeof p.icon === 'string' && !p.icon.startsWith('http') && !p.icon.startsWith('data:') && p.icon.length <= 8) {
           cleanIcon = p.icon;
         }
         let cleanLabel = (p.categoryLabel || p.category || '').replace(/https?:\/\/[^\s]+/g, '').trim() || p.category;
+        const slug = slugifyCategory(cleanLabel);
         CATEGORIES.push({
-          id: p.category,
+          id: slug,
           label: cleanLabel,
-          icon: cleanIcon
+          icon: cleanIcon,
+          description: `Tổng hợp các mặt hàng ${cleanLabel} uy tín và giá ưu đãi tại Tạp Hóa 23.`,
+          tags: [cleanLabel, 'Chính Hãng', 'Bảo Hành Uy Tín']
         });
         hasNewCat = true;
       }
     }
   });
 
-  // Strict Sanitizer: Clean existing CATEGORIES in case a URL was previously stored
+  // Strict Sanitizer: Clean existing CATEGORIES and ensure description & tags exist
   CATEGORIES.forEach(c => {
     if (!c.icon || typeof c.icon !== 'string' || c.icon.includes('http') || c.icon.includes('data:') || c.icon.length > 8) {
       c.icon = '🏷️';
@@ -1152,9 +1209,19 @@ function loadProductsAndCategories() {
       c.label = c.label.replace(/https?:\/\/[^\s]+/g, '').trim() || c.id || 'Mặt Hàng Mới';
       hasNewCat = true;
     }
+    if (!c.description) {
+      const def = DEFAULT_CATEGORIES.find(d => d.id === c.id || d.label.toLowerCase() === c.label.toLowerCase());
+      c.description = def && def.description ? def.description : `Tổng hợp các mặt hàng ${c.label} uy tín và giá ưu đãi tại Tạp Hóa 23.`;
+      hasNewCat = true;
+    }
+    if (!c.tags || !Array.isArray(c.tags) || c.tags.length === 0) {
+      const def = DEFAULT_CATEGORIES.find(d => d.id === c.id || d.label.toLowerCase() === c.label.toLowerCase());
+      c.tags = def && def.tags ? [...def.tags] : [c.label, 'Chính Hãng', 'Bảo Hành Uy Tín'];
+      hasNewCat = true;
+    }
   });
 
-  if (hasNewCat) {
+  if (hasNewCat || !localStorage.getItem('tapHoa23Categories')) {
     try {
       localStorage.setItem('tapHoa23Categories', JSON.stringify(CATEGORIES));
     } catch (e) { }
@@ -1205,6 +1272,153 @@ function getRelatedProducts(product, limit = 4) {
     .slice(0, limit);
 }
 
+// ==================== CATEGORY MANAGEMENT FUNCTIONS ====================
+
+function slugifyCategory(text) {
+  if (!text) return 'danh-muc-' + Date.now();
+  return text
+    .toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[đĐ]/g, 'd')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || ('cat-' + Date.now());
+}
+
+function getCategories() {
+  loadProductsAndCategories();
+  return CATEGORIES;
+}
+
+function addCategory({ name, label, icon, description, tags }) {
+  loadProductsAndCategories();
+  const cleanLabel = (label || name || '').replace(/https?:\/\/[^\s]+/g, '').trim();
+  if (!cleanLabel) return null;
+  const slug = slugifyCategory(cleanLabel);
+
+  // Check if exists
+  let existing = CATEGORIES.find(c => c.id === slug || c.label.toLowerCase() === cleanLabel.toLowerCase());
+  if (existing) {
+    existing.label = cleanLabel;
+    if (icon) existing.icon = icon;
+    if (description) existing.description = description;
+    if (tags) existing.tags = Array.isArray(tags) ? tags : tags.split(',').map(t => t.trim()).filter(Boolean);
+    saveCategories();
+    return existing;
+  }
+
+  const cleanIcon = (icon && typeof icon === 'string' && !icon.startsWith('http') && !icon.startsWith('data:') && icon.length <= 8)
+    ? icon
+    : '🏷️';
+
+  const parsedTags = Array.isArray(tags)
+    ? tags
+    : (typeof tags === 'string' && tags.trim() ? tags.split(',').map(t => t.trim()).filter(Boolean) : [cleanLabel, 'Chính Hãng', 'Bảo Hành']);
+
+  const newCat = {
+    id: slug,
+    label: cleanLabel,
+    icon: cleanIcon,
+    description: description && description.trim() ? description.trim() : `Tổng hợp các mặt hàng ${cleanLabel} chất lượng và giá ưu đãi nhất tại Tạp Hóa 23.`,
+    tags: parsedTags
+  };
+
+  CATEGORIES.push(newCat);
+  saveCategories();
+  return newCat;
+}
+
+function renameCategory(targetCatId, newLabel, newIcon, newDesc, newTags) {
+  loadProductsAndCategories();
+  const cleanNewName = (newLabel || '').replace(/https?:\/\/[^\s]+/g, '').trim();
+  if (!cleanNewName) return null;
+
+  const cat = CATEGORIES.find(c => c.id === targetCatId || c.label.toLowerCase() === (targetCatId || '').toLowerCase());
+  if (!cat || cat.id === 'all') return null;
+
+  const oldSlug = cat.id;
+  const oldLabel = cat.label;
+  const newSlug = slugifyCategory(cleanNewName);
+
+  // Update category properties
+  cat.id = newSlug;
+  cat.label = cleanNewName;
+  if (newIcon && typeof newIcon === 'string' && !newIcon.startsWith('http') && !newIcon.startsWith('data:') && newIcon.length <= 8) {
+    cat.icon = newIcon;
+  }
+  if (newDesc !== undefined && typeof newDesc === 'string') {
+    cat.description = newDesc.trim();
+  }
+  if (newTags !== undefined) {
+    cat.tags = Array.isArray(newTags)
+      ? newTags
+      : (typeof newTags === 'string' ? newTags.split(',').map(t => t.trim()).filter(Boolean) : cat.tags);
+  } else if (Array.isArray(cat.tags)) {
+    // Automatically update tag that was identical to oldLabel
+    cat.tags = cat.tags.map(t => t.toLowerCase() === oldLabel.toLowerCase() ? cleanNewName : t);
+  }
+
+  // Update all matching products in PRODUCTS
+  let updatedCount = 0;
+  PRODUCTS.forEach(p => {
+    if (p.category === oldSlug || p.category === targetCatId || p.categoryLabel === oldLabel) {
+      p.category = newSlug;
+      p.categoryLabel = cleanNewName;
+      if (Array.isArray(p.tags)) {
+        p.tags = p.tags.map(t => t.toLowerCase() === oldLabel.toLowerCase() ? cleanNewName : t);
+      }
+      updatedCount++;
+    }
+  });
+
+  // Sync to cart items in localStorage
+  try {
+    const savedCart = localStorage.getItem('tapHoa23Cart');
+    if (savedCart) {
+      const cart = JSON.parse(savedCart);
+      let changed = false;
+      cart.forEach(item => {
+        if (item.category === oldSlug || item.category === targetCatId || item.categoryLabel === oldLabel) {
+          item.category = newSlug;
+          item.categoryLabel = cleanNewName;
+          changed = true;
+        }
+      });
+      if (changed) {
+        localStorage.setItem('tapHoa23Cart', JSON.stringify(cart));
+      }
+    }
+  } catch (e) { }
+
+  saveCategories();
+  saveProducts();
+  return { category: cat, updatedCount, oldSlug, oldLabel, newSlug, newLabel: cleanNewName };
+}
+
+function deleteCategory(targetCatId, deleteAssociatedProducts = true) {
+  loadProductsAndCategories();
+  if (!targetCatId || targetCatId === 'all') return false;
+
+  const catIndex = CATEGORIES.findIndex(c => c.id === targetCatId || c.label.toLowerCase() === (targetCatId || '').toLowerCase());
+  if (catIndex === -1) return false;
+
+  const targetCat = CATEGORIES[catIndex];
+  const targetSlug = targetCat.id;
+  const targetLabel = targetCat.label;
+
+  CATEGORIES.splice(catIndex, 1);
+  saveCategories();
+
+  if (deleteAssociatedProducts) {
+    PRODUCTS = PRODUCTS.filter(p => p.category !== targetSlug && p.category !== targetCatId && p.categoryLabel !== targetLabel);
+    saveProducts();
+  }
+
+  return true;
+}
+
 // Product Management Helpers for Admin
 function addProduct(newProduct) {
   loadProductsAndCategories();
@@ -1227,19 +1441,25 @@ function addProduct(newProduct) {
     newProduct.images = [newProduct.icon];
   }
 
-  // Check if category exists; if not, auto-create category!
-  const catSlug = newProduct.category || 'other';
-  const existingCat = CATEGORIES.find(c => c.id === catSlug);
+  // Clean category label and slug
+  let cleanLabel = (newProduct.categoryLabel || newProduct.category || '').replace(/https?:\/\/[^\s]+/g, '').trim() || 'Mặt Hàng Khác';
+  const catSlug = slugifyCategory(cleanLabel);
+  newProduct.category = catSlug;
+  newProduct.categoryLabel = cleanLabel;
+
+  // Auto-create category in CATEGORIES if not already present
+  const existingCat = CATEGORIES.find(c => c.id === catSlug || c.label.toLowerCase() === cleanLabel.toLowerCase());
   if (!existingCat) {
     let cleanIcon = '🏷️';
     if (newProduct.icon && typeof newProduct.icon === 'string' && !newProduct.icon.startsWith('http') && !newProduct.icon.startsWith('data:') && newProduct.icon.length <= 8) {
       cleanIcon = newProduct.icon;
     }
-    let cleanLabel = (newProduct.categoryLabel || catSlug).replace(/https?:\/\/[^\s]+/g, '').trim() || catSlug;
     CATEGORIES.push({
       id: catSlug,
       label: cleanLabel,
-      icon: cleanIcon
+      icon: cleanIcon,
+      description: `Tổng hợp các mặt hàng ${cleanLabel} uy tín và giá ưu đãi tại Tạp Hóa 23.`,
+      tags: [cleanLabel, 'Chính Hãng', 'Bảo Hành Uy Tín']
     });
     saveCategories();
   }
@@ -1254,32 +1474,54 @@ function updateProduct(id, updatedFields) {
   const numId = parseInt(id, 10);
   const idx = PRODUCTS.findIndex(p => p.id === numId);
   if (idx !== -1) {
+    const oldProduct = { ...PRODUCTS[idx] };
+    const oldCatSlug = oldProduct.category;
+    const oldCatLabel = oldProduct.categoryLabel;
+
     if (updatedFields.sold !== undefined) {
       updatedFields.sold = Number(updatedFields.sold) || 0;
     }
     if (updatedFields.images && !Array.isArray(updatedFields.images)) {
       updatedFields.images = [updatedFields.images];
     }
+
+    if (updatedFields.categoryLabel || updatedFields.category) {
+      let cLabel = (updatedFields.categoryLabel || updatedFields.category || '').replace(/https?:\/\/[^\s]+/g, '').trim();
+      if (cLabel) {
+        const cSlug = slugifyCategory(cLabel);
+        updatedFields.category = cSlug;
+        updatedFields.categoryLabel = cLabel;
+
+        // Auto-create category if not exists
+        const existingCat = CATEGORIES.find(c => c.id === cSlug || c.label.toLowerCase() === cLabel.toLowerCase());
+        if (!existingCat) {
+          let cleanIcon = '🏷️';
+          if (updatedFields.icon && typeof updatedFields.icon === 'string' && !updatedFields.icon.startsWith('http') && !updatedFields.icon.startsWith('data:') && updatedFields.icon.length <= 8) {
+            cleanIcon = updatedFields.icon;
+          }
+          CATEGORIES.push({
+            id: cSlug,
+            label: cLabel,
+            icon: cleanIcon,
+            description: `Tổng hợp các mặt hàng ${cLabel} uy tín và giá ưu đãi tại Tạp Hóa 23.`,
+            tags: [cLabel, 'Chính Hãng', 'Bảo Hành Uy Tín']
+          });
+          saveCategories();
+        }
+      }
+    }
+
     PRODUCTS[idx] = { ...PRODUCTS[idx], ...updatedFields };
 
-    // Check category auto-creation
-    if (updatedFields.category) {
-      const catSlug = updatedFields.category;
-      const existingCat = CATEGORIES.find(c => c.id === catSlug);
-      if (!existingCat) {
-        let cleanIcon = '🏷️';
-        if (updatedFields.icon && typeof updatedFields.icon === 'string' && !updatedFields.icon.startsWith('http') && !updatedFields.icon.startsWith('data:') && updatedFields.icon.length <= 8) {
-          cleanIcon = updatedFields.icon;
-        }
-        let cleanLabel = (updatedFields.categoryLabel || catSlug).replace(/https?:\/\/[^\s]+/g, '').trim() || catSlug;
-        CATEGORIES.push({
-          id: catSlug,
-          label: cleanLabel,
-          icon: cleanIcon
-        });
+    // If category was changed, check if old category now has 0 products
+    if (oldCatSlug && oldCatSlug !== 'all' && updatedFields.category && updatedFields.category !== oldCatSlug) {
+      const remainingOld = PRODUCTS.filter(p => p.category === oldCatSlug || (oldCatLabel && p.categoryLabel === oldCatLabel)).length;
+      if (remainingOld === 0) {
+        CATEGORIES = CATEGORIES.filter(c => c.id !== oldCatSlug && c.label !== oldCatLabel);
         saveCategories();
       }
     }
+
     saveProducts();
     return PRODUCTS[idx];
   }
@@ -1307,7 +1549,22 @@ function toggleProductStock(id) {
 function deleteProduct(id) {
   loadProductsAndCategories();
   const numId = parseInt(id, 10);
+  const targetProduct = PRODUCTS.find(p => p.id === numId);
+  if (!targetProduct) return;
+
+  const targetCatSlug = targetProduct.category;
+  const targetCatLabel = targetProduct.categoryLabel;
+
   PRODUCTS = PRODUCTS.filter(p => p.id !== numId);
   saveProducts();
+
+  // If ALL products in that category have been deleted, the category disappears!
+  if (targetCatSlug && targetCatSlug !== 'all') {
+    const remainingCount = PRODUCTS.filter(p => p.category === targetCatSlug || (targetCatLabel && p.categoryLabel === targetCatLabel)).length;
+    if (remainingCount === 0) {
+      CATEGORIES = CATEGORIES.filter(c => c.id !== targetCatSlug && c.label !== targetCatLabel);
+      saveCategories();
+    }
+  }
 }
 

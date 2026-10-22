@@ -15,9 +15,9 @@
   <link rel="stylesheet" href="css/pages/admin.css" />
   <style>
     .admin-container {
-      max-width: 1240px;
-      margin: 76px auto 40px;
-      padding: 0 20px;
+      max-width: 1400px;
+      margin: 76px auto 50px;
+      padding: 0 24px;
     }
 
     .admin-header-banner {
@@ -80,49 +80,193 @@
       flex-shrink: 0;
     }
 
-    .admin-tabs {
+    /* 2-COLUMN MAIN WORKSPACE LAYOUT */
+    .admin-workspace-layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+      margin-bottom: 40px;
+    }
+
+    /* LEFT SIDEBAR (VERTICAL MENU) */
+    .admin-sidebar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 16px 12px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      position: sticky;
+      top: 86px;
+      z-index: 20;
+    }
+
+    .admin-sidebar-header {
       display: flex;
-      gap: 8px;
-      border-bottom: 1px solid var(--border-color);
-      margin-bottom: 24px;
-      overflow-x: auto;
-      padding-bottom: 4px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 8px 12px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .admin-sidebar-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+    }
+
+    .admin-sidebar-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 99px;
+      background: rgba(234, 179, 8, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(234, 179, 8, 0.35);
+    }
+
+    .admin-vertical-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
     .admin-tab-btn {
-      padding: 12px 20px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
       background: transparent;
-      border: none;
-      border-bottom: 2px solid transparent;
+      border: 1px solid transparent;
+      border-radius: 10px;
       color: var(--text-secondary);
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 13.5px;
+      font-weight: 600;
       cursor: pointer;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      text-align: left;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .admin-tab-btn .tab-icon {
+      font-size: 18px;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      transition: var(--transition);
+      justify-content: center;
+      width: 24px;
+      flex-shrink: 0;
+    }
+
+    .admin-tab-btn .tab-text {
+      flex: 1;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .admin-tab-btn:hover {
       color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.08);
+      transform: translateX(3px);
     }
 
     .admin-tab-btn.active {
       color: var(--gold);
-      border-bottom-color: var(--gold);
-      background: rgba(234, 179, 8, 0.08);
-      border-radius: 8px 8px 0 0;
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.18), rgba(255, 255, 255, 0.03));
+      border-color: rgba(234, 179, 8, 0.4);
+      font-weight: 700;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35), inset 0 0 12px rgba(234, 179, 8, 0.08);
+      transform: translateX(3px);
+    }
+
+    .admin-tab-btn.active::before {
+      content: '';
+      position: absolute;
+      left: -3px;
+      top: 18%;
+      bottom: 18%;
+      width: 4px;
+      border-radius: 4px;
+      background: var(--gold);
+      box-shadow: 0 0 10px var(--gold);
+    }
+
+    .sidebar-mini-badge {
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.5);
+    }
+
+    /* RIGHT MAIN CONTENT AREA */
+    .admin-content-area {
+      min-width: 0;
+      width: 100%;
     }
 
     .admin-section {
       display: none;
-      animation: fadeIn 0.25s ease;
+      animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .admin-section.active {
       display: block;
+    }
+
+    @media (max-width: 992px) {
+      .admin-workspace-layout {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .admin-sidebar {
+        position: static;
+        padding: 10px;
+        border-radius: var(--radius);
+      }
+
+      .admin-sidebar-header {
+        display: none;
+      }
+
+      .admin-vertical-tabs {
+        flex-direction: row;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        gap: 6px;
+        padding-bottom: 2px;
+      }
+
+      .admin-vertical-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .admin-tab-btn {
+        width: auto;
+        flex: 0 0 auto;
+        padding: 9px 13px;
+        font-size: 13px;
+      }
+
+      .admin-tab-btn.active::before {
+        display: none;
+      }
+
+      .admin-tab-btn:hover,
+      .admin-tab-btn.active {
+        transform: none;
+      }
     }
 
     .admin-card {
@@ -135,19 +279,24 @@
     }
 
     .table-responsive {
+      width: 100%;
       overflow-x: auto;
       margin-top: 16px;
+      -webkit-overflow-scrolling: touch;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     .admin-table {
       width: 100%;
+      min-width: 680px;
       border-collapse: collapse;
       text-align: left;
       font-size: 13px;
     }
 
     .admin-table th {
-      padding: 12px 14px;
+      padding: 12px 16px;
       background: rgba(255, 255, 255, 0.05);
       border-bottom: 2px solid var(--border-color);
       color: var(--text-secondary);
@@ -156,13 +305,33 @@
     }
 
     .admin-table td {
-      padding: 12px 14px;
+      padding: 12px 16px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       vertical-align: middle;
     }
 
     .admin-table tr:hover {
       background: rgba(255, 255, 255, 0.02);
+    }
+
+    .btn-preset-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-secondary);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-preset-chip:hover {
+      background: rgba(234, 179, 8, 0.15);
+      border-color: rgba(234, 179, 8, 0.4);
+      color: var(--gold);
+      transform: translateY(-1px);
     }
 
     .status-pill {
@@ -173,6 +342,7 @@
       border-radius: 99px;
       font-size: 11px;
       font-weight: 700;
+      white-space: nowrap;
     }
 
     .status-available {
@@ -188,13 +358,17 @@
     }
 
     .btn-action-small {
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 6px;
       font-size: 12px;
       font-weight: 600;
       border: 1px solid transparent;
       cursor: pointer;
       transition: var(--transition);
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .modal-overlay {
@@ -397,6 +571,13 @@
         </div>
       </div>
       <div class="admin-stat-card">
+        <div class="admin-stat-icon" style="color:var(--purple-light)">📁</div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted)">Tổng Loại Hàng</div>
+          <div style="font-size:22px;font-weight:800;color:var(--purple-light)" id="stat-total-categories">0</div>
+        </div>
+      </div>
+      <div class="admin-stat-card">
         <div class="admin-stat-icon" style="color:var(--green)">🟢</div>
         <div>
           <div style="font-size:12px;color:var(--text-muted)">Mặt Hàng Còn Hàng</div>
@@ -419,30 +600,53 @@
       </div>
     </div>
 
-    <!-- NAVIGATION TABS -->
-    <div class="admin-tabs">
-      <button class="admin-tab-btn active" onclick="switchAdminTab('products', this)">
-        <span>📦</span> Danh Sách Mặt Hàng
-      </button>
-      <button class="admin-tab-btn" onclick="switchAdminTab('add-product', this)">
-        <span>➕</span> Thêm Mặt Hàng Thủ Công
-      </button>
-      <button class="admin-tab-btn" onclick="switchAdminTab('wallet', this)">
-        <span>💰</span> Bơm Tiền & Duyệt Nạp Ví
-      </button>
-      <button class="admin-tab-btn" onclick="switchAdminTab('customers', this)">
-        <span>👥</span> Khách Hàng & Cấp VIP
-      </button>
-      <button class="admin-tab-btn" onclick="switchAdminTab('avatar', this)">
-        <span>🖼️</span> Đổi Avatar Admin
-      </button>
-      <button class="admin-tab-btn" onclick="switchAdminTab('slides', this)">
-        <span>🎠</span> Quản Lý Banner Slide
-      </button>
-      <button class="admin-tab-btn" onclick="switchAdminTab('giftcodes', this)">
-        <span>🎁</span> Quản Lý Giftcode
-      </button>
-    </div>
+    <!-- 2-COLUMN MAIN WORKSPACE LAYOUT -->
+    <div class="admin-workspace-layout">
+      <!-- CỘT TRÁI: DÃY MENU DỌC CÁC CHỨC NĂNG -->
+      <aside class="admin-sidebar" id="admin-sidebar">
+        <div class="admin-sidebar-header">
+          <span class="admin-sidebar-title">MENU CHỨC NĂNG</span>
+          <span class="admin-sidebar-badge">Admin</span>
+        </div>
+        <nav class="admin-vertical-tabs" role="tablist" aria-label="Menu chức năng admin">
+          <button class="admin-tab-btn active" onclick="switchAdminTab('products', this)">
+            <span class="tab-icon">📦</span>
+            <span class="tab-text">Danh Sách Mặt Hàng</span>
+          </button>
+          <button class="admin-tab-btn" onclick="switchAdminTab('categories', this)">
+            <span class="tab-icon">📁</span>
+            <span class="tab-text">Quản Lý Loại Hàng</span>
+          </button>
+          <button class="admin-tab-btn" onclick="switchAdminTab('add-product', this)">
+            <span class="tab-icon">➕</span>
+            <span class="tab-text">Thêm Hàng Thủ Công</span>
+          </button>
+          <button class="admin-tab-btn" onclick="switchAdminTab('wallet', this)">
+            <span class="tab-icon">💰</span>
+            <span class="tab-text">Bơm Tiền & Duyệt Ví</span>
+            <span class="sidebar-mini-badge" id="sidebar-pending-badge" style="display:none">0</span>
+          </button>
+          <button class="admin-tab-btn" onclick="switchAdminTab('customers', this)">
+            <span class="tab-icon">👥</span>
+            <span class="tab-text">Khách Hàng & VIP</span>
+          </button>
+          <button class="admin-tab-btn" onclick="switchAdminTab('avatar', this)">
+            <span class="tab-icon">🖼️</span>
+            <span class="tab-text">Đổi Avatar Admin</span>
+          </button>
+          <button class="admin-tab-btn" onclick="switchAdminTab('slides', this)">
+            <span class="tab-icon">🎠</span>
+            <span class="tab-text">Quản Lý Slide</span>
+          </button>
+          <button class="admin-tab-btn" onclick="switchAdminTab('giftcodes', this)">
+            <span class="tab-icon">🎁</span>
+            <span class="tab-text">Quản Lý Giftcode</span>
+          </button>
+        </nav>
+      </aside>
+
+      <!-- CỘT PHẢI: NƠI THAO TÁC THỰC HIỆN CÁC CHỨC NĂNG ĐÓ -->
+      <main class="admin-content-area" id="admin-content-area">
 
     <!-- SECTION 1: PRODUCTS LIST & MANAGEMENT -->
     <div id="sec-products" class="admin-section active">
@@ -450,10 +654,14 @@
         <div
           style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px">
           <h2 style="font-size:18px;margin:0">Quản Lý Trạng Thái & Thông Tin Mặt Hàng</h2>
-          <div style="display:flex;gap:10px">
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
             <input type="text" id="admin-search-input" class="form-input" placeholder="Tìm sản phẩm..."
-              style="width:240px;padding:8px 12px" oninput="renderAdminProductsTable()" />
-            <select id="admin-filter-status" class="form-input" style="width:160px;padding:8px 12px"
+              style="width:220px;padding:8px 12px" oninput="renderAdminProductsTable()" />
+            <select id="admin-filter-category" class="form-input" style="width:170px;padding:8px 12px"
+              onchange="renderAdminProductsTable()">
+              <option value="all">Tất cả loại hàng</option>
+            </select>
+            <select id="admin-filter-status" class="form-input" style="width:150px;padding:8px 12px"
               onchange="renderAdminProductsTable()">
               <option value="all">Tất cả trạng thái</option>
               <option value="available">🟢 Còn hàng</option>
@@ -477,6 +685,70 @@
               </tr>
             </thead>
             <tbody id="admin-products-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION: CATEGORIES MANAGEMENT -->
+    <div id="sec-categories" class="admin-section">
+      <!-- Card Thêm Loại Hàng -->
+      <div class="admin-card" style="margin-bottom:24px">
+        <h2 style="font-size:18px;margin-bottom:10px;display:flex;align-items:center;gap:8px">
+          <span>➕</span> Thêm Loại Hàng Mới
+        </h2>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px">
+          Mỗi lần thêm loại hàng mới, danh mục sẽ xuất hiện ở mọi nơi trên website (Trang chủ, Bộ lọc Sản phẩm, Trang Danh mục, Quản trị, Footer...). Khi xóa loại hàng hoặc khi tất cả mặt hàng trong loại đó bị xóa, loại hàng sẽ tự động biến mất hoàn toàn.
+        </p>
+
+        <form onsubmit="handleAdminAddCategory(event)">
+          <div style="display:grid;grid-template-columns:2fr 1fr 2fr;gap:16px;margin-bottom:14px">
+            <div class="form-group">
+              <label class="form-label">Tên Loại Hàng / Danh Mục (*)</label>
+              <input type="text" class="form-input" id="new-cat-name" placeholder="Ví dụ: Tài Khoản Steam, Thẻ Zing..." required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Biểu Tượng (Emoji)</label>
+              <input type="text" class="form-input" id="new-cat-icon" placeholder="Emoji: 🎮, 🎟️, 💎..." value="🏷️" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tags Liên Quan (Cách nhau bởi dấu phẩy)</label>
+              <input type="text" class="form-input" id="new-cat-tags" placeholder="Ví dụ: Steam, Bản Quyền, Giá Rẻ" />
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:18px">
+            <label class="form-label">Mô Tả Ngắn Loại Hàng</label>
+            <input type="text" class="form-input" id="new-cat-desc" placeholder="Mô tả sẽ hiển thị ở thẻ danh mục trong trang categories.html..." />
+          </div>
+
+          <button type="submit" class="btn-primary" style="padding:10px 24px">
+            <span>✨ Thêm Loại Hàng Mới Vào Toàn Bộ Hệ Thống</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Card Bảng Danh Sách Loại Hàng -->
+      <div class="admin-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+          <h2 style="font-size:18px;margin:0">Quản Lý Các Loại Hàng Trên Sàn</h2>
+          <div style="font-size:12px;color:var(--text-muted)">
+            💡 Khi đổi tên loại hàng, toàn bộ mặt hàng thuộc loại đó sẽ tự động đổi tên và tag theo!
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Biểu Tượng & Tên Loại Hàng</th>
+                <th>Mã Slug</th>
+                <th>Số Mặt Hàng Đang Có</th>
+                <th>Mô Tả & Tags</th>
+                <th>Thao Tác</th>
+              </tr>
+            </thead>
+            <tbody id="admin-categories-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -599,56 +871,87 @@
 
     <!-- SECTION 3: PUMP WALLET & APPROVE DEPOSITS -->
     <div id="sec-wallet" class="admin-section">
-      <div style="display:grid;grid-template-columns:1fr 360px;gap:24px">
-        <!-- Requests Table -->
-        <div class="admin-card">
-          <h2 style="font-size:18px;margin-bottom:12px;display:flex;align-items:center;gap:8px">
-            <span>📋</span> Yêu Cầu Nạp Tiền Của Khách Hàng
-          </h2>
-          <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">
-            Khách chuyển khoản và tạo yêu cầu nạp tiền sẽ xuất hiện ở đây. Admin ấn "Duyệt & Bơm Tiền" để cộng tiền vào
-            ví và tự động nâng cấp VIP.
-          </p>
-
-          <div class="table-responsive">
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Mã Lệnh</th>
-                  <th>Khách Hàng</th>
-                  <th>Số Tiền</th>
-                  <th>Phương Thức</th>
-                  <th>Thời Gian</th>
-                  <th>Trạng Thái</th>
-                  <th>Thao Tác</th>
-                </tr>
-              </thead>
-              <tbody id="admin-deposits-tbody"></tbody>
-            </table>
+      <!-- 1. TOOL BƠM TIỀN TRỰC TIẾP (QUICK PUMP TOOL) -->
+      <div class="admin-card" style="margin-bottom:20px;border-color:rgba(234,179,8,0.3);background:linear-gradient(135deg,rgba(234,179,8,0.06),rgba(17,19,27,0.85))">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px">
+          <div>
+            <h3 style="font-size:17px;margin:0;color:var(--gold);display:flex;align-items:center;gap:8px">
+              <span>⚡</span> Bơm Tiền Trực Tiếp Vào Ví Khách Hàng
+            </h3>
+            <p style="font-size:12.5px;color:var(--text-muted);margin-top:4px;margin-bottom:0">
+              Chủ động bơm tiền vào ví bất kỳ tài khoản khách hàng nào. Cấp độ VIP sẽ tự động thăng hạng.
+            </p>
           </div>
         </div>
 
-        <!-- Direct Manual Pump Tool -->
-        <div class="admin-card">
-          <h3 style="font-size:16px;margin-bottom:14px;color:var(--gold)">⚡ Bơm Tiền Trực Tiếp Vào Ví</h3>
-          <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">
-            Chủ động bơm tiền vào ví bất kỳ tài khoản khách hàng nào. Cấp độ VIP sẽ tự động thăng hạng.
-          </p>
+        <form onsubmit="handleManualPump(event)" style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap">
+          <div style="flex:1;min-width:200px">
+            <label class="form-label" style="font-size:12px;margin-bottom:6px">Tên tài khoản khách (Username)</label>
+            <input type="text" class="form-input" id="pump-username" placeholder="Nhập username khách..." required />
+          </div>
+          <div style="flex:1;min-width:200px">
+            <label class="form-label" style="font-size:12px;margin-bottom:6px">Số tiền bơm (VNĐ)</label>
+            <input type="number" class="form-input" id="pump-amount" placeholder="Ví dụ: 500000" min="10000"
+              step="10000" required />
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:11px;color:var(--text-muted)">Mốc nạp nhanh:</span>
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+              <button type="button" class="btn-preset-chip" onclick="setPumpAmount(50000)">+50k</button>
+              <button type="button" class="btn-preset-chip" onclick="setPumpAmount(100000)">+100k</button>
+              <button type="button" class="btn-preset-chip" onclick="setPumpAmount(200000)">+200k</button>
+              <button type="button" class="btn-preset-chip" onclick="setPumpAmount(500000)">+500k</button>
+              <button type="button" class="btn-preset-chip" onclick="setPumpAmount(1000000)">+1M</button>
+              <button type="button" class="btn-preset-chip" onclick="setPumpAmount(5000000)">+5M</button>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary"
+            style="padding:10px 24px;white-space:nowrap;height:42px;background:var(--gold);color:#0a0b10;font-weight:700">
+            <span>💸 Bơm Tiền Ngay</span>
+          </button>
+        </form>
+      </div>
 
-          <form onsubmit="handleManualPump(event)">
-            <div class="form-group">
-              <label class="form-label">Tên tài khoản khách</label>
-              <input type="text" class="form-input" id="pump-username" placeholder="Nhập username khách..." required />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Số tiền bơm (VNĐ)</label>
-              <input type="number" class="form-input" id="pump-amount" placeholder="Ví dụ: 500000" min="10000"
-                step="10000" required />
-            </div>
-            <button type="submit" class="btn-primary" style="width:100%;justify-content:center">
-              <span>💸 Bơm Tiền Ngay</span>
-            </button>
-          </form>
+      <!-- 2. BẢNG YÊU CẦU NẠP TIỀN FULL WIDTH -->
+      <div class="admin-card">
+        <div
+          style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:16px">
+          <div>
+            <h2 style="font-size:18px;margin:0;display:flex;align-items:center;gap:8px">
+              <span>📋</span> Yêu Cầu Nạp Tiền Của Khách Hàng
+            </h2>
+            <p style="font-size:13px;color:var(--text-muted);margin-top:4px;margin-bottom:0">
+              Khách chuyển khoản và tạo yêu cầu nạp tiền sẽ xuất hiện ở đây. Admin ấn "Duyệt & Bơm Tiền" để cộng tiền vào
+              ví và tự động nâng cấp VIP.
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <input type="text" id="admin-deposits-search" class="form-input" placeholder="Tìm theo mã hoặc username..."
+              style="width:230px;padding:8px 12px;font-size:12.5px" oninput="renderAdminDepositsTable()" />
+            <select id="admin-deposits-filter-status" class="form-input"
+              style="width:160px;padding:8px 12px;font-size:12.5px" onchange="renderAdminDepositsTable()">
+              <option value="all">Tất cả trạng thái</option>
+              <option value="pending">⏳ Chờ Duyệt</option>
+              <option value="approved">✅ Đã Bơm Tiền</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="min-width:110px">Mã Lệnh</th>
+                <th style="min-width:130px">Khách Hàng</th>
+                <th style="min-width:120px">Số Tiền</th>
+                <th style="min-width:130px">Phương Thức</th>
+                <th style="min-width:140px">Thời Gian</th>
+                <th style="min-width:120px">Trạng Thái</th>
+                <th style="min-width:150px;text-align:right">Thao Tác</th>
+              </tr>
+            </thead>
+            <tbody id="admin-deposits-tbody"></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -905,7 +1208,6 @@
         </div>
       </div>
     </div>
-  </div>
 
   <!-- SECTION 7: QUẢN LÝ GIFTCODE (ADMIN ONLY) -->
   <div id="sec-giftcodes" class="admin-section">
@@ -931,6 +1233,9 @@
       <div id="admin-giftcodes-table-container">
         <!-- Rendered by renderAdminGiftcodesTab() -->
       </div>
+    </div>
+  </div>
+      </main>
     </div>
   </div>
 
@@ -1021,6 +1326,54 @@
     </div>
   </div>
 
+  <!-- EDIT CATEGORY MODAL -->
+  <div id="edit-category-modal" class="modal-overlay">
+    <div class="modal-box" style="max-width:560px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h3 style="font-size:18px;margin:0;display:flex;align-items:center;gap:8px">
+          <span>✏️</span> Chỉnh Sửa / Đổi Tên Loại Hàng
+        </h3>
+        <button type="button" onclick="closeEditCategoryModal()"
+          style="background:transparent;border:none;color:var(--text-muted);font-size:20px;cursor:pointer">✕</button>
+      </div>
+      <form onsubmit="handleSaveEditCategory(event)">
+        <input type="hidden" id="edit-cat-id" />
+        <div class="form-group">
+          <label class="form-label">Tên Loại Hàng / Danh Mục (*)</label>
+          <input type="text" class="form-input" id="edit-cat-name" required />
+          <div style="font-size:11.5px;color:var(--gold);margin-top:6px;line-height:1.4">
+            ⚡ Khi đổi tên loại hàng, toàn bộ mặt hàng thuộc loại này sẽ tự động được cập nhật tên loại hàng & tag tương ứng ở mọi nơi!
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:14px">
+          <div class="form-group">
+            <label class="form-label">Biểu Tượng (Emoji)</label>
+            <input type="text" class="form-input" id="edit-cat-icon" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tags (Cách nhau bởi dấu phẩy)</label>
+            <input type="text" class="form-input" id="edit-cat-tags" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Mô Tả Danh Mục</label>
+          <textarea class="form-input" id="edit-cat-desc" rows="3" placeholder="Mô tả hiển thị ở trang Danh Mục..."></textarea>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px">
+          <button type="button" onclick="closeEditCategoryModal()" class="btn-action-small" style="padding:10px 18px">
+            Hủy Bỏ
+          </button>
+          <button type="submit" class="btn-primary" style="padding:10px 24px">
+            <span>💾 Lưu & Cập Nhật Toàn Bộ Mặt Hàng Liên Quan</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <footer class="footer" style="margin-top:60px">
     <div class="container">
@@ -1090,6 +1443,7 @@
       if (sec) sec.classList.add('active');
 
       if (tabId === 'products') renderAdminProductsTable();
+      if (tabId === 'categories') renderAdminCategoriesTable();
       if (tabId === 'wallet') renderAdminDepositsTable();
       if (tabId === 'customers') renderAdminCustomersTable();
       if (tabId === 'slides' && typeof renderAdminSlidesManager === 'function') renderAdminSlidesManager();
@@ -1194,9 +1548,23 @@
       document.getElementById('stat-available-products').textContent = availableCount;
       document.getElementById('stat-out-products').textContent = PRODUCTS.length - availableCount;
 
+      const nonAllCats = CATEGORIES.filter(c => c.id !== 'all');
+      const catStatEl = document.getElementById('stat-total-categories');
+      if (catStatEl) catStatEl.textContent = nonAllCats.length;
+
       const deposits = getDepositRequests();
       const pendingCount = deposits.filter(d => d.status === 'pending').length;
       document.getElementById('stat-pending-deposits').textContent = pendingCount;
+
+      const sidebarBadge = document.getElementById('sidebar-pending-badge');
+      if (sidebarBadge) {
+        if (pendingCount > 0) {
+          sidebarBadge.textContent = pendingCount;
+          sidebarBadge.style.display = 'inline-block';
+        } else {
+          sidebarBadge.style.display = 'none';
+        }
+      }
     }
 
     function renderAdminProductsTable() {
@@ -1206,10 +1574,15 @@
       const tbody = document.getElementById('admin-products-tbody');
       const searchVal = document.getElementById('admin-search-input').value.toLowerCase().trim();
       const statusVal = document.getElementById('admin-filter-status').value;
+      const catFilterEl = document.getElementById('admin-filter-category');
+      const catVal = catFilterEl ? catFilterEl.value : 'all';
 
       let filtered = PRODUCTS;
       if (searchVal) {
         filtered = filtered.filter(p => p.name.toLowerCase().includes(searchVal) || (p.categoryLabel && p.categoryLabel.toLowerCase().includes(searchVal)));
+      }
+      if (catVal && catVal !== 'all') {
+        filtered = filtered.filter(p => p.category === catVal || (p.categoryLabel && p.categoryLabel.toLowerCase() === catVal.toLowerCase()));
       }
       if (statusVal === 'available') {
         filtered = filtered.filter(p => !p.isOutOfStock && p.status !== 'out_of_stock' && Number(p.stock) > 0);
@@ -1294,6 +1667,10 @@
       if (confirm('Bạn có chắc chắn muốn xóa mặt hàng này khỏi sàn?')) {
         deleteProduct(id);
         renderAdminProductsTable();
+        populateCategoryDatalist();
+        if (typeof renderAdminCategoriesTable === 'function') {
+          renderAdminCategoriesTable();
+        }
         showToast('🗑️ Đã xóa sản phẩm khỏi sàn!');
       }
     }
@@ -1406,6 +1783,163 @@
         datalist.innerHTML = CATEGORIES.filter(c => c.id !== 'all').map(c => `
         <option value="${c.label}">${c.icon} ${c.label}</option>
       `).join('');
+      }
+
+      const catFilterEl = document.getElementById('admin-filter-category');
+      if (catFilterEl && CATEGORIES) {
+        const currentVal = catFilterEl.value;
+        catFilterEl.innerHTML = `<option value="all">Tất cả loại hàng</option>` + CATEGORIES.filter(c => c.id !== 'all').map(c => `
+          <option value="${c.id}" ${currentVal === c.id ? 'selected' : ''}>${c.icon} ${c.label}</option>
+        `).join('');
+      }
+    }
+
+    // ==================== ADMIN CATEGORIES MANAGEMENT ====================
+    function renderAdminCategoriesTable() {
+      loadProductsAndCategories();
+      updateAdminStats();
+      populateCategoryDatalist();
+
+      const tbody = document.getElementById('admin-categories-tbody');
+      if (!tbody) return;
+
+      const nonAllCats = CATEGORIES.filter(c => c.id !== 'all');
+      if (nonAllCats.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-muted)">Chưa có loại hàng nào. Hãy nhập tên ở form phía trên để tạo loại hàng mới!</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = nonAllCats.map(c => {
+        const prods = PRODUCTS.filter(p => p.category === c.id || p.categoryLabel === c.label);
+        const count = prods.length;
+        const icon = c.icon || '🏷️';
+        const label = c.label || c.id;
+        const desc = c.description || 'Chưa có mô tả';
+        const tags = Array.isArray(c.tags) ? c.tags.join(', ') : (c.tags || '—');
+
+        return `
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:12px">
+                <span style="font-size:24px;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border-radius:8px;border:1px solid var(--border-color)">${icon}</span>
+                <div>
+                  <strong style="color:var(--text-primary);font-size:14px">${label}</strong>
+                  <div style="font-size:11px;color:var(--text-muted)">Hiển thị trên toàn bộ website</div>
+                </div>
+              </div>
+            </td>
+            <td><code>${c.id}</code></td>
+            <td>
+              <span class="status-pill ${count > 0 ? 'status-available' : 'status-out'}" style="font-size:12px">
+                ${count > 0 ? `📦 ${count} mặt hàng` : '0 mặt hàng'}
+              </span>
+            </td>
+            <td style="max-width:280px">
+              <div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${desc}">${desc}</div>
+              <div style="font-size:11px;color:var(--gold)">🏷️ ${tags}</div>
+            </td>
+            <td>
+              <div style="display:flex;gap:6px">
+                <button onclick="openEditCategoryModal('${c.id}')" class="btn-action-small" style="background:rgba(234,179,8,0.15);color:var(--gold)">
+                  ✏️ Đổi Tên / Sửa
+                </button>
+                <button onclick="handleDeleteCategory('${c.id}')" class="btn-action-small" style="background:rgba(239,68,68,0.15);color:#ef4444">
+                  🗑️ Xóa
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function handleAdminAddCategory(e) {
+      e.preventDefault();
+      const name = document.getElementById('new-cat-name').value.trim();
+      const icon = document.getElementById('new-cat-icon').value.trim() || '🏷️';
+      const tagsStr = document.getElementById('new-cat-tags').value.trim();
+      const desc = document.getElementById('new-cat-desc').value.trim();
+
+      if (!name) {
+        showToast('⚠️ Vui lòng nhập tên loại hàng!', 'error');
+        return;
+      }
+
+      const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : [name, 'Chính Hãng', 'Bảo Hành'];
+      const added = addCategory({ label: name, icon, description: desc, tags });
+      if (added) {
+        showToast(`✨ Đã thêm loại hàng "${name}" thành công! Đã tự động xuất hiện ở mọi nơi trên website.`);
+        e.target.reset();
+        document.getElementById('new-cat-icon').value = '🏷️';
+        renderAdminCategoriesTable();
+        populateCategoryDatalist();
+      }
+    }
+
+    function openEditCategoryModal(catId) {
+      loadProductsAndCategories();
+      const cat = CATEGORIES.find(c => c.id === catId || c.label.toLowerCase() === (catId || '').toLowerCase());
+      if (!cat) return;
+
+      document.getElementById('edit-cat-id').value = cat.id;
+      document.getElementById('edit-cat-name').value = cat.label;
+      document.getElementById('edit-cat-icon').value = cat.icon || '🏷️';
+      document.getElementById('edit-cat-tags').value = Array.isArray(cat.tags) ? cat.tags.join(', ') : (cat.tags || '');
+      document.getElementById('edit-cat-desc').value = cat.description || '';
+
+      const modal = document.getElementById('edit-category-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeEditCategoryModal() {
+      const modal = document.getElementById('edit-category-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function handleSaveEditCategory(e) {
+      e.preventDefault();
+      const catId = document.getElementById('edit-cat-id').value;
+      const newName = document.getElementById('edit-cat-name').value.trim();
+      const newIcon = document.getElementById('edit-cat-icon').value.trim() || '🏷️';
+      const newTagsStr = document.getElementById('edit-cat-tags').value.trim();
+      const newDesc = document.getElementById('edit-cat-desc').value.trim();
+
+      if (!newName) {
+        showToast('⚠️ Tên loại hàng không được để trống!', 'error');
+        return;
+      }
+
+      const newTags = newTagsStr ? newTagsStr.split(',').map(t => t.trim()).filter(Boolean) : undefined;
+      const result = renameCategory(catId, newName, newIcon, newDesc, newTags);
+      if (result) {
+        closeEditCategoryModal();
+        renderAdminCategoriesTable();
+        renderAdminProductsTable();
+        populateCategoryDatalist();
+        showToast(`🎉 Đã đổi tên loại hàng thành "${newName}" & đồng bộ ${result.updatedCount} mặt hàng và tag liên quan!`);
+      } else {
+        showToast('⚠️ Không tìm thấy loại hàng cần cập nhật!', 'error');
+      }
+    }
+
+    function handleDeleteCategory(catId) {
+      loadProductsAndCategories();
+      const cat = CATEGORIES.find(c => c.id === catId || c.label.toLowerCase() === (catId || '').toLowerCase());
+      if (!cat) return;
+
+      const prods = PRODUCTS.filter(p => p.category === cat.id || p.categoryLabel === cat.label);
+      const count = prods.length;
+
+      const msg = count > 0
+        ? `Bạn có chắc chắn muốn xóa loại hàng "${cat.label}"?\n\n⚠️ Lưu ý: Toàn bộ ${count} mặt hàng thuộc loại này cũng sẽ bị xóa khỏi sàn và danh mục sẽ biến mất khỏi toàn bộ website.`
+        : `Bạn có chắc chắn muốn xóa loại hàng "${cat.label}"? Danh mục sẽ bị xóa khỏi toàn bộ website.`;
+
+      if (confirm(msg)) {
+        deleteCategory(cat.id, true);
+        renderAdminCategoriesTable();
+        renderAdminProductsTable();
+        populateCategoryDatalist();
+        showToast(`🗑️ Đã xóa loại hàng "${cat.label}" và toàn bộ mặt hàng thuộc loại này!`);
       }
     }
 
@@ -1535,13 +2069,37 @@
     }
 
     // Wallet / Deposits
+    function setPumpAmount(val) {
+      const input = document.getElementById('pump-amount');
+      if (input) {
+        input.value = val;
+        input.focus();
+      }
+    }
+
     function renderAdminDepositsTable() {
       const tbody = document.getElementById('admin-deposits-tbody');
-      const deposits = getDepositRequests();
+      if (!tbody) return;
+      let deposits = getDepositRequests();
       updateAdminStats();
 
+      const searchInput = document.getElementById('admin-deposits-search');
+      const searchVal = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      const filterStatus = document.getElementById('admin-deposits-filter-status');
+      const statusVal = filterStatus ? filterStatus.value : 'all';
+
+      if (searchVal) {
+        deposits = deposits.filter(d =>
+          (d.id && d.id.toLowerCase().includes(searchVal)) ||
+          (d.username && d.username.toLowerCase().includes(searchVal))
+        );
+      }
+      if (statusVal && statusVal !== 'all') {
+        deposits = deposits.filter(d => d.status === statusVal);
+      }
+
       if (deposits.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Chưa có yêu cầu nạp tiền nào.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text-muted)">Không tìm thấy yêu cầu nạp tiền nào phù hợp.</td></tr>`;
         return;
       }
 
@@ -1549,20 +2107,20 @@
         const isApproved = d.status === 'approved';
         return `
         <tr>
-          <td><code>${d.id}</code></td>
-          <td><strong style="color:var(--text-primary)">${d.username}</strong></td>
-          <td style="color:var(--gold);font-weight:700">${formatPrice(d.amount)}</td>
-          <td>${d.method === 'banking' ? '🏦 Vietcombank' : '📱 MoMo'}</td>
-          <td style="font-size:11px;color:var(--text-muted)">${d.createdAt}</td>
-          <td>
+          <td><code style="background:rgba(255,255,255,0.06);padding:4px 8px;border-radius:6px;font-size:12px;font-weight:700;color:var(--text-primary);letter-spacing:0.5px">${d.id}</code></td>
+          <td><strong style="color:var(--text-primary);font-size:13.5px">👤 ${d.username}</strong></td>
+          <td style="color:var(--gold);font-weight:800;font-size:14px;white-space:nowrap">${formatPrice(d.amount)}</td>
+          <td style="white-space:nowrap">${d.method === 'banking' ? '🏦 Vietcombank' : '📱 MoMo'}</td>
+          <td style="font-size:11.5px;color:var(--text-muted);white-space:nowrap">${d.createdAt}</td>
+          <td style="white-space:nowrap">
             <span class="status-pill ${isApproved ? 'status-available' : 'status-out'}">
               ${isApproved ? '✅ Đã Bơm Tiền' : '⏳ Chờ Duyệt'}
             </span>
           </td>
-          <td>
+          <td style="white-space:nowrap;text-align:right">
             ${isApproved
-            ? `<span style="font-size:11px;color:var(--green)">Hoàn tất</span>`
-            : `<button onclick="handleApproveDeposit('${d.id}')" class="btn-action-small" style="background:#ffffff;color:#0a0b0e;border:1px solid #ffffff;font-weight:700">⚡ Duyệt & Bơm Tiền</button>`
+            ? `<span style="font-size:12px;font-weight:600;color:var(--green);display:inline-flex;align-items:center;gap:4px">✓ Hoàn tất</span>`
+            : `<button onclick="handleApproveDeposit('${d.id}')" class="btn-action-small" style="background:linear-gradient(135deg, #eab308, #ca8a04);color:#0a0b0e;border:none;font-weight:800;padding:7px 16px;border-radius:8px;box-shadow:0 2px 10px rgba(234,179,8,0.3);white-space:nowrap;cursor:pointer">⚡ Duyệt & Bơm Tiền</button>`
           }
           </td>
         </tr>
@@ -1591,6 +2149,7 @@
       showToast(`💸 Đã bơm +${formatPrice(amount)} vào ví của "${username}"! Tự động nâng cấp VIP.`);
       document.getElementById('pump-username').value = '';
       document.getElementById('pump-amount').value = '';
+      renderAdminDepositsTable();
       renderAdminCustomersTable();
     }
 
@@ -1716,6 +2275,7 @@
       }
       populateCategoryDatalist();
       renderAdminProductsTable();
+      renderAdminCategoriesTable();
       updateAdminStats();
 
       // Check if URL has ?edit=ID
