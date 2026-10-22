@@ -1,0 +1,14 @@
+/* ===== CATEGORIES PAGE STYLES ===== */
+@import url("../components/cards.css");
+
+.categories-page-header {
+  text-align: center;
+  padding: 40px 0 20px;
+}
+.categories-filter-tags {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}

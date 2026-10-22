@@ -1,4 +1,17 @@
-// ==================== TẠP HÓA 23 - Main JavaScript ====================
+// ==================== CẤU HÌNH THANH TOÁN (MOMO & BANKING) ====================
+// Người quản trị có thể dễ dàng thay link ảnh QR MoMo thủ công tại đây:
+window.TAPHOA23_PAYMENT_CONFIG = {
+  // 👉 Đổi link ảnh QR MoMo vào đây (đường dẫn file 'images/momo-qr.png' hoặc URL ảnh online https://...):
+  momoQrImage: 'images/momo-qr.png',
+  momoPhone: '0348989461',
+  momoOwner: 'NGUYEN XUAN DUC',
+
+  // Thông tin ngân hàng
+  bankName: 'Vietcombank (Ngoại Thương Việt Nam)',
+  bankAccount: '1019213943',
+  bankOwner: 'NGUYEN XUAN DUC',
+  bankBin: '970436'
+};
 
 // Check admin role immediately on script load to prevent layout shift
 try {
@@ -768,21 +781,21 @@ function renderCart() {
   // 1. Kiểm tra đăng nhập (Chỉ tài khoản đã đăng nhập mới xem được giỏ hàng)
   if (!currentUser) {
     container.innerHTML = `
-      <div class="empty-cart" style="padding:48px 24px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-lg);text-align:center;">
-        <span style="font-size:56px;display:inline-block;margin-bottom:16px;">🔐</span>
-        <h3 style="font-size:22px;font-weight:800;color:var(--text-primary);margin-bottom:10px;">Yêu Cầu Đăng Nhập</h3>
-        <p style="color:var(--text-secondary);max-width:480px;margin:0 auto 24px;font-size:14px;line-height:1.6;">
-          Giỏ hàng được bảo vệ riêng tư cho từng tài khoản. Bạn vui lòng đăng nhập để xem và quản lý các sản phẩm bạn đã thêm vào giỏ.
+      <div class="empty-cart cart-guest-prompt" style="padding:40px 24px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-lg);text-align:center;">
+        <div class="empty-cart-icon" style="font-size:42px;margin-bottom:12px;line-height:1;">🔐</div>
+        <h3 style="font-size:18px;font-weight:700;color:#ffffff;margin-bottom:8px;">Yêu Cầu Đăng Nhập</h3>
+        <p style="color:var(--text-secondary);max-width:440px;margin:0 auto 20px;font-size:13.5px;line-height:1.55;">
+          Giỏ hàng được bảo vệ riêng tư cho từng tài khoản. Bạn vui lòng đăng nhập để xem và quản lý các sản phẩm đã thêm vào giỏ.
         </p>
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-          <a href="login.html?redirect=cart.html" class="btn-primary" style="padding:12px 28px;font-size:14px;font-weight:700;">
-            <span>👤 Đăng Nhập Ngay</span>
+        <div class="cart-guest-actions" style="display:inline-flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;">
+          <a href="login.html?redirect=cart.html" class="btn-primary" style="padding:9px 20px;font-size:13px;font-weight:700;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+            👤 Đăng Nhập Ngay
           </a>
-          <a href="login.html?tab=register&redirect=cart.html" class="btn-secondary" style="padding:12px 24px;font-size:14px;font-weight:600;border:1px solid var(--border-color);border-radius:var(--radius);text-decoration:none;color:var(--text-primary);display:inline-flex;align-items:center;">
-            <span>✨ Tạo Tài Khoản</span>
+          <a href="login.html?tab=register&redirect=cart.html" class="btn-secondary" style="padding:9px 18px;font-size:13px;font-weight:600;border-radius:8px;border:1px solid var(--border-color);text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+            ✨ Tạo Tài Khoản
           </a>
-          <a href="products.html" style="padding:12px 20px;font-size:14px;color:var(--purple-light);text-decoration:none;display:inline-flex;align-items:center;">
-            <span>🛍️ Xem Sản Phẩm</span>
+          <a href="products.html" class="btn-cart-browse" style="padding:9px 16px;font-size:13px;font-weight:500;color:var(--text-secondary);text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+            🛍️ Xem Sản Phẩm
           </a>
         </div>
       </div>
@@ -793,7 +806,8 @@ function renderCart() {
     if (checkoutBtn) {
       checkoutBtn.href = 'login.html?redirect=cart.html';
       checkoutBtn.textContent = '🔒 Đăng Nhập Để Thanh Toán';
-      checkoutBtn.style.background = 'linear-gradient(135deg, #475569, #334155)';
+      checkoutBtn.style.background = '';
+      checkoutBtn.style.color = '';
     }
     return;
   }

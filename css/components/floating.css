@@ -1,0 +1,74 @@
+/* ===== FLOATING SOCIAL WIDGET (ALL PAGES) ===== */
+.floating-social-widget {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.floating-social-btn {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.floating-social-btn.floating-fb {
+  background: linear-gradient(135deg, #1877f2, #0d5ec4);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.floating-social-btn.floating-discord {
+  background: linear-gradient(135deg, #5865f2, #4752c4);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.floating-social-btn:hover {
+  transform: translateY(-4px) scale(1.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+}
+
+.floating-social-btn.floating-fb:hover {
+  box-shadow: 0 8px 25px rgba(24, 119, 242, 0.6);
+}
+
+.floating-social-btn.floating-discord:hover {
+  box-shadow: 0 8px 25px rgba(88, 101, 242, 0.6);
+}
+
+.floating-social-btn .floating-tooltip {
+  position: absolute;
+  left: 60px;
+  top: 50%;
+  transform: translateY(-50%) translateX(-8px);
+  background: rgba(13, 13, 26, 0.95);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.floating-social-btn:hover .floating-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Floating widget responsive overrides moved to main responsive section */
+

@@ -1,0 +1,106 @@
+/* ===== FILTER BAR ===== */
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.category-btn {
+  padding: 8px 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.category-btn:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.category-btn.active {
+  border-color: rgba(255, 255, 255, 0.9);
+  color: #0a0b10;
+  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 32%, #cbd5e1 68%, #94a3b8 100%);
+  font-weight: 700;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.25), inset 0 1px 0 #ffffff;
+}
+
+/* ===== PAGE HEADER ===== */
+.page-header {
+  background: radial-gradient(700px circle at 50% 0%, rgba(255, 255, 255, 0.05), transparent 70%);
+  padding: 120px 0 60px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  text-align: center;
+}
+
+.page-header h1 {
+  font-size: clamp(28px, 5vw, 48px);
+  margin-bottom: 12px;
+}
+
+.page-header p {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.breadcrumb a {
+  color: #cbd5e1;
+}
+
+.breadcrumb a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+/* ===== PRODUCTS HEADER ===== */
+.products-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.products-count {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.sort-select {
+  padding: 8px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.sort-select option {
+  background: var(--bg-secondary);
+}
+

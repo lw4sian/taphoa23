@@ -1,0 +1,13 @@
+/* ===== DEPOSIT PAGE STYLES ===== */
+.deposit-container {
+  max-width: 900px;
+  margin: 90px auto 60px;
+  padding: 0 20px;
+}
+.deposit-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 24px;
+}

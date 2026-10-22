@@ -1,0 +1,25 @@
+/* ===== VIP Progress Bar in Profile ===== */
+.vip-card-banner {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(203, 213, 225, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.vip-progress-container {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+  height: 10px;
+  overflow: hidden;
+  position: relative;
+  margin: 10px 0 6px;
+}
+
+.vip-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #ffffff, #cbd5e1);
+  transition: width 0.5s ease-in-out;
+}
+

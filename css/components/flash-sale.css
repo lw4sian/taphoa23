@@ -1,0 +1,109 @@
+/* ===== FLASH SALE ===== */
+.flash-sale-section {
+  position: relative;
+  background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.03) 8%,
+      rgba(226, 232, 240, 0.05) 20%,
+      rgba(203, 213, 225, 0.06) 50%,
+      rgba(148, 163, 184, 0.04) 80%,
+      rgba(148, 163, 184, 0.02) 95%,
+      transparent 100%);
+  border-bottom: none;
+  border-top: none;
+  margin-top: -10px;
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+
+.flash-sale-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(226, 232, 240, 0.3) 30%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(226, 232, 240, 0.3) 70%,
+      transparent);
+  border-radius: 50%;
+  filter: blur(0.5px);
+}
+
+.flash-sale-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 80px;
+  background: radial-gradient(ellipse at center top,
+      rgba(255, 255, 255, 0.06) 0%,
+      transparent 70%);
+  pointer-events: none;
+}
+
+.flash-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.flash-title-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.flash-icon {
+  font-size: 40px;
+  animation: float 2s ease-in-out infinite;
+}
+
+.flash-title {
+  font-size: clamp(22px, 4vw, 32px);
+  font-weight: 900;
+  color: var(--gold);
+}
+
+.countdown {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#countdown {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Exo 2', sans-serif;
+}
+
+#countdown span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  height: 48px;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: var(--radius-sm);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--red);
+}
+
+.countdown-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
